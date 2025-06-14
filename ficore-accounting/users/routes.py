@@ -5,7 +5,7 @@ from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import app
 
-users_bp = Blueprint('users', __name__, template_folder='../templates')
+users_bp = Blueprint('users', __name__, template_folder='templates/users')
 mongo = PyMongo(app)
 
 class LoginForm(FlaskForm):
@@ -22,7 +22,7 @@ def login():
             flash('Login successful!', 'success')
             return redirect(url_for('users.profile'))
         flash('Invalid credentials', 'error')
-    return render_template('users/login.html', form=form)
+    return render_template('login.html', form=form)
 
 @users_bp.route('/profile', methods=['GET'])
 def profile():
@@ -32,4 +32,4 @@ def profile():
     user = mongo.db.users.find_one({'_id': session['user_id']})
     if user:
         user['_id'] = str(user['_id'])
-    return render_template('users/profile.html', user=user)
+    return render_template('profile.html', user=user)
