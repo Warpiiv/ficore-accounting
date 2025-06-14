@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators
 from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
-from .. import app
+from ... import app
 
 users_bp = Blueprint('users', __name__, template_folder='templates')
 mongo = PyMongo(app)
