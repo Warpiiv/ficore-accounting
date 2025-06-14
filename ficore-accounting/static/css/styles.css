@@ -173,13 +173,13 @@ body {
     font-size: 0.8rem;
 }
 
-/* Forms */
-.form-container {
+/* Forms */.form-container {
     background: var(--form-bg);
     padding: 2rem;
     border-radius: 8px;
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin: 1rem auto; /* centers horizontally and reduces bottom spacing */
+    max-width: 400px; /* optional: keep form width clean */
 }
 
 .form-group {
