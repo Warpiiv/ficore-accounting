@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, validators
 from flask_pymongo import PyMongo
 from datetime import datetime
-from ... import app
+from app import app
 
 transactions_bp = Blueprint('transactions', __name__, template_folder='templates')
 mongo = PyMongo(app)
