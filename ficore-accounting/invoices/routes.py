@@ -3,9 +3,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, validators
 from flask_pymongo import PyMongo
 from datetime import datetime
-from app import app
+from ficore_accounting.app import app
 
-invoices_bp = Blueprint('invoices', __name__, template_folder='templates')
+invoices_bp = Blueprint('invoices', __name__, template_folder='../templates')
 mongo = PyMongo(app)
 
 class InvoiceForm(FlaskForm):
