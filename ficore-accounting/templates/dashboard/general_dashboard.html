@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{ trans('general_dashboard') | default('General Dashboard') }}{% endblock %}
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">{{ trans('general_dashboard') | default('General Dashboard') }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">{{ trans('dashboard_welcome') | default('Welcome to Your Dashboard') }}</h2>
+            <p class="card-text">
+                {{ trans('dashboard_summary') | default('View your recent invoices, transactions, and profile information below.') }}
+            </p>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ trans('recent_invoices') | default('Recent Invoices') }}</h3>
+                            <ul class="list-group">
+                                <!-- Placeholder data -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ trans('invoice') | default('Invoice') }} #001
+                                    <span class="amount-highlight">{{ 1500 | format_currency }}</span>
+                                    <span>{{ '2025-06-14' | format_datetime }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ trans('invoice') | default('Invoice') }} #002
+                                    <span class="amount-highlight">{{ 2000 | format_currency }}</span>
+                                    <span>{{ '2025-06-13' | format_datetime }}</span>
+                                </li>
+                            </ul>
+                            <a href="{{ url_for('invoices.invoice_dashboard') }}" class="btn btn-primary mt-3">
+                                {{ trans('view_all_invoices') | default('View All Invoices') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ trans('recent_transactions') | default('Recent Transactions') }}</h3>
+                            <ul class="list-group">
+                                <!-- Placeholder data -->
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ trans('transaction') | default('Transaction') }} #T001
+                                    <span class="amount-highlight">{{ 500 | format_currency }}</span>
+                                    <span>{{ '2025-06-14' | format_datetime }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ trans('transaction') | default('Transaction') }} #T002
+                                    <span class="amount-highlight">{{ 750 | format_currency }}</span>
+                                    <span>{{ '2025-06-13' | format_datetime }}</span>
+                                </li>
+                            </ul>
+                            <a href="{{ url_for('transactions.transaction_history') }}" class="btn btn-primary mt-3">
+                                {{ trans('view_all_transactions') | default('View All Transactions') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
