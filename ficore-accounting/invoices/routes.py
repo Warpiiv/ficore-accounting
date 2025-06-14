@@ -5,7 +5,7 @@ from flask_pymongo import PyMongo
 from datetime import datetime
 from app import app
 
-invoices_bp = Blueprint('invoices', __name__, template_folder='templates/invoices')
+invoices_bp = Blueprint('invoices', __name__, template_folder='templates/invoices/invoices')
 mongo = PyMongo(app)
 
 class InvoiceForm(FlaskForm):
