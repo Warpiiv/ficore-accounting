@@ -13,7 +13,7 @@ from utils import trans_function, is_valid_email
 
 logger = logging.getLogger(__name__)
 
-users_bp = Blueprint('users', __name__, template_folder='templates/users')
+users_bp = Blueprint('users', __name__, template_folder='templates')
 mongo = PyMongo(app)
 
 class LoginForm(FlaskForm):
