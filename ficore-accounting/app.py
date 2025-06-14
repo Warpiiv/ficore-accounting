@@ -5,7 +5,7 @@ import os
 from flask_wtf import CSRFProtect
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, template_folder='ficore_accounting/templates')
 CORS(app)
 CSRFProtect(app)
 
@@ -18,23 +18,65 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour
 mongo = PyMongo(app)
 
 # Register blueprints
-from invoices import invoices_bp
-from transactions import transactions_bp
-from users import users_bp
+from ficore_accounting.invoices.routes import invoices_bp
+from ficore_accounting.transactions.routes import transactions_bp
+from ficore_accounting.users.routes import users_bp
 app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
 app.register_blueprint(users_bp, url_prefix='/users')
 
 # Translations route
-from translations import TRANSLATIONS
+from ficore_accounting.translations import TRANSLATIONS
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
     return {'translations': TRANSLATIONS.get(lang, TRANSLATIONS['en'])}
 
-# Index route
+# General routes
 @app.route('/')
 def index():
     return redirect(url_for('invoices.invoice_dashboard'))
+
+@app.route('/about')
+def about():
+    return render_template('general/about.html')
+
+@app.route('/feedback')
+def feedback():
+    return render_template('general/feedback.html')
+
+@app.route('/dashboard/admin')
+def admin_dashboard():
+    return render_template('dashboard/admin_dashboard.html')
+
+@app.route('/dashboard/general')
+def general_dashboard():
+    return render_template('dashboard/general_dashboard.html')
+
+# Error handlers
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('errors/500.html'), 500
+
+# Auth routes (placeholders)
+@app.route('/auth/signin')
+def signin():
+    return render_template('auth/signin.html')
+
+@app.route('/auth/signup')
+def signup():
+    return render_template('auth/signup.html')
+
+@app.route('/auth/forgot-password')
+def forgot_password():
+    return render_template('auth/forgot_password.html')
+
+@app.route('/auth/reset-password')
+def reset_password():
+    return render_template('auth/reset_password.html')
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))  # Match Render's expected port
