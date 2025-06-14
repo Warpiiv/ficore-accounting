@@ -1,11 +1,11 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, validators
 from flask_pymongo import PyMongo
 from datetime import datetime
 from .. import app
 
-transactions_bp = Blueprint('transactions', __name__)
+transactions_bp = Blueprint('transactions', __name__, template_folder='templates')
 mongo = PyMongo(app)
 
 class TransactionForm(FlaskForm):
@@ -34,5 +34,6 @@ def add_transaction():
         }
         result = mongo.db.transactions.insert_one(transaction)
         transaction['_id'] = str(result.inserted_id)
-        return jsonify({'message': 'Transaction created', 'transaction': transaction}), 201
+        flash('Transaction added successfully!', 'success')
+        return redirect(url_for('transactions.transaction_history'))
     return render_template('transactions/add.html', form=form)
