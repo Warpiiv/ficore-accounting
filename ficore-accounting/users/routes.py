@@ -68,8 +68,9 @@ class ProfileForm(FlaskForm):
 
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+    # TODO: Re-enable authentication check before production
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         try:
@@ -89,8 +90,9 @@ def login():
 
 @users_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+    # TODO: Re-enable authentication check before production
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('index'))
     form = SignupForm()
     if form.validate_on_submit():
         try:
@@ -120,8 +122,9 @@ def signup():
 
 @users_bp.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+    # TODO: Re-enable authentication check before production
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('index'))
     form = ForgotPasswordForm()
     if form.validate_on_submit():
         try:
@@ -160,8 +163,9 @@ def forgot_password():
 
 @users_bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+    # TODO: Re-enable authentication check before production
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('index'))
     token = request.args.get('token')
     form = ResetPasswordForm()
     if form.validate_on_submit():
@@ -194,10 +198,17 @@ def reset_password():
     return render_template('users/reset_password.html', form=form, token=token)
 
 @users_bp.route('/profile', methods=['GET'])
-@login_required
 def profile():
+    # TODO: Re-enable @login_required before production
     try:
-        user = mongo.db.users.find_one({'_id': current_user.id})
+        # Use a default user for unauthenticated access
+        user_id = current_user.id if current_user.is_authenticated else 'guest'
+        user = mongo.db.users.find_one({'_id': user_id}) if current_user.is_authenticated else {
+            '_id': 'guest',
+            'email': 'guest@example.com',
+            'dark_mode': False,
+            'is_admin': False
+        }
         if user:
             user['_id'] = str(user['_id'])
             return render_template('users/profile.html', user=user, form=ProfileForm())
@@ -209,42 +220,47 @@ def profile():
         return redirect(url_for('index')), 500
 
 @users_bp.route('/update_profile', methods=['GET', 'POST'])
-@login_required
 def update_profile():
+    # TODO: Re-enable @login_required before production
     form = ProfileForm(data={
-        'username': current_user.id,
-        'email': current_user.email
+        'username': current_user.id if current_user.is_authenticated else 'guest',
+        'email': current_user.email if current_user.is_authenticated else 'guest@example.com'
     })
     if form.validate_on_submit():
         try:
             new_username = form.username.data.strip()
             new_email = form.email.data.strip()
-            if new_username != current_user.id and mongo.db.users.find_one({'_id': new_username}):
-                flash(trans_function('username_exists'), 'danger')
-                return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
-            if new_email != current_user.email and mongo.db.users.find_one({'email': new_email}):
-                flash(trans_function('email_exists'), 'danger')
-                return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
-            mongo.db.users.update_one(
-                {'_id': current_user.id},
-                {
-                    '$set': {
-                        '_id': new_username,
-                        'email': new_email,
-                        'updated_at': datetime.utcnow()
+            user_id = current_user.id if current_user.is_authenticated else None
+            if user_id:
+                if new_username != user_id and mongo.db.users.find_one({'_id': new_username}):
+                    flash(trans_function('username_exists'), 'danger')
+                    return render_template('users/profile.html', form=form, user={'_id': user_id, 'email': current_user.email})
+                if new_email != current_user.email and mongo.db.users.find_one({'email': new_email}):
+                    flash(trans_function('email_exists'), 'danger')
+                    return render_template('users/profile.html', form=form, user={'_id': user_id, 'email': current_user.email})
+                mongo.db.users.update_one(
+                    {'_id': user_id},
+                    {
+                        '$set': {
+                            '_id': new_username,
+                            'email': new_email,
+                            'updated_at': datetime.utcnow()
+                        }
                     }
-                }
-            )
-            current_user.id = new_username
-            current_user.email = new_email
-            flash(trans_function('profile_updated'), 'success')
-            logger.info(f"Profile updated for user: {new_username}")
+                )
+                if current_user.is_authenticated:
+                    current_user.id = new_username
+                    current_user.email = new_email
+                flash(trans_function('profile_updated'), 'success')
+                logger.info(f"Profile updated for user: {new_username}")
+            else:
+                flash(trans_function('profile_update_guest'), 'warning')
             return redirect(url_for('users.profile'))
         except Exception as e:
             logger.error(f"Error updating profile: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
-            return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email}), 500
-    return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
+            return render_template('users/profile.html', form=form, user={'_id': user_id or 'guest', 'email': current_user.email or 'guest@example.com'}), 500
+    return render_template('users/profile.html', form=form, user={'_id': current_user.id or 'guest', 'email': current_user.email or 'guest@example.com'})
 
 @users_bp.route('/logout')
 def logout():
