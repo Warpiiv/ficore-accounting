@@ -1,5 +1,13 @@
 TRANSLATIONS = {
     'en': {
+         # Setup
+        'database_setup_success': 'Database setup completed successfully',
+        'database_setup_error': 'Error setting up database. Please try again',
+        # Errors
+        'forbidden': 'Access Forbidden',
+        'status': 'Status',
+        # General
+        'type': 'Type',
         # Auth
         'invalid_username': 'Username must be at least 3 characters long',
         'invalid_password': 'Password must be at least 8 characters long',
@@ -275,6 +283,14 @@ TRANSLATIONS = {
         'username_exists': 'Sunan mai amfani tuni yana wanzu',
         'email_exists': 'Imel tuni yana wanzu',
         'profile_updated': 'An sabunta bayanan martaba cikin nasara',
-        'user_not_found': 'Ba a sami mai amfani ba'
+        'user_not_found': 'Ba a sami mai amfani ba',
+        # Setup
+        'database_setup_success': 'An kammala saitin bayanai cikin nasara',
+        'database_setup_error': 'Kuskure wajen saitin bayanai. Sake gwadawa',
+        # Errors
+        'forbidden': 'An Hana Shiga',
+        'status': 'Matsayi',
+        # General
+        'type': 'Nau’i'
     }
 }
