@@ -12,13 +12,13 @@
     --accent-gold: #FFD700;
     --accent-gold-dark: #FFA500;
     --button-gradient: linear-gradient(135deg, #00008B, #4B0082);
-    --button-gradient-hover: linear-gradient(135deg, #4B0082, #6A1B9A);
+    --button-gradient-hover: linear-gradient(135deg, #6A1B9A, #4B0082); /* Darker contrast on hover */
     --button-nav-gradient: linear-gradient(90deg, #00008B, #4B0082);
-    --button-nav-gradient-hover: linear-gradient(90deg, #4B0082, #6A1B9A);
+    --button-nav-gradient-hover: linear-gradient(90deg, #6A1B9A, #4B0082);
     --card-bg: #FFFFFF;
     --card-border: #4B0082;
     --card-text: #6c757d;
-    --form-bg: #F5F5F5;
+    --form-bg: #FFFFFF;
     --table-border: #e0e0e0;
     --table-header-bg: #EDE7F6;
     --table-text: #333333;
@@ -39,11 +39,11 @@
     --accent-gold: #FFCA28;
     --accent-gold-dark: #F57F17;
     --button-gradient: linear-gradient(135deg, #00008B, #4B0082);
-    --button-gradient-hover: linear-gradient(135deg, #4B0082, #6A1B9A);
+    --button-gradient-hover: linear-gradient(135deg, #6A1B9A, #4B0082); /* Darker contrast on hover */
     --button-nav-gradient: linear-gradient(90deg, #00008B, #4B0082);
-    --button-nav-gradient-hover: linear-gradient(90deg, #4B0082, #6A1B9A);
+    --button-nav-gradient-hover: linear-gradient(90deg, #6A1B9A, #4B0082);
     --card-bg: #424242;
-    --card-border: #4B0082;
+    --card-border: #6A1B9A;
     --card-text: #B0BEC5;
     --form-bg: #424242;
     --table-border: #616161;
@@ -63,9 +63,11 @@ body {
     font-family: 'Poppins', 'Arial', sans-serif;
     background: var(--background-gradient);
     color: var(--text-color);
-    padding: 0.5rem;
+    padding: 0;
     margin: 0;
-    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     overflow-x: hidden;
     scroll-behavior: smooth;
 }
@@ -74,6 +76,7 @@ body {
     max-width: 100%;
     margin: 0 auto;
     padding: 0.5rem 1rem;
+    flex: 1;
 }
 
 /* Navbar */
@@ -106,6 +109,7 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-size: 0.9rem;
+    width: 100%; /* Full-width for mobile */
 }
 
 .btn-primary:hover {
@@ -133,62 +137,37 @@ body {
     z-index: 1000;
 }
 
-/* Cards */
-.card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.card-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-color);
-    margin-bottom: 0.5rem;
-}
-
-.card-text {
-    color: var(--card-text);
-    font-size: 0.9rem;
-}
-
-.amount-highlight {
-    color: var(--amount-highlight);
-    font-weight: bold;
-}
-
-.text-danger {
-    color: var(--error-highlight);
-    font-size: 0.8rem;
-}
-
 /* Forms */
 .form-container {
     background: var(--form-bg);
-    padding: 1rem;
+    border: 1px solid var(--card-border);
     border-radius: 8px;
-    margin-bottom: 1rem;
+    padding: 2rem; /* Increased padding */
+    margin: 2rem auto; /* Centered with margin */
+    max-width: 400px; /* Increased width */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem; /* Increased spacing */
+    width: 100%;
 }
 
 .form-label {
     font-weight: 500;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem; /* Increased spacing */
     color: var(--text-color);
 }
 
 .form-control, .form-select {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.75rem; /* Increased padding */
     border: 1px solid var(--card-border);
     border-radius: 4px;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .form-control:focus, .form-select:focus {
@@ -212,58 +191,70 @@ body {
     display: block;
 }
 
-/* Tables */
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-}
-
-.table th,
-.table td {
-    padding: 0.5rem;
-    border: 1px solid var(--table-border);
-    text-align: left;
-}
-
-.table th {
-    background-color: var(--table-header-bg);
-    color: var(--table-text);
-    font-weight: 600;
-}
-
-.table td {
-    color: var(--table-text);
-}
-
-/* List Group */
-.list-group-item {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: 4px;
-}
-
-.list-group-item.d-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 /* Buttons */
-.btn {
+.btn-login {
     background: var(--button-gradient);
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem;
     border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
+    font-size: 1rem;
+    width: 100%; /* Full-width for mobile */
+    margin-bottom: 1rem; /* Increased spacing */
 }
 
-.btn:hover {
+.btn-login:hover {
     background: var(--button-gradient-hover);
+}
+
+.btn-link {
+    color: var(--accent-indigo);
+    text-decoration: none;
+    margin-top: 0.5rem; /* Increased spacing */
+    display: block; /* Separate links */
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(90deg, #003087, #004D40);
+    color: white;
+    padding: 1rem 0;
+    margin-top: auto;
+}
+
+.footer .container {
+    text-align: center;
+}
+
+.footer p {
+    margin-bottom: 1rem;
+}
+
+.footer .social-icons, .footer .footer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer .social-icons, .footer .footer-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }
 
 /* Media Queries */
@@ -285,33 +276,12 @@ body {
         font-size: 1rem;
     }
 
-    .card {
-        padding: 1.5rem;
-    }
-
-    .card-title {
-        font-size: 1.4rem;
-    }
-
-    .card-text {
-        font-size: 1rem;
-    }
-
     .form-container {
-        padding: 1.5rem;
+        padding: 2.5rem;
     }
 
     .form-control, .form-select {
         font-size: 1rem;
-    }
-
-    .table th,
-    .table td {
-        padding: 0.75rem;
-    }
-
-    .list-group-item {
-        padding: 0.75rem;
     }
 }
 
@@ -324,11 +294,12 @@ body {
         font-size: 0.8rem;
     }
 
-    .card-title {
-        font-size: 1rem;
+    .form-container {
+        padding: 1.5rem;
+        max-width: 90%;
     }
 
-    .form-control, .form-select {
-        font-size: 0.85rem;
+    .btn-login, .form-control {
+        font-size: 0.9rem;
     }
 }
