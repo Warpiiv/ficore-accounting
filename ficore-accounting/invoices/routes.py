@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-invoices_bp = Blueprint('invoices', __name__, template_folder='templates/invoices')
+invoices_bp = Blueprint('invoices', __name__, template_folder='templates')
 mongo = PyMongo(app)
 
 class InvoiceForm(FlaskForm):
