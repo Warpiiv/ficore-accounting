@@ -30,7 +30,7 @@
     {% endwith %}
 
     <div class="header-message">
-        {{ trans('core_welcome_to_ficore_accounting') | default('Welcome to Ficore MiniRecords!') }}
+        {{ trans('core_welcome_to_ficore_accounting') | default('Welcome to Ficore Africa Accounting: Manage your invoices, transactions, and profile with confidence.') }}
     </div>
 
     <nav class="navbar navbar-expand-lg">
@@ -120,6 +120,8 @@
             const modeToggle = document.getElementById('modeToggle');
             const body = document.body;
             const currentMode = localStorage.getItem('darkMode') || 'false';
+
+            // Initialize mode based on localStorage
             if (currentMode === 'true') {
                 body.classList.add('dark-mode');
                 modeToggle.innerHTML = '<i class="fas fa-sun" aria-hidden="true"></i>';
@@ -128,13 +130,24 @@
                 modeToggle.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
             }
 
+            // Toggle dark mode on click
             modeToggle.addEventListener('click', function() {
                 const isDarkMode = body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
                 modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
-                session['dark_mode'] = isDarkMode ? 'true' : 'false';
+
+                // Notify server to update session (optional, for persistence across sessions)
+                fetch('{{ url_for("set_dark_mode") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ dark_mode: isDarkMode })
+                }).catch(error => console.error('Error updating dark mode:', error));
             });
 
+            // Form validation
             document.querySelectorAll('form.validate-form').forEach(form => {
                 form.addEventListener('submit', function(e) {
                     let valid = true;
@@ -163,6 +176,7 @@
                 });
             });
 
+            // Initialize tooltips
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
         });
