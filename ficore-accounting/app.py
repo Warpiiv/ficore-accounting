@@ -5,7 +5,7 @@ import os
 from flask_wtf import CSRFProtect
 
 # Initialize Flask app
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder='../templates')
 CORS(app)
 CSRFProtect(app)
 
@@ -18,15 +18,15 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour
 mongo = PyMongo(app)
 
 # Register blueprints
-from invoices.routes import invoices_bp
-from transactions.routes import transactions_bp
-from users.routes import users_bp
+from ficore_accounting.invoices.routes import invoices_bp
+from ficore_accounting.transactions.routes import transactions_bp
+from ficore_accounting.users.routes import users_bp
 app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
 app.register_blueprint(users_bp, url_prefix='/users')
 
 # Translations route
-from translations import TRANSLATIONS
+from ficore_accounting.translations import TRANSLATIONS
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
     return {'translations': TRANSLATIONS.get(lang, TRANSLATIONS['en'])}
