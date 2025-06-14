@@ -86,7 +86,7 @@
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="footer mt-5" style="background: linear-gradient(90deg, #003087, #004D40); color: white;">
+    <footer class="footer mt-5" style="background: linear-gradient(90deg, #003087, #4B0082); color: white;">
         <div class="container text-center py-4" role="contentinfo">
             <p>{{ trans('core_about_minirecords') | default('About Ficore MiniRecords') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2025') }}</p>
             <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_minirecords') | default('Ficore MiniRecords is a simplified Software for SMEs') }} <a href="{{ url_for('about') }}" class="text-white text-decoration-underline">{{ trans('core_learn_more') | default('Learn more') }}</a></p>
