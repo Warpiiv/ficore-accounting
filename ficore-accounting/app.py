@@ -9,9 +9,10 @@ import os
 import jinja2
 from flask_wtf import CSRFProtect
 import logging
-import re
 import uuid
 from bson import ObjectId
+from translations import TRANSLATIONS
+from utils import trans_function, is_valid_email
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -66,21 +67,6 @@ app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
 app.register_blueprint(users_bp, url_prefix='/users')
 
-# Translations
-from translations import TRANSLATIONS
-
-# Translation function
-def trans_function(key):
-    try:
-        lang = session.get('lang', 'en')
-        translation = TRANSLATIONS.get(lang, {}).get(key, key)
-        if translation == key:
-            logger.info(f"Missing translation for key '{key}' in language '{lang}'")
-        return translation
-    except Exception as e:
-        logger.error(f"Error in trans function: {e}")
-        return key
-
 app.jinja_env.globals['trans'] = trans_function
 
 @app.template_filter('trans')
@@ -117,11 +103,6 @@ def format_datetime(value):
     except Exception as e:
         logger.warning(f"Error formatting datetime {value}: {str(e)}")
         return str(value)
-
-# Email validation
-def is_valid_email(email):
-    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(email_regex, email) is not None
 
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
