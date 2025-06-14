@@ -196,6 +196,22 @@ body {
     box-shadow: 0 0 5px rgba(2, 136, 209, 0.5);
 }
 
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: var(--error-highlight);
+    background-image: none;
+}
+
+.invalid-feedback {
+    display: none;
+    color: var(--error-highlight);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
 /* Tables */
 .table {
     width: 100%;
