@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators
-from flask_login import login_required, current_user, login_user, logout_user, UserMixin
+from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_pymongo import PyMongo
-from app import app, mail
+from app import app, mail, User  # Import User from app
 from flask_mail import Message
 import logging
 import uuid
@@ -15,19 +15,6 @@ logger = logging.getLogger(__name__)
 
 users_bp = Blueprint('users', __name__, template_folder='templates')
 mongo = PyMongo(app)
-
-# User class for Flask-Login
-class User(UserMixin):
-    def __init__(self, username, email):
-        self.id = username  # Flask-Login uses 'id' for user identification
-        self.email = email
-
-    @staticmethod
-    def get(user_id):
-        user = mongo.db.users.find_one({'_id': user_id})
-        if user:
-            return User(user['_id'], user['email'])
-        return None
 
 class LoginForm(FlaskForm):
     username = StringField('Username', [
