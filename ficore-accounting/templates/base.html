@@ -16,13 +16,6 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    {% if not session.get('consent_acknowledged') %}
-    <div class="consent-banner alert alert-info alert-dismissible fade show" id="consentBanner" role="alert">
-        <i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_consent_banner_accounting') | default('By using Ficore Accounting, you understand that we provide tools for planning only, not banking.') }}
-        <button type="button" class="btn btn-primary btn-sm ms-2" id="acknowledgeConsentBtn">{{ trans('core_accept') | default('Accept') }}</button>
-    </div>
-    {% endif %}
-
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div class="container mt-3">
@@ -37,7 +30,7 @@
     {% endwith %}
 
     <div class="header-message">
-        {{ trans('core_welcome_to_ficore_accounting') | default('Welcome to Ficore Africa Accounting: Manage your invoices, transactions, and profile with confidence.') }}
+        {{ trans('core_welcome_to_ficore_accounting') | default('Welcome to Ficore Accounting Software!') }}
     </div>
 
     <nav class="navbar navbar-expand-lg">
@@ -167,37 +160,6 @@
                         e.preventDefault();
                         alert('{{ trans('core_please_complete_all_fields') | default('Please complete all required fields') }}');
                     }
-                });
-            });
-
-            const consentBtn = document.getElementById('acknowledgeConsentBtn');
-            if (consentBtn) {
-                consentBtn.addEventListener('click', function() {
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    fetch('{{ url_for("acknowledge_consent") }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': csrfToken
-                        }
-                    })
-                    .then(response => {
-                        if (response.status === 204) {
-                            const banner = document.getElementById('consentBanner');
-                            if (banner) {
-                                banner.classList.remove('show');
-                                setTimeout(() => banner.remove(), 300);
-                            }
-                        } else if (response.status === 400) {
-                            alert('{{ trans("core_invalid_request") | default("Invalid request. Please try again.") }}');
-                        } else {
-                            alert('{{ trans("core_error_acknowledging_consent") | default("Error acknowledging consent. Please try again.") }}');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('{{ trans("core_network_error") | default("Network error. Please try again.") }}');
-                    });
                 });
             });
 
