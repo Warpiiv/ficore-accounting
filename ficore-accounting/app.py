@@ -1,18 +1,18 @@
 from flask import Flask, session, redirect, url_for, flash, render_template, request, Response
 from flask_pymongo import PyMongo
 from flask_cors import CORS
-from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user
+from flask_login import LoginManager, UserMixin, login_user, current_user
 from flask_mail import Mail, Message
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from datetime import datetime, timedelta
 import os
 import jinja2
 from flask_wtf import CSRFProtect
 import logging
-import uuid
 from bson import ObjectId
 from translations import TRANSLATIONS
-from utils import trans_function, is_valid_email
+from utils import trans_function
+from flask_session import Session
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -26,9 +26,17 @@ CSRFProtect(app)
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANENT_SESSION_LIFETIME'] = 3600
+app.config['SESSION_TYPE'] = 'mongodb'  # Use MongoDB for session storage
+app.config['SESSION_MONGODB'] = PyMongo(app).cx
+app.config['SESSION_MONGODB_DB'] = 'minirecords'
+app.config['SESSION_MONGODB_COLLECT'] = 'sessions'
+app.config['SESSION_PERMANENT'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=3600)  # 1 hour
+app.config['SESSION_COOKIE_SECURE'] = os.getenv('FLASK_ENV', 'development') == 'production'  # Secure cookies in production
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.jinja_env.undefined = jinja2.Undefined
+
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
@@ -39,6 +47,7 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'support@fi
 
 mongo = PyMongo(app)
 mail = Mail(app)
+sess = Session(app)  # Initialize Flask-Session
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -130,12 +139,6 @@ def set_dark_mode():
         )
     return Response(status=204)
 
-@app.route('/logout')
-def logout():
-    logout_user()
-    flash(trans_function('logged_out'), 'success')
-    return redirect(url_for('index'))
-
 # Database setup route
 @app.route('/setup', methods=['GET'])
 def setup_database():
@@ -171,6 +174,9 @@ def setup_database():
         # Create feedback collection and indexes
         mongo.db.feedback.create_index([('user_id', 1)], sparse=True)
         mongo.db.feedback.create_index([('timestamp', -1)])
+
+        # Create sessions collection index
+        mongo.db.sessions.create_index([('expires', 1)], expireAfterSeconds=0)
 
         flash(trans_function('database_setup_success'), 'success')
         logger.info("Database setup completed successfully")
@@ -234,23 +240,6 @@ def general_dashboard():
     if not current_user.is_authenticated:
         return redirect(url_for('users.login'))
     return render_template('dashboard/general_dashboard.html')
-
-# Redirect old auth routes
-@app.route('/auth/signin')
-def signin():
-    return redirect(url_for('users.login'))
-
-@app.route('/auth/signup')
-def signup():
-    return redirect(url_for('users.signup'))
-
-@app.route('/auth/forgot-password')
-def forgot_password():
-    return redirect(url_for('users.forgot_password'))
-
-@app.route('/auth/reset-password')
-def reset_password():
-    return redirect(url_for('users.reset_password'))
 
 # Error handlers
 @app.errorhandler(403)
