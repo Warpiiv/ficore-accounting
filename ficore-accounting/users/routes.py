@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, validators
 from flask_login import login_required, current_user, login_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_pymongo import PyMongo
-from app import app, 
+from app import app
 from flask_mail import Message
 import logging
 import uuid
