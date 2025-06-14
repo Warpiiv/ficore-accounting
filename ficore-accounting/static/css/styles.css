@@ -63,7 +63,7 @@ body {
     font-family: 'Poppins', 'Arial', sans-serif;
     background: var(--background-gradient);
     color: var(--text-color);
-    padding: 0.5rem;
+    padding: 0;
     margin: 0;
     max-width: 100%;
     overflow-x: hidden;
@@ -74,6 +74,7 @@ body {
     max-width: 100%;
     margin: 0 auto;
     padding: 0.5rem 1rem;
+    margin-top: 3rem;
 }
 
 /* Navbar */
@@ -83,7 +84,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
+    position: absolute;
+    left: 0;
+    width: 100%;
     z-index: 1000;
 }
 
@@ -271,6 +274,7 @@ body {
     .container {
         max-width: 1200px;
         padding: 1rem 2rem;
+        margin-top: 4rem;
     }
 
     .navbar {
