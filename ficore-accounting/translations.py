@@ -33,8 +33,8 @@ TRANSLATIONS = {
         'user_id': 'User ID',
         'username': 'Username',
         # General
-        'about_description': 'Ficore MiniRecords is a simplified software designed to empower small and medium enterprises (SMEs) across Africa with record-keeping.',
-        'about_mission': 'Our mission is to provide SMEs with tools to streamline invoicing and track transactions.',
+        'about_description': 'Ficore MiniRecords is a simplified software designed to empower small and medium enterprises (SMEs) across Africa with efficient financial record-keeping. Since 2025, we have been committed to making financial management accessible and intuitive.',
+        'about_mission': 'Our mission is to provide SMEs with tools to streamline invoicing, track transactions, and manage profiles, all while maintaining simplicity and affordability.',
         'amount': 'Amount (₦)',
         'category': 'Category',
         'choose_option': 'Choose...',
@@ -115,6 +115,28 @@ TRANSLATIONS = {
         # Financial
         'create_invoice': 'Create Invoice',
         'track_transaction': 'Track Income/Expense',
+        # Consent Banner
+        'core_consent_banner_minirecords': 'By using Ficore MiniRecords, you understand that we provide tools for planning only, not banking.',
+        # Additional Keys
+        'actions': 'Actions',
+        'confirm_delete': 'Are you sure?',
+        'delete': 'Delete',
+        'edit': 'Edit',
+        'invoice_created': 'Invoice created successfully',
+        'invoice_updated': 'Invoice updated successfully',
+        'invoice_deleted': 'Invoice deleted successfully',
+        'invoice_not_found': 'Invoice not found',
+        'no_invoices': 'No invoices found',
+        'transaction_added': 'Transaction added successfully',
+        'transaction_updated': 'Transaction updated successfully',
+        'transaction_deleted': 'Transaction deleted successfully',
+        'transaction_not_found': 'Transaction not found',
+        'no_transactions': 'No transactions found',
+        'user_details': 'User Details',
+        'username_exists': 'Username already exists',
+        'email_exists': 'Email already exists',
+        'profile_updated': 'Profile updated successfully',
+        'user_not_found': 'User not found'
     },
     'ha': {
         # Auth
@@ -150,8 +172,8 @@ TRANSLATIONS = {
         'user_id': 'ID na Mai amfani',
         'username': 'Sunan mai amfani',
         # General
-        'about_description': 'Ficore MiniRecords software ne mai sauƙi don ƙarfafa matsakaitan kasuwanci (SMEs) a duk faɗin Afirka.',
-        'about_mission': 'Manufarmu ita ce samar wa SMEs kayan aiki don sauƙaƙe lissafin kuɗi, da bin diddigin ma’amaloli.',
+        'about_description': 'Ficore MiniRecords software ne mai sauƙi wanda aka ƙera don ƙarfafa ƙananan da matsakaitan kasuwanci (SMEs) a duk faɗin Afirka tare da ingantaccen adana bayanan kuɗi. Tun daga 2025, mun himmatu wajen sa sarrafa kuɗi ya zama mai sauƙi da fahimta.',
+        'about_mission': 'Manufarmu ita ce samar wa SMEs kayan aiki don sauƙaƙe lissafin kuɗi, bin diddigin ma’amaloli, da sarrafa bayanan martaba, duk yayin da muke kiyaye sauƙi da araha.',
         'amount': 'Adadin (₦)',
         'category': 'Rukuni',
         'choose_option': 'Zaɓi...',
@@ -232,5 +254,27 @@ TRANSLATIONS = {
         # Financial
         'create_invoice': 'Ƙirƙiri Daftari',
         'track_transaction': 'Bincika Kuɗin Shiga/Fita',
-     }
+        # Consent Banner
+        'core_consent_banner_minirecords': 'Ta amfani da Ficore MiniRecords, ka fahimci cewa muna ba da kayan aiki don shiri kawai, ba banki ba.',
+        # Additional Keys
+        'actions': 'Ayyuka',
+        'confirm_delete': 'Ka tabbata?',
+        'delete': 'Goge',
+        'edit': 'Gyara',
+        'invoice_created': 'An ƙirƙiri lissafin kuɗi cikin nasara',
+        'invoice_updated': 'An sabunta lissafin kuɗi cikin nasara',
+        'invoice_deleted': 'An goge lissafin kuɗi cikin nasara',
+        'invoice_not_found': 'Ba a sami lissafin kuɗi ba',
+        'no_invoices': 'Ba a sami lissafin kuɗi ba',
+        'transaction_added': 'An ƙara ma’amala cikin nasara',
+        'transaction_updated': 'An sabunta ma’amala cikin nasara',
+        'transaction_deleted': 'An goge ma’amala cikin nasara',
+        'transaction_not_found': 'Ba a sami ma’amala ba',
+        'no_transactions': 'Ba a sami ma’amaloli ba',
+        'user_details': 'Bayanin Mai amfani',
+        'username_exists': 'Sunan mai amfani tuni yana wanzu',
+        'email_exists': 'Imel tuni yana wanzu',
+        'profile_updated': 'An sabunta bayanan martaba cikin nasara',
+        'user_not_found': 'Ba a sami mai amfani ba'
+    }
 }
