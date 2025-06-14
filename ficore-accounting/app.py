@@ -49,7 +49,7 @@ mongo = PyMongo(app)
 mail = Mail(app)
 sess = Session(app)  # Initialize Flask-Session
 
-# Initialize Flask-Login
+# Initialize Flask-Login (retained for future use)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login'
@@ -132,11 +132,12 @@ def set_language(lang):
 def set_dark_mode():
     data = request.get_json()
     session['dark_mode'] = str(data.get('dark_mode', False)).lower()
-    if current_user.is_authenticated:
-        mongo.db.users.update_one(
-            {'_id': current_user.id},
-            {'$set': {'dark_mode': session['dark_mode'] == 'true'}}
-        )
+    # Commented out for no-auth mode; restore when re-enabling authentication
+    # if current_user.is_authenticated:
+    #     mongo.db.users.update_one(
+    #         {'_id': current_user.id},
+    #         {'$set': {'dark_mode': session['dark_mode'] == 'true'}}
+    #     )
     return Response(status=204)
 
 # Database setup route
@@ -208,12 +209,12 @@ def feedback():
             if not tool_name or tool_name not in tool_options:
                 flash(trans_function('invalid_tool'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
-            if not rating or not rating.is_digit() or int(rating) < 1 or int(rating) > 5:
+            if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
                 flash(trans_function('invalid_rating'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
             feedback_entry = {
-                'user_id': current_user.id if current_user.is_authenticated else None,
+                'user_id': None,  # Use None for unauthenticated users
                 'tool_name': tool_name,
                 'rating': int(rating),
                 'comment': comment or None,
@@ -231,14 +232,16 @@ def feedback():
 
 @app.route('/dashboard/admin')
 def admin_dashboard():
-    if not current_user.is_authenticated or not mongo.db.users.find_one({'_id': current_user.id, 'is_admin': True}):
-        return render_template('errors/403.html'), 403
+    # TODO: Re-enable authentication before production
+    # if not current_user.is_authenticated or not mongo.db.users.find_one({'_id': current_user.id, 'is_admin': True}):
+    #     return render_template('errors/403.html'), 403
     return render_template('dashboard/admin_dashboard.html')
 
 @app.route('/dashboard/general')
 def general_dashboard():
-    if not current_user.is_authenticated:
-        return redirect(url_for('users.login'))
+    # TODO: Re-enable authentication before production
+    # if not current_user.is_authenticated:
+    #     return redirect(url_for('users.login'))
     return render_template('dashboard/general_dashboard.html')
 
 # Error handlers
