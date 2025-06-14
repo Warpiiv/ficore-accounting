@@ -1,9 +1,9 @@
 /* Define CSS Custom Properties for Colors */
 :root {
     /* Light Mode Colors */
-    --background-gradient: #f9fafc; /* Soft neutral background for focus on financial data */
+    --background-gradient: #f9fafc;
     --text-color: #333;
-    --navbar-gradient: linear-gradient(90deg, #0288D1, #2E7D32); /* Blue to green for professionalism */
+    --navbar-gradient: linear-gradient(90deg, #0288D1, #2E7D32);
     --header-message-gradient: linear-gradient(90deg, #0288D1, #2E7D32);
     --consent-banner-bg: #E6F0FA;
     --consent-banner-text: #333;
@@ -11,21 +11,19 @@
     --accent-blue-dark: #01579B;
     --accent-green: #2E7D32;
     --accent-green-dark: #1B5E20;
-    --button-gradient: linear-gradient(135deg, #2E7D32, #0288D1); /* Actionable call-to-action */
+    --button-gradient: linear-gradient(135deg, #2E7D32, #0288D1);
     --button-gradient-hover: linear-gradient(135deg, #1B5E20, #01579B);
     --button-nav-gradient: linear-gradient(90deg, #0288D1, #2E7D32);
     --button-nav-gradient-hover: linear-gradient(90deg, #0277BD, #27632A);
-    --card-bg: #FFFFFF; /* Clean white for data cards */
+    --card-bg: #FFFFFF;
     --card-border: #0288D1;
     --card-text: #6c757d;
-    --form-bg: #F8F9FA; /* Light gray for forms */
+    --form-bg: #F8F9FA;
     --table-border: #e0e0e0;
     --table-header-bg: #E6F0FA;
     --table-text: #333;
-
-    /* Accounting-specific highlights */
-    --amount-highlight: #2E7D32; /* Green for positive amounts */
-    --error-highlight: #dc3545; /* Red for errors */
+    --amount-highlight: #2E7D32;
+    --error-highlight: #dc3545;
 }
 
 /* Dark Mode Overrides */
@@ -135,7 +133,7 @@ body {
     z-index: 1000;
 }
 
-/* Cards for Data Display */
+/* Cards */
 .card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -162,8 +160,9 @@ body {
     font-weight: bold;
 }
 
-.error-highlight {
+.text-danger {
     color: var(--error-highlight);
+    font-size: 0.8rem;
 }
 
 /* Forms */
@@ -184,7 +183,7 @@ body {
     color: var(--text-color);
 }
 
-.form-control {
+.form-control, .form-select {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid var(--card-border);
@@ -192,17 +191,12 @@ body {
     font-size: 0.9rem;
 }
 
-.form-control:focus {
+.form-control:focus, .form-select:focus {
     border-color: var(--accent-blue);
     box-shadow: 0 0 5px rgba(2, 136, 209, 0.5);
 }
 
-.invalid-feedback {
-    color: var(--error-highlight);
-    font-size: 0.8rem;
-}
-
-/* Tables for Transactions/Invoices */
+/* Tables */
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -224,6 +218,21 @@ body {
 
 .table td {
     color: var(--table-text);
+}
+
+/* List Group */
+.list-group-item {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.list-group-item.d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* Buttons */
@@ -276,12 +285,16 @@ body {
         padding: 1.5rem;
     }
 
-    .form-control {
+    .form-control, .form-select {
         font-size: 1rem;
     }
 
     .table th,
     .table td {
+        padding: 0.75rem;
+    }
+
+    .list-group-item {
         padding: 0.75rem;
     }
 }
@@ -299,7 +312,7 @@ body {
         font-size: 1rem;
     }
 
-    .form-control {
+    .form-control, .form-select {
         font-size: 0.85rem;
     }
 }
