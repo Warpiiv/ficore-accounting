@@ -1,56 +1,56 @@
 /* Define CSS Custom Properties for Colors */
 :root {
     /* Light Mode Colors */
-    --background-gradient: #f9fafc;
-    --text-color: #333;
-    --navbar-gradient: linear-gradient(90deg, #0288D1, #2E7D32);
-    --header-message-gradient: linear-gradient(90deg, #0288D1, #2E7D32);
-    --consent-banner-bg: #E6F0FA;
-    --consent-banner-text: #333;
-    --accent-blue: #0288D1;
-    --accent-blue-dark: #01579B;
-    --accent-green: #2E7D32;
-    --accent-green-dark: #1B5E20;
-    --button-gradient: linear-gradient(135deg, #2E7D32, #0288D1);
-    --button-gradient-hover: linear-gradient(135deg, #1B5E20, #01579B);
-    --button-nav-gradient: linear-gradient(90deg, #0288D1, #2E7D32);
-    --button-nav-gradient-hover: linear-gradient(90deg, #0277BD, #27632A);
+    --background-gradient: #F5F5F5;
+    --text-color: #333333;
+    --navbar-gradient: linear-gradient(90deg, #4B0082, #FFD700);
+    --header-message-gradient: linear-gradient(90deg, #4B0082, #FFA500);
+    --consent-banner-bg: #EDE7F6;
+    --consent-banner-text: #333333;
+    --accent-indigo: #4B0082;
+    --accent-indigo-dark: #6A1B9A;
+    --accent-gold: #FFD700;
+    --accent-gold-dark: #FFA500;
+    --button-gradient: linear-gradient(135deg, #FFD700, #4B0082);
+    --button-gradient-hover: linear-gradient(135deg, #FFA500, #6A1B9A);
+    --button-nav-gradient: linear-gradient(90deg, #4B0082, #FFD700);
+    --button-nav-gradient-hover: linear-gradient(90deg, #6A1B9A, #FFA500);
     --card-bg: #FFFFFF;
-    --card-border: #0288D1;
+    --card-border: #4B0082;
     --card-text: #6c757d;
-    --form-bg: #F8F9FA;
+    --form-bg: #F5F5F5;
     --table-border: #e0e0e0;
-    --table-header-bg: #E6F0FA;
-    --table-text: #333;
-    --amount-highlight: #2E7D32;
-    --error-highlight: #dc3545;
+    --table-header-bg: #EDE7F6;
+    --table-text: #333333;
+    --amount-highlight: #FFD700;
+    --error-highlight: #D32F2F;
 }
 
 /* Dark Mode Overrides */
 .dark-mode {
-    --background-gradient: linear-gradient(135deg, #2c2f33, #3e4247);
-    --text-color: #e9ecef;
-    --navbar-gradient: linear-gradient(90deg, #0056b3, #1b5e20);
-    --header-message-gradient: linear-gradient(90deg, #0056b3, #1b5e20);
-    --consent-banner-bg: #3e4247;
-    --consent-banner-text: #e9ecef;
-    --accent-blue: #4dabf7;
-    --accent-blue-dark: #003d82;
-    --accent-green: #1b5e20;
-    --accent-green-dark: #123e14;
-    --button-gradient: linear-gradient(135deg, #1b5e20, #0056b3);
-    --button-gradient-hover: linear-gradient(135deg, #123e14, #003d82);
-    --button-nav-gradient: linear-gradient(90deg, #0056b3, #1b5e20);
-    --button-nav-gradient-hover: linear-gradient(90deg, #004a99, #144d17);
-    --card-bg: #2c2f33;
-    --card-border: #4dabf7;
-    --card-text: #adb5bd;
-    --form-bg: #3e4247;
-    --table-border: #495057;
-    --table-header-bg: #3e4247;
-    --table-text: #e9ecef;
-    --amount-highlight: #1b5e20;
-    --error-highlight: #b02a37;
+    --background-gradient: linear-gradient(135deg, #212121, #424242);
+    --text-color: #E0E0E0;
+    --navbar-gradient: linear-gradient(90deg, #7B1FA2, #FFCA28);
+    --header-message-gradient: linear-gradient(90deg, #7B1FA2, #F57F17);
+    --consent-banner-bg: #424242;
+    --consent-banner-text: #E0E0E0;
+    --accent-indigo: #7B1FA2;
+    --accent-indigo-dark: #4A148C;
+    --accent-gold: #FFCA28;
+    --accent-gold-dark: #F57F17;
+    --button-gradient: linear-gradient(135deg, #FFCA28, #7B1FA2);
+    --button-gradient-hover: linear-gradient(135deg, #F57F17, #4A148C);
+    --button-nav-gradient: linear-gradient(90deg, #7B1FA2, #FFCA28);
+    --button-nav-gradient-hover: linear-gradient(90deg, #4A148C, #F57F17);
+    --card-bg: #424242;
+    --card-border: #7B1FA2;
+    --card-text: #B0BEC5;
+    --form-bg: #424242;
+    --table-border: #616161;
+    --table-header-bg: #424242;
+    --table-text: #E0E0E0;
+    --amount-highlight: #FFCA28;
+    --error-highlight: #D32F2F;
 }
 
 /* Transitions for Smooth Changes */
@@ -192,8 +192,8 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 5px rgba(2, 136, 209, 0.5);
+    border-color: var(--accent-indigo);
+    box-shadow: 0 0 5px rgba(75, 0, 130, 0.5);
 }
 
 .form-control.is-invalid, .form-select.is-invalid {
