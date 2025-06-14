@@ -122,6 +122,8 @@ body {
     text-align: center;
     padding: 0.5rem;
     font-size: 0.85rem;
+    position: fixed;
+    margin-top: 3rem;
 }
 
 /* Consent Banner */
