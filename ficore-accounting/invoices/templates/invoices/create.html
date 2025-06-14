@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Create Invoice{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="card p-4 shadow-sm">
+        <h2 class="card-title mb-4">Create New Invoice</h2>
+        <form method="POST" class="validate-form">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.customer_name.label(class="form-label") }} {{ form.customer_name(class="form-control") }}
+                {% for error in form.customer_name.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                {{ form.description.label(class="form-label") }} {{ form.description(class="form-control") }}
+                {% for error in form.description.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                {{ form.amount.label(class="form-label") }} {{ form.amount(class="form-control") }}
+                {% for error in form.amount.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

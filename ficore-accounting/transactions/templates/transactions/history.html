@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Transaction History{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Transaction History</h2>
+    <ul class="list-group">
+        {% for transaction in transactions %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ transaction.type }} - {{ transaction.category }} - <span class="amount-highlight">{{ transaction.amount }}</span> ({{ transaction.created_at }})
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('transactions.add_transaction') }}" class="btn btn-primary mt-3">Add New Transaction</a>
+</div>
+{% endblock %}
