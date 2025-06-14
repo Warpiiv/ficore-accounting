@@ -41,7 +41,7 @@ mail = Mail(app)
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'signin'
+login_manager.login_view = 'users.login'
 
 # Simple User model for Flask-Login
 class User(UserMixin):
@@ -213,6 +213,23 @@ def admin_dashboard():
 def general_dashboard():
     return render_template('dashboard/general_dashboard.html')
 
+# Redirect old auth routes to users blueprint
+@app.route('/auth/signin')
+def signin():
+    return redirect(url_for('users.login'))
+
+@app.route('/auth/signup')
+def signup():
+    return redirect(url_for('users.signup'))
+
+@app.route('/auth/forgot-password')
+def forgot_password():
+    return redirect(url_for('users.forgot_password'))
+
+@app.route('/auth/reset-password')
+def reset_password():
+    return redirect(url_for('users.reset_password'))
+
 # Error handlers
 @app.errorhandler(404)
 def page_not_found(e):
@@ -221,166 +238,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('errors/500.html'), 500
-
-# Auth routes
-@app.route('/auth/signin', methods=['GET', 'POST'])
-def signin():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        username = request.form.get('user_id')
-        password = request.form.get('password')
-        user = mongo.db.users.find_one({'_id': username})
-        if user and check_password_hash(user['password'], password):
-            login_user(User(username, user['email']))
-            flash(trans_function('logged_in'), 'success')
-            logger.info(f"User {username} signed in successfully")
-            return redirect(url_for('index'))
-        flash(trans_function('invalid_credentials'), 'danger')
-        logger.warning(f"Failed signin attempt for username: {username}")
-    return render_template('auth/signin.html')
-
-@app.route('/auth/signup', methods=['GET', 'POST'])
-def signup():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        try:
-            username = request.form.get('username')
-            email = request.form.get('email')
-            password = request.form.get('password')
-
-            # Validate inputs
-            if not username or len(username) < 3:
-                flash(trans_function('invalid_username'), 'danger')
-                return render_template('auth/signup.html')
-            if not is_valid_email(email):
-                flash(trans_function('invalid_email'), 'danger')
-                return render_template('auth/signup.html')
-            if not password or len(password) < 8:
-                flash(trans_function('invalid_password'), 'danger')
-                return render_template('auth/signup.html')
-
-            # Check for existing user
-            if mongo.db.users.find_one({'_id': username}) or mongo.db.users.find_one({'email': email}):
-                flash(trans_function('user_exists'), 'danger')
-                return render_template('auth/signup.html')
-
-            # Create user
-            user_data = {
-                '_id': username,
-                'email': email,
-                'password': generate_password_hash(password),
-                'dark_mode': False,
-                'created_at': datetime.utcnow()
-            }
-            mongo.db.users.insert_one(user_data)
-            login_user(User(username, email))
-            flash(trans_function('signup_success'), 'success')
-            logger.info(f"New user created: {username}")
-            return redirect(url_for('index'))
-        except Exception as e:
-            logger.error(f"Error during signup: {str(e)}")
-            flash(trans_function('signup_error'), 'danger')
-            return render_template('auth/signup.html'), 500
-    return render_template('auth/signup.html')
-
-@app.route('/auth/forgot-password', methods=['GET', 'POST'])
-def forgot_password():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        try:
-            email = request.form.get('email')
-            if not is_valid_email(email):
-                flash(trans_function('invalid_email'), 'danger')
-                return render_template('auth/forgot_password.html')
-
-            user = mongo.db.users.find_one({'email': email})
-            if not user:
-                flash(trans_function('email_not_found'), 'danger')
-                return render_template('auth/forgot_password.html')
-
-            # Generate reset token
-            reset_token = str(uuid.uuid4())
-            expiry = datetime.utcnow() + timedelta(hours=1)
-            mongo.db.users.update_one(
-                {'_id': user['_id']},
-                {'$set': {'reset_token': reset_token, 'reset_token_expiry': expiry}}
-            )
-
-            # Send reset email
-            reset_url = url_for('reset_password', token=reset_token, _external=True)
-            msg = Message(
-                subject=trans_function('reset_password_subject'),
-                recipients=[email],
-                body=f"{trans_function('reset_password_body')}\n\n{reset_url}\n\n{trans_function('reset_password_expiry')}"
-            )
-            try:
-                mail.send(msg)
-                logger.info(f"Password reset email sent to {email}")
-            except Exception as e:
-                logger.error(f"Failed to send reset email to {email}: {str(e)}")
-                # Fallback: Log the reset URL for testing
-                logger.info(f"Reset URL for {email}: {reset_url}")
-                flash(trans_function('reset_email_failed'), 'warning')
-                return render_template('auth/forgot_password.html')
-
-            flash(trans_function('reset_email_sent'), 'success')
-            return render_template('auth/forgot_password.html')
-        except Exception as e:
-            logger.error(f"Error during forgot password: {str(e)}")
-            flash(trans_function('forgot_password_error'), 'danger')
-            return render_template('auth/forgot_password.html'), 500
-    return render_template('auth/forgot_password.html')
-
-@app.route('/auth/reset-password', methods=['GET', 'POST'])
-def reset_password():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    token = request.args.get('token')
-    if request.method == 'POST':
-        try:
-            token = request.form.get('token') or token
-            password = request.form.get('password')
-            confirm_password = request.form.get('confirm_password')
-
-            # Validate inputs
-            if not password or len(password) < 8:
-                flash(trans_function('invalid_password'), 'danger')
-                return render_template('auth/reset_password.html', token=token)
-            if password != confirm_password:
-                flash(trans_function('password_mismatch'), 'danger')
-                return render_template('auth/reset_password.html', token=token)
-
-            # Verify token
-            user = mongo.db.users.find_one({
-                'reset_token': token,
-                'reset_token_expiry': {'$gt': datetime.utcnow()}
-            })
-            if not user:
-                flash(trans_function('invalid_or_expired_token'), 'danger')
-                return render_template('auth/reset_password.html', token=token)
-
-            # Update password
-            mongo.db.users.update_one(
-                {'_id': user['_id']},
-                {
-                    '$set': {'password': generate_password_hash(password)},
-                    '$unset': {'reset_token': '', 'reset_token_expiry': ''}
-                }
-            )
-            flash(trans_function('reset_password_success'), 'success')
-            logger.info(f"Password reset for user: {user['_id']}")
-            return redirect(url_for('signin'))
-        except Exception as e:
-            logger.error(f"Error during password reset: {str(e)}")
-            flash(trans_function('reset_password_error'), 'danger')
-            return render_template('auth/reset_password.html', token=token), 500
-    if not token:
-        flash(trans_function('invalid_or_expired_token'), 'danger')
-        return redirect(url_for('forgot_password'))
-    return render_template('auth/reset_password.html', token=token)
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
