@@ -30,13 +30,13 @@
     {% endwith %}
 
     <div class="header-message">
-        {{ trans('core_welcome_to_ficore_accounting') | default('Welcome to Ficore MiniRecords!') }}
+        {{ trans('core_welcome_to_minirecords') | default('Welcome to Ficore MiniRecords!') }}
     </div>
 
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='img/ficore_logo.png') }}" alt="{{ trans('core_ficore_africa_logo') | default('Ficore Africa Accounting Logo') }}" class="logo-centered" style="border-radius: 50%; object-fit: contain; width: 80px; height: 80px;">
+                <img src="{{ url_for('static', filename='img/ficore_logo.png') }}" alt="{{ trans('core_minirecords_logo') | default('Ficore MiniRecords Logo') }}" class="logo-centered" style="border-radius: 50%; object-fit: contain; width: 80px; height: 80px;">
             </a>
             <a href="{{ url_for('set_language', lang='ha' if session.lang == 'en' else 'en') }}"
                class="btn btn-primary navbar-btn btn-outline-light language-btn ms-1 me-1"
@@ -87,8 +87,8 @@
 
     <footer class="footer mt-5" style="background: linear-gradient(90deg, #003087, #004D40); color: white;">
         <div class="container text-center py-4" role="contentinfo">
-            <p>{{ trans('core_about_ficore_africa_accounting') | default('About Ficore MiniRecords') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2025') }}</p>
-            <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_accounting') | default('Ficore MiniRecords is a simplified Software for SMEs') }} <a href="{{ url_for('about') }}" class="text-white text-decoration-underline">{{ trans('core_learn_more') | default('Learn more') }}</a></p>
+            <p>{{ trans('core_about_minirecords') | default('About Ficore MiniRecords') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2025') }}</p>
+            <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_minirecords') | default('Ficore MiniRecords is a simplified Software for SMEs') }} <a href="{{ url_for('about') }}" class="text-white text-decoration-underline">{{ trans('core_learn_more') | default('Learn more') }}</a></p>
             <div class="social-icons d-flex justify-content-center gap-3">
                 <a href="{{ LINKEDIN_URL }}" target="_blank" aria-label="{{ trans('core_connect_on_linkedin') | default('Connect on LinkedIn') }}" class="d-flex align-items-center text-white">
                     <i class="fab fa-linkedin me-1"></i> LinkedIn
@@ -136,7 +136,7 @@
                 localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
                 modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
 
-                // Notify server to update session (optional, for persistence across sessions)
+                // Notify server to update session
                 fetch('{{ url_for("set_dark_mode") }}', {
                     method: 'POST',
                     headers: {
@@ -147,31 +147,51 @@
                 }).catch(error => console.error('Error updating dark mode:', error));
             });
 
-            // Form validation
+            // Enhanced form validation
             document.querySelectorAll('form.validate-form').forEach(form => {
                 form.addEventListener('submit', function(e) {
                     let valid = true;
-                    form.querySelectorAll('.form-control').forEach(input => {
+                    form.querySelectorAll('.form-control, .form-select').forEach(input => {
                         input.classList.add('was-validated');
-                        if (!input.value.trim()) {
+                        const value = input.value.trim();
+                        const type = input.type;
+                        const required = input.hasAttribute('required');
+
+                        // Basic required field validation
+                        if (required && !value) {
                             input.classList.add('is-invalid');
                             valid = false;
-                        } else {
-                            input.classList.remove('is-invalid');
+                            return;
                         }
-                    });
-                    form.querySelectorAll('.form-select').forEach(select => {
-                        select.classList.add('was-validated');
-                        if (!select.value) {
-                            select.classList.add('is-invalid');
-                            valid = false;
-                        } else {
-                            select.classList.remove('is-invalid');
+
+                        // Number input validation
+                        if (type === 'number' && value) {
+                            const min = input.getAttribute('min');
+                            const max = input.getAttribute('max');
+                            const numValue = parseFloat(value);
+                            if ((min && numValue < parseFloat(min)) || (max && numValue > parseFloat(max))) {
+                                input.classList.add('is-invalid');
+                                valid = false;
+                                return;
+                            }
                         }
+
+                        // Custom validation for ratings (1-5)
+                        if (input.name === 'rating' && value) {
+                            const rating = parseInt(value);
+                            if (isNaN(rating) || rating < 1 || rating > 5) {
+                                input.classList.add('is-invalid');
+                                valid = false;
+                                return;
+                            }
+                        }
+
+                        input.classList.remove('is-invalid');
                     });
+
                     if (!valid) {
                         e.preventDefault();
-                        alert('{{ trans('core_please_complete_all_fields') | default('Please complete all required fields') }}');
+                        alert('{{ trans('core_please_complete_all_fields') | default('Please complete all required fields correctly') }}');
                     }
                 });
             });
