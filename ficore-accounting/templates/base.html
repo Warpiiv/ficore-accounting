@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ session.lang | default('en') }}" class="">
+<html lang="{{ session.lang | default('en') }}" class="{{ 'dark-mode' if session.get('dark_mode', 'false') == 'true' else '' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -148,12 +148,14 @@
                         const type = input.type;
                         const required = input.hasAttribute('required');
 
+                        // Basic required field validation
                         if (required && !value) {
                             input.classList.add('is-invalid');
                             valid = false;
                             return;
                         }
 
+                        // Number input validation
                         if (type === 'number' && value) {
                             const min = input.getAttribute('min');
                             const max = input.getAttribute('max');
@@ -165,6 +167,7 @@
                             }
                         }
 
+                        // Custom validation for ratings (1-5)
                         if (input.name === 'rating' && value) {
                             const rating = parseInt(value);
                             if (isNaN(rating) || rating < 1 || rating > 5) {
@@ -190,3 +193,5 @@
         });
     </script>
     {% block extra_scripts %}{% endblock %}
+</body>
+</html>
