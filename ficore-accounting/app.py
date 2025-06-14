@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, url_for, flash, render_template
+from flask import Flask, session, redirect, url_for, flash, render_template, request
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 import os
@@ -19,7 +19,7 @@ CSRFProtect(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANENT_SESSION_LIFETIME'] = 3600
+app.config['PERMANANT_SESSION_LIFETIME'] = 3600
 app.jinja_env.undefined = jinja2.Undefined  # Ensure undefined variables don’t crash
 
 mongo = PyMongo(app)
@@ -35,7 +35,7 @@ app.register_blueprint(users_bp, url_prefix='/users')
 # Translations
 from translations import TRANSLATIONS
 
-# Define trans function for global use and filter
+# Define translation function for global use and filter
 def trans_function(key):
     try:
         lang = session.get('lang', 'en')
@@ -58,6 +58,18 @@ def trans_filter(key):
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
     return {'translations': TRANSLATIONS.get(lang, TRANSLATIONS['en'])}
+
+# Language switching route
+@app.route('/setlang/<lang>')
+def set_language(lang):
+    # Validate language to prevent invalid session values
+    valid_langs = ['en', 'ha']  # Add supported languages as needed
+    if lang in valid_langs:
+        session['lang'] = lang
+    else:
+        session['lang'] = 'en'  # Default to English if invalid
+    # Redirect to the previous page or default to index
+    return redirect(request.referrer or url_for('index'))
 
 # General routes
 @app.route('/')
