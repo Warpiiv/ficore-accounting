@@ -1,37 +1,49 @@
-{% extends "base.html" %}
-{% block title %}Add Transaction{% endblock %}
+{% extends 'base.html' %}
+{% block title %}{{ trans('track_transaction') | default('Add Transaction') }}{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="card p-4 shadow-sm">
-        <h2 class="card-title mb-4">Add New Transaction</h2>
-        <form method="POST" class="validate-form">
-            {{ form.hidden_tag() }}
-            <div class="mb-3">
-                {{ form.type.label(class="form-label") }} {{ form.type(class="form-select") }}
-                {% for error in form.type.errors %}
-                    <div class="text-danger">{{ error }}</div>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                {{ form.category.label(class="form-label") }} {{ form.category(class="form-select") }}
-                {% for error in form.category.errors %}
-                    <div class="text-danger">{{ error }}</div>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                {{ form.amount.label(class="form-label") }} {{ form.amount(class="form-control") }}
-                {% for error in form.amount.errors %}
-                    <div class="text-danger">{{ error }}</div>
-                {% endfor %}
-            </div>
-            <div class="mb-3">
-                {{ form.description.label(class="form-label") }} {{ form.description(class="form-control") }}
-                {% for error in form.description.errors %}
-                    <div class="text-danger">{{ error }}</div>
-                {% endfor %}
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+<div class="container my-5">
+    <h1 class="text-center mb-4">{{ transaction_id | default(trans('track_transaction') | default('Add Transaction')) if transaction_id else trans('track_transaction') | default('Add Transaction') }}</h1>
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-body">
+            <form class="validate-form" method="POST" action="{{ url_for('transactions.update_transaction', transaction_id=transaction_id) if transaction_id else url_for('transactions.add_transaction') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group mb-3">
+                    <label for="type" class="form-label">{{ trans('type') | default('Type') }}</label>
+                    <select name="type" id="type" class="form-select" required>
+                        {% for value, label in form.type.choices %}
+                            <option value="{{ value }}" {% if form.type.data == value %}selected{% endif %}>
+                                {{ trans(value) | default(label) }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">{{ form.type.errors[0] if form.type.errors else trans('required_field') | default('This field is required') }}</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="category" class="form-label">{{ trans('category') | default('Category') }}</label>
+                    <select name="category" id="category" class="form-select" required>
+                        {% for value, label in form.category.choices %}
+                            <option value="{{ value }}" {% if form.category.data == value %}selected{% endif %}>
+                                {{ trans(value) | default(label) }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">{{ form.category.errors[0] if form.category.errors else trans('required_field') | default('This field is required') }}</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="amount" class="form-label">{{ trans('amount') | default('Amount (₦)') }}</label>
+                    <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0" required>
+                    <div class="invalid-feedback">{{ form.amount.errors[0] if form.amount.errors else trans('required_field') | default('This field is required') }}</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="description" class="form-label">{{ trans('description') | default('Description') }}</label>
+                    <textarea name="description" id="description" class="form-control" required>{{ form.description.data or '' }}</textarea>
+                    <div class="invalid-feedback">{{ form.description.errors[0] if form.description.errors else trans('required_field') | default('This field is required') }}</div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">{{ trans('save') | default('Save') }}</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
