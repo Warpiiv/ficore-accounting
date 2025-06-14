@@ -1,10 +1,11 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, validators
 from flask_pymongo import PyMongo
-from .. import app  # Access app for mongo
+from datetime import datetime
+from .. import app
 
-invoices_bp = Blueprint('invoices', __name__)
+invoices_bp = Blueprint('invoices', __name__, template_folder='templates')
 mongo = PyMongo(app)
 
 class InvoiceForm(FlaskForm):
@@ -32,5 +33,6 @@ def create_invoice():
         }
         result = mongo.db.invoices.insert_one(invoice)
         invoice['_id'] = str(result.inserted_id)
-        return jsonify({'message': 'Invoice created', 'invoice': invoice}), 201
+        flash('Invoice created successfully!', 'success')
+        return redirect(url_for('invoices.invoice_dashboard'))
     return render_template('invoices/create.html', form=form)
