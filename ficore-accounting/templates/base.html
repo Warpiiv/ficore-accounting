@@ -37,7 +37,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='img/minirecords_logo') }}" alt="{{ trans('core_minirecords_logo') | default('Ficore MiniRecords Logo') }}" class="logo-centered" style="border-radius: 50%; object-fit: contain; width: 80px; height: 80px;">
+                <img src="{{ url_for('static', filename='img/minirecords_logo.png') }}" alt="{{ trans('core_minirecords_logo') | default('Ficore MiniRecords Logo') }}" class="logo-centered" style="border-radius: 50%; object-fit: contain; width: 80px; height: 80px;">
             </a>
             <a href="{{ url_for('set_language', lang='ha' if session.lang == 'en' else 'en') }}"
                class="btn btn-primary navbar-btn btn-outline-light language-btn ms-1 me-1"
