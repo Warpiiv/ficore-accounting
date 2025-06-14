@@ -3,17 +3,17 @@
     /* Light Mode Colors */
     --background-gradient: #F5F5F5;
     --text-color: #333333;
-    --navbar-gradient: linear-gradient(90deg, #4B0082, #FFD700);
+    --navbar-gradient: linear-gradient(90deg, #4B0082, #D4A017);
     --header-message-gradient: linear-gradient(90deg, #4B0082, #FFA500);
     --consent-banner-bg: #EDE7F6;
     --consent-banner-text: #333333;
     --accent-indigo: #4B0082;
     --accent-indigo-dark: #6A1B9A;
-    --accent-gold: #FFD700;
+    --accent-gold: #D4A017;
     --accent-gold-dark: #FFA500;
-    --button-gradient: linear-gradient(135deg, #FFD700, #4B0082);
+    --button-gradient: linear-gradient(135deg, #D4A017, #4B0082);
     --button-gradient-hover: linear-gradient(135deg, #FFA500, #6A1B9A);
-    --button-nav-gradient: linear-gradient(90deg, #4B0082, #FFD700);
+    --button-nav-gradient: linear-gradient(90deg, #4B0082, #D4A017);
     --button-nav-gradient-hover: linear-gradient(90deg, #6A1B9A, #FFA500);
     --card-bg: #FFFFFF;
     --card-border: #4B0082;
@@ -22,7 +22,7 @@
     --table-border: #e0e0e0;
     --table-header-bg: #EDE7F6;
     --table-text: #333333;
-    --amount-highlight: #FFD700;
+    --amount-highlight: #D4A017;
     --error-highlight: #D32F2F;
 }
 
