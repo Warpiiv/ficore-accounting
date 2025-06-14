@@ -25,8 +25,14 @@ app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
 app.register_blueprint(users_bp, url_prefix='/users')
 
-# Translations route
+# Translations
 from translations import TRANSLATIONS
+
+# Add trans filter to Jinja2
+@app.template_filter('trans')
+def trans_filter(key):
+    return TRANSLATIONS.get('en', {}).get(key, key)  # Default to English or key if not found
+
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
     return {'translations': TRANSLATIONS.get(lang, TRANSLATIONS['en'])}
