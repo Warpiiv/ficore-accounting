@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, url_for, flash, render_template, request, Response
+from flask import Flask, session, redirect, url_for, flash, render_template, request
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user
@@ -90,26 +90,6 @@ def set_language(lang):
         session['lang'] = 'en'  # Default to English if invalid
     # Redirect to the previous page or default to index
     return redirect(request.referrer or url_for('index'))
-
-# Consent acknowledgment route
-@app.route('/acknowledge_consent', methods=['POST'])
-def acknowledge_consent():
-    # Validate CSRF token (handled by CSRFProtect)
-    session['consent_acknowledged'] = True
-    # Optionally store in MongoDB user profile if authenticated
-    if current_user.is_authenticated:
-        mongo.db.users.update_one(
-            {'_id': current_user.id},
-            {'$set': {'consent_acknowledged': True}}
-        )
-    return Response(status=204)
-
-# Logout route
-@app.route('/logout')
-def logout():
-    logout_user()
-    flash('Logged out successfully.', 'success')
-    return redirect(url_for('index'))
 
 # General routes
 @app.route('/')
