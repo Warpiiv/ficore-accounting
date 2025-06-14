@@ -24,8 +24,8 @@ CORS(app)
 CSRFProtect(app)
 
 # Configuration
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
-app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')  # Set in Render environment
+app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')  # Set in Render environment
 app.config['SESSION_TYPE'] = 'mongodb'  # Use MongoDB for session storage
 app.config['SESSION_MONGODB'] = PyMongo(app).cx
 app.config['SESSION_MONGODB_DB'] = 'minirecords'
@@ -38,11 +38,11 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.jinja_env.undefined = jinja2.Undefined
 
 # Flask-Mail configuration
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # Set in Render environment
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'true').lower() == 'true'
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # Set in Render environment
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Set in Render environment
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'support@ficoreminirecords.com')
 
 mongo = PyMongo(app)
@@ -208,7 +208,7 @@ def feedback():
             if not tool_name or tool_name not in tool_options:
                 flash(trans_function('invalid_tool'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
-            if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
+            if not rating or not rating.is_digit() or int(rating) < 1 or int(rating) > 5:
                 flash(trans_function('invalid_rating'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
@@ -244,16 +244,17 @@ def general_dashboard():
 # Error handlers
 @app.errorhandler(403)
 def forbidden(e):
-    return render_template('errors/403.html'), 403
+    return render_template('errors/403.html', message=trans_function('forbidden')), 403
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('errors/404.html'), 404
+    return render_template('errors/404.html', message=trans_function('page_not_found')), 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('errors/500.html'), 500
+    return render_template('errors/500.html', message=trans_function('internal_server_error')), 500
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
+    logger.info(f"Starting Flask app on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False)
