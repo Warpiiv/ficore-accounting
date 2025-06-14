@@ -1,11 +1,12 @@
-Flask==2.3.3
-Flask-PyMongo==2.3.0
-Flask-WTF==1.2.1
-Flask-Cors==4.0.0
-WTForms==3.1.2
-werkzeug==3.0.1
-pymongo==4.6.1
-python-dotenv==1.0.1
+Flask==2.2.5
 gunicorn==22.0.0
-Jinja2==3.1.4  # Ensure Jinja2 is included
+flask-cors==3.0.10
+flask-pymongo==2.3.0
+pymongo==4.6.3
+flask-wtf>=1.2.0
+werkzeug==2.3.8
+Jinja2==3.1.4
+setuptools<81
 Flask-Babel==4.0.0
+Babel==2.17.0
+Flask-Login==0.6.3
