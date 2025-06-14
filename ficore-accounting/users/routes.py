@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators
-from flask_login import login_required, current_user, login_user, UserMixin
+from flask_login import login_required, current_user, login_user, logout_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_pymongo import PyMongo
 from app import app, mail
@@ -75,7 +75,7 @@ def login():
         try:
             user = mongo.db.users.find_one({'_id': form.username.data.strip()})
             if user and check_password_hash(user['password'], form.password.data):
-                login_user(User(user['_id'], user['email']))
+                login_user(User(user['_id'], user['email']), remember=True)  # Enable persistent login
                 flash(trans_function('logged_in'), 'success')
                 logger.info(f"User {form.username.data} logged in successfully")
                 return redirect(url_for('users.profile'))
@@ -108,7 +108,7 @@ def signup():
                 'created_at': datetime.utcnow()
             }
             mongo.db.users.insert_one(user_data)
-            login_user(User(username, email))
+            login_user(User(username, email), remember=True)  # Enable persistent login
             flash(trans_function('signup_success'), 'success')
             logger.info(f"New user created: {username}")
             return redirect(url_for('index'))
@@ -245,3 +245,25 @@ def update_profile():
             flash(trans_function('core_something_went_wrong'), 'danger')
             return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email}), 500
     return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
+
+@users_bp.route('/logout')
+def logout():
+    logout_user()
+    flash(trans_function('logged_out'), 'success')
+    return redirect(url_for('index'))
+
+@users_bp.route('/auth/signin')
+def signin():
+    return redirect(url_for('users.login'))
+
+@users_bp.route('/auth/signup')
+def signup_redirect():
+    return redirect(url_for('users.signup'))
+
+@users_bp.route('/auth/forgot-password')
+def forgot_password_redirect():
+    return redirect(url_for('users.forgot_password'))
+
+@users_bp.route('/auth/reset-password')
+def reset_password_redirect():
+    return redirect(url_for('users.reset_password'))
