@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ session.lang | default('en') }}" class="{{ 'dark-mode' if session.get('dark_mode', 'false') == 'true' else '' }}">
+<html lang="{{ session.lang | default('en') }}" class="{{ 'dark-mode' if localStorage.getItem('darkMode') === 'true' else '' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,21 +131,11 @@
                 modeToggle.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
             }
 
-            // Toggle dark mode on click
+            // Toggle dark mode on click (client-side only)
             modeToggle.addEventListener('click', function() {
                 const isDarkMode = body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
                 modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
-
-                // Notify server to update session
-                fetch('{{ url_for("set_dark_mode") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ dark_mode: isDarkMode })
-                }).catch(error => console.error('Error updating dark mode:', error));
             });
 
             // Enhanced form validation
@@ -203,5 +193,3 @@
         });
     </script>
     {% block extra_scripts %}{% endblock %}
-</body>
-</html>
