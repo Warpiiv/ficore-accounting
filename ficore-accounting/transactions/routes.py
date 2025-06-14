@@ -5,7 +5,7 @@ from flask_pymongo import PyMongo
 from datetime import datetime
 from app import app
 
-transactions_bp = Blueprint('transactions', __name__, template_folder='../templates')
+transactions_bp = Blueprint('transactions', __name__, template_folder='templates/transactions')
 mongo = PyMongo(app)
 
 class TransactionForm(FlaskForm):
@@ -19,7 +19,7 @@ def transaction_history():
     transactions = list(mongo.db.transactions.find())
     for transaction in transactions:
         transaction['_id'] = str(transaction['_id'])
-    return render_template('transactions/history.html', transactions=transactions)
+    return render_template('history.html', transactions=transactions)
 
 @transactions_bp.route('/add', methods=['GET', 'POST'])
 def add_transaction():
@@ -36,4 +36,4 @@ def add_transaction():
         transaction['_id'] = str(result.inserted_id)
         flash('Transaction added successfully!', 'success')
         return redirect(url_for('transactions.transaction_history'))
-    return render_template('transactions/add.html', form=form)
+    return render_template('add.html', form=form)
