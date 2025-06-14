@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-transactions_bp = Blueprint('transactions', __name__, template_folder='templates/transactions')
+transactions_bp = Blueprint('transactions', __name__, template_folder='templates')
 mongo = PyMongo(app)
 
 class TransactionForm(FlaskForm):
