@@ -74,7 +74,7 @@ body {
     max-width: 100%;
     margin: 0 auto;
     padding: 0.5rem 1rem;
-    margin-top: 6rem;
+    margin-top: 3rem;
 }
 
 /* Navbar */
@@ -123,7 +123,10 @@ body {
     padding: 0.5rem;
     font-size: 0.85rem;
     position: fixed;
-    margin-top: 3rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
 /* Consent Banner */
