@@ -11,6 +11,7 @@ from flask_wtf import CSRFProtect
 import logging
 import re
 import uuid
+from bson import ObjectId
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -26,14 +27,14 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600
-app.jinja_env.undefined = jinja2.Undefined  # Ensure undefined variables don’t crash
+app.jinja_env.undefined = jinja2.Undefined
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'true').lower() == 'true'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'support@ficoreaccounting.com')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'support@ficoreminirecords.com')
 
 mongo = PyMongo(app)
 mail = Mail(app)
@@ -43,7 +44,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login'
 
-# Simple User model for Flask-Login
+# User model for Flask-Login
 class User(UserMixin):
     def __init__(self, id, email):
         self.id = id
@@ -68,7 +69,7 @@ app.register_blueprint(users_bp, url_prefix='/users')
 # Translations
 from translations import TRANSLATIONS
 
-# Define translation function for global use and filter
+# Translation function
 def trans_function(key):
     try:
         lang = session.get('lang', 'en')
@@ -78,17 +79,14 @@ def trans_function(key):
         return translation
     except Exception as e:
         logger.error(f"Error in trans function: {e}")
-        return key  # Fallback to key on error
+        return key
 
-# Add trans as a global function
 app.jinja_env.globals['trans'] = trans_function
 
-# Add trans as a filter for fallback compatibility
 @app.template_filter('trans')
 def trans_filter(key):
-    return trans_function(key)  # Reuse the same logic
+    return trans_function(key)
 
-# Add number formatting filters
 @app.template_filter('format_number')
 def format_number(value):
     try:
@@ -120,7 +118,7 @@ def format_datetime(value):
         logger.warning(f"Error formatting datetime {value}: {str(e)}")
         return str(value)
 
-# Email validation helper
+# Email validation
 def is_valid_email(email):
     email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(email_regex, email) is not None
@@ -129,7 +127,6 @@ def is_valid_email(email):
 def get_translations(lang):
     return {'translations': TRANSLATIONS.get(lang, TRANSLATIONS['en'])}
 
-# Language switching route
 @app.route('/setlang/<lang>')
 def set_language(lang):
     valid_langs = ['en', 'ha']
@@ -141,7 +138,6 @@ def set_language(lang):
         flash(trans_function('invalid_language'), 'danger')
     return redirect(request.referrer or url_for('index'))
 
-# Dark mode toggle route
 @app.route('/set_dark_mode', methods=['POST'])
 def set_dark_mode():
     data = request.get_json()
@@ -153,12 +149,55 @@ def set_dark_mode():
         )
     return Response(status=204)
 
-# Logout route
 @app.route('/logout')
 def logout():
     logout_user()
     flash(trans_function('logged_out'), 'success')
     return redirect(url_for('index'))
+
+# Database setup route
+@app.route('/setup', methods=['GET'])
+def setup_database():
+    setup_key = request.args.get('key')
+    if setup_key != os.getenv('SETUP_KEY', 'setup-secret'):
+        return render_template('errors/403.html'), 403
+    try:
+        # Create users collection and indexes
+        mongo.db.users.create_index([('_id', 1)], unique=True)
+        mongo.db.users.create_index([('email', 1)], unique=True)
+        mongo.db.users.create_index([('reset_token', 1)], sparse=True)
+        
+        # Create default admin user if not exists
+        if not mongo.db.users.find_one({'_id': 'admin'}):
+            mongo.db.users.insert_one({
+                '_id': 'admin',
+                'email': 'admin@ficoreminirecords.com',
+                'password': generate_password_hash('Admin123!'),
+                'dark_mode': False,
+                'is_admin': True,
+                'created_at': datetime.utcnow()
+            })
+            logger.info("Default admin user created")
+
+        # Create invoices collection and indexes
+        mongo.db.invoices.create_index([('user_id', 1)])
+        mongo.db.invoices.create_index([('created_at', -1)])
+
+        # Create transactions collection and indexes
+        mongo.db.transactions.create_index([('user_id', 1)])
+        mongo.db.transactions.create_index([('created_at', -1)])
+
+        # Create feedback collection and indexes
+        mongo.db.feedback.create_index([('user_id', 1)], sparse=True)
+        mongo.db.feedback.create_index([('timestamp', -1)])
+
+        flash(trans_function('database_setup_success'), 'success')
+        logger.info("Database setup completed successfully")
+        return redirect(url_for('index'))
+    except Exception as e:
+        logger.error(f"Error setting up database: {str(e)}")
+        flash(trans_function('database_setup_error'), 'danger')
+        return render_template('errors/500.html'), 500
 
 # General routes
 @app.route('/')
@@ -179,7 +218,6 @@ def feedback():
             rating = request.form.get('rating')
             comment = request.form.get('comment', '').strip()
 
-            # Validate inputs
             if not tool_name or tool_name not in tool_options:
                 flash(trans_function('invalid_tool'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
@@ -187,7 +225,6 @@ def feedback():
                 flash(trans_function('invalid_rating'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
-            # Store feedback in MongoDB
             feedback_entry = {
                 'user_id': current_user.id if current_user.is_authenticated else None,
                 'tool_name': tool_name,
@@ -207,13 +244,17 @@ def feedback():
 
 @app.route('/dashboard/admin')
 def admin_dashboard():
+    if not current_user.is_authenticated or not mongo.db.users.find_one({'_id': current_user.id, 'is_admin': True}):
+        return render_template('errors/403.html'), 403
     return render_template('dashboard/admin_dashboard.html')
 
 @app.route('/dashboard/general')
 def general_dashboard():
+    if not current_user.is_authenticated:
+        return redirect(url_for('users.login'))
     return render_template('dashboard/general_dashboard.html')
 
-# Redirect old auth routes to users blueprint
+# Redirect old auth routes
 @app.route('/auth/signin')
 def signin():
     return redirect(url_for('users.login'))
@@ -231,6 +272,10 @@ def reset_password():
     return redirect(url_for('users.reset_password'))
 
 # Error handlers
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template('errors/403.html'), 403
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('errors/404.html'), 404
