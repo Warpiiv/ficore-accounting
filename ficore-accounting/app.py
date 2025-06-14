@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, url_for, flash, render_template, request
+from flask import Flask, session, redirect, url_for, flash, render_template, request, Response
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, current_user, logout_user
@@ -75,6 +75,38 @@ app.jinja_env.globals['trans'] = trans_function
 def trans_filter(key):
     return trans_function(key)  # Reuse the same logic
 
+# Add number formatting filters
+@app.template_filter('format_number')
+def format_number(value):
+    try:
+        if isinstance(value, (int, float)):
+            return f"{float(value):,.2f}"
+        return str(value)
+    except (ValueError, TypeError) as e:
+        logger.warning(f"Error formatting number {value}: {str(e)}")
+        return str(value)
+
+@app.template_filter('format_currency')
+def format_currency(value):
+    try:
+        value = float(value)
+        if value.is_integer():
+            return f"₦{int(value):,}"
+        return f"₦{value:,.2f}"
+    except (TypeError, ValueError):
+        logger.warning(f"Error formatting currency {value}: {str(e)}")
+        return str(value)
+
+@app.template_filter('format_datetime')
+def format_datetime(value):
+    try:
+        if isinstance(value, datetime):
+            return value.strftime('%B %d, %Y, %I:%M %p')
+        return str(value)
+    except Exception as e:
+        logger.warning(f"Error formatting datetime {value}: {str(e)}")
+        return str(value)
+
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
     return {'translations': TRANSLATIONS.get(lang, TRANSLATIONS['en'])}
@@ -86,10 +118,30 @@ def set_language(lang):
     valid_langs = ['en', 'ha']  # Add supported languages as needed
     if lang in valid_langs:
         session['lang'] = lang
+        flash(trans_function('language_updated', default='Language updated successfully'), 'success')
     else:
-        session['lang'] = 'en'  # Default to English if invalid
-    # Redirect to the previous page or default to index
+        session['lang'] = 'en'
+        flash(trans_function('invalid_language', default='Invalid language selected'), 'danger')
     return redirect(request.referrer or url_for('index'))
+
+# Dark mode toggle route
+@app.route('/set_dark_mode', methods=['POST'])
+def set_dark_mode():
+    data = request.get_json()
+    session['dark_mode'] = str(data.get('dark_mode', False)).lower()
+    if current_user.is_authenticated:
+        mongo.db.users.update_one(
+            {'_id': current_user.id},
+            {'$set': {'dark_mode': session['dark_mode'] == 'true'}}
+        )
+    return Response(status=204)
+
+# Logout route
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash(trans_function('logged_out', default='Logged out successfully'), 'success')
+    return redirect(url_for('index'))
 
 # General routes
 @app.route('/')
@@ -100,9 +152,41 @@ def index():
 def about():
     return render_template('general/about.html')
 
-@app.route('/feedback')
+@app.route('/feedback', methods=['GET', 'POST'])
 def feedback():
-    return render_template('general/feedback.html')
+    lang = session.get('lang', 'en')
+    tool_options = ['invoices', 'transactions', 'profile']
+    if request.method == 'POST':
+        try:
+            tool_name = request.form.get('tool_name')
+            rating = request.form.get('rating')
+            comment = request.form.get('comment', '').strip()
+
+            # Validate inputs
+            if not tool_name or tool_name not in tool_options:
+                flash(trans_function('invalid_tool', default='Please select a valid tool'), 'danger')
+                return render_template('general/feedback.html', tool_options=tool_options)
+            if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
+                flash(trans_function('invalid_rating', default='Please provide a rating between 1 and 5'), 'danger')
+                return render_template('general/feedback.html', tool_options=tool_options)
+
+            # Store feedback in MongoDB
+            feedback_entry = {
+                'user_id': current_user.id if current_user.is_authenticated else None,
+                'tool_name': tool_name,
+                'rating': int(rating),
+                'comment': comment or None,
+                'timestamp': datetime.utcnow()
+            }
+            mongo.db.feedback.insert_one(feedback_entry)
+            flash(trans_function('feedback_success', default='Thank you for your feedback!'), 'success')
+            return redirect(url_for('index'))
+        except Exception as e:
+            logger.error(f"Error processing feedback: {str(e)}")
+            flash(trans_function('feedback_error', default='An error occurred while submitting feedback'), 'danger')
+            return render_template('general/feedback.html', tool_options=tool_options), 500
+
+    return render_template('general/feedback.html', tool_options=tool_options)
 
 @app.route('/dashboard/admin')
 def admin_dashboard():
@@ -132,9 +216,9 @@ def signin():
         user = mongo.db.users.find_one({'_id': user_id})
         if user:
             login_user(User(user_id))
-            flash('Logged in successfully.', 'success')
+            flash(trans_function('logged_in', default='Logged in successfully'), 'success')
             return redirect(url_for('index'))
-        flash('Invalid credentials.', 'error')
+        flash(trans_function('invalid_credentials', default='Invalid credentials'), 'danger')
     return render_template('auth/signin.html')
 
 @app.route('/auth/signup')
