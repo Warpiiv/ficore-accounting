@@ -5,7 +5,7 @@ from flask_pymongo import PyMongo
 from datetime import datetime
 from app import app
 
-transactions_bp = Blueprint('transactions', __name__, template_folder='templates')
+transactions_bp = Blueprint('transactions', __name__, template_folder='../templates')
 mongo = PyMongo(app)
 
 class TransactionForm(FlaskForm):
