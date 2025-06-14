@@ -3,6 +3,11 @@ from flask_pymongo import PyMongo
 from flask_cors import CORS
 import os
 from flask_wtf import CSRFProtect
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__, template_folder='templates')
@@ -28,10 +33,14 @@ app.register_blueprint(users_bp, url_prefix='/users')
 # Translations
 from translations import TRANSLATIONS
 
-# Add trans filter to Jinja2
+# Add trans filter to Jinja2 with logging for missing translations
 @app.template_filter('trans')
 def trans_filter(key):
-    return TRANSLATIONS.get('en', {}).get(key, key)  # Default to English or key if not found
+    lang = session.get('lang', 'en')  # Default to 'en' if no language in session
+    translation = TRANSLATIONS.get(lang, {}).get(key, key)  # Fall back to key if not found
+    if translation == key:
+        logger.info(f"Missing translation for key '{key}' in language '{lang}'")
+    return translation
 
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
