@@ -4,8 +4,8 @@ from wtforms import StringField, FloatField, validators
 from flask_login import login_required, current_user
 from flask_pymongo import PyMongo
 from datetime import datetime
-from utils import trans_function, mail, is_valid_email
-from app import app
+from utils import trans_function, is_valid_email
+from app import app, mail
 import logging
 
 logger = logging.getLogger(__name__)
