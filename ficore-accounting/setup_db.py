@@ -22,7 +22,7 @@ def setup_database():
         if not db.users.find_one({'_id': 'admin'}):
             db.users.insert_one({
                 '_id': 'admin',
-                'email': 'admin@ficoreminirecords.com',
+                'email': 'ficoreafrica@gmail.com',
                 'password': generate_password_hash('Admin123!'),
                 'dark_mode': False,
                 'is_admin': True,
