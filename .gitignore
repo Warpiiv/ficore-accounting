@@ -1,7 +1,0 @@
-Backend
-
-venv/ pycache/ *.pyc
-
-Frontend
-
-frontend/node_modules/ frontend/build/
