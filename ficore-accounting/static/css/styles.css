@@ -79,15 +79,16 @@ body {
 
 /* Navbar */
 .navbar {
-    background: var(--navbar-gradient);
-    padding: 0.5rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
+  background: var(--navbar-gradient);
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 2rem;
+  left: 0;
+  width: 100%;
+  z-index: 999;
 }
 
 .navbar-brand {
