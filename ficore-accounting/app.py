@@ -17,8 +17,9 @@ CSRFProtect(app)
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI')
-app.config['SESSION_TYPE'] = 'filesystem'  # Simple session handling
-app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600
+app.jinja_env.undefined = jinja2.Undefined  # Ensure undefined variables don’t crash
 
 mongo = PyMongo(app)
 
@@ -32,15 +33,20 @@ app.register_blueprint(users_bp, url_prefix='/users')
 
 # Translations
 from translations import TRANSLATIONS
+import jinja2  # Import jinja2 explicitly
 
 # Add trans filter to Jinja2 with logging for missing translations
 @app.template_filter('trans')
 def trans_filter(key):
-    lang = session.get('lang', 'en')  # Default to 'en' if no language in session
-    translation = TRANSLATIONS.get(lang, {}).get(key, key)  # Fall back to key if not found
-    if translation == key:
-        logger.info(f"Missing translation for key '{key}' in language '{lang}'")
-    return translation
+    try:
+        lang = session.get('lang', 'en')
+        translation = TRANSLATIONS.get(lang, {}).get(key, key)
+        if translation == key:
+            logger.info(f"Missing translation for key '{key}' in language '{lang}'")
+        return translation
+    except Exception as e:
+        logger.error(f"Error in trans filter: {e}")
+        return key  # Fallback to key on error
 
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
@@ -94,5 +100,5 @@ def reset_password():
     return render_template('auth/reset_password.html')
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 10000))  # Match Render's expected port
+    port = int(os.getenv('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=False)
