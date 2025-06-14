@@ -3,17 +3,17 @@
     /* Light Mode Colors */
     --background-gradient: #F5F5F5;
     --text-color: #333333;
-    --navbar-gradient: linear-gradient(90deg, #4B0082, #D4A017);
+    --navbar-gradient: linear-gradient(90deg, #4B0082, #1E3A8A);
     --header-message-gradient: linear-gradient(90deg, #4B0082, #FFA500);
     --consent-banner-bg: #EDE7F6;
     --consent-banner-text: #333333;
     --accent-indigo: #4B0082;
     --accent-indigo-dark: #6A1B9A;
-    --accent-gold: #D4A017;
+    --accent-gold: #1E3A8A;
     --accent-gold-dark: #FFA500;
-    --button-gradient: linear-gradient(135deg, #D4A017, #4B0082);
+    --button-gradient: linear-gradient(135deg, #1E3A8A, #4B0082);
     --button-gradient-hover: linear-gradient(135deg, #FFA500, #6A1B9A);
-    --button-nav-gradient: linear-gradient(90deg, #4B0082, #D4A017);
+    --button-nav-gradient: linear-gradient(90deg, #4B0082, #1E3A8A);
     --button-nav-gradient-hover: linear-gradient(90deg, #6A1B9A, #FFA500);
     --card-bg: #FFFFFF;
     --card-border: #4B0082;
@@ -22,7 +22,7 @@
     --table-border: #e0e0e0;
     --table-header-bg: #EDE7F6;
     --table-text: #333333;
-    --amount-highlight: #D4A017;
+    --amount-highlight: #1E3A8A;
     --error-highlight: #D32F2F;
 }
 
@@ -30,17 +30,17 @@
 .dark-mode {
     --background-gradient: linear-gradient(135deg, #212121, #424242);
     --text-color: #E0E0E0;
-    --navbar-gradient: linear-gradient(90deg, #7B1FA2, #FFCA28);
+    --navbar-gradient: linear-gradient(90deg, #7B1FA2, #1E3A8A);
     --header-message-gradient: linear-gradient(90deg, #7B1FA2, #F57F17);
     --consent-banner-bg: #424242;
     --consent-banner-text: #E0E0E0;
     --accent-indigo: #7B1FA2;
     --accent-indigo-dark: #4A148C;
-    --accent-gold: #FFCA28;
+    --accent-gold: #1E3A8A;
     --accent-gold-dark: #F57F17;
-    --button-gradient: linear-gradient(135deg, #FFCA28, #7B1FA2);
+    --button-gradient: linear-gradient(135deg, #1E3A8A, #7B1FA2);
     --button-gradient-hover: linear-gradient(135deg, #F57F17, #4A148C);
-    --button-nav-gradient: linear-gradient(90deg, #7B1FA2, #FFCA28);
+    --button-nav-gradient: linear-gradient(90deg, #7B1FA2, #1E3A8A);
     --button-nav-gradient-hover: linear-gradient(90deg, #4A148C, #F57F17);
     --card-bg: #424242;
     --card-border: #7B1FA2;
@@ -49,7 +49,7 @@
     --table-border: #616161;
     --table-header-bg: #424242;
     --table-text: #E0E0E0;
-    --amount-highlight: #FFCA28;
+    --amount-highlight: #1E3A8A;
     --error-highlight: #D32F2F;
 }
 
