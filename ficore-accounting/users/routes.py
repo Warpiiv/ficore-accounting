@@ -16,6 +16,19 @@ logger = logging.getLogger(__name__)
 users_bp = Blueprint('users', __name__, template_folder='templates')
 mongo = PyMongo(app)
 
+# User class for Flask-Login
+class User(UserMixin):
+    def __init__(self, username, email):
+        self.id = username  # Flask-Login uses 'id' for user identification
+        self.email = email
+
+    @staticmethod
+    def get(user_id):
+        user = mongo.db.users.find_one({'_id': user_id})
+        if user:
+            return User(user['_id'], user['email'])
+        return None
+
 class LoginForm(FlaskForm):
     username = StringField('Username', [
         validators.DataRequired(message='Username is required'),
@@ -75,7 +88,7 @@ def login():
         try:
             user = mongo.db.users.find_one({'_id': form.username.data.strip()})
             if user and check_password_hash(user['password'], form.password.data):
-                login_user(User(user['_id'], user['email']), remember=True)  # Enable persistent login
+                login_user(User(user['_id'], user['email']), remember=True)
                 flash(trans_function('logged_in'), 'success')
                 logger.info(f"User {form.username.data} logged in successfully")
                 return redirect(url_for('users.profile'))
@@ -98,7 +111,7 @@ def signup():
             email = form.email.data.strip()
             if mongo.db.users.find_one({'_id': username}) or mongo.db.users.find_one({'email': email}):
                 flash(trans_function('user_exists'), 'danger')
-                return render_template('auth/signup.html', form=form)
+                return render_template('users/signup.html', form=form)
             user_data = {
                 '_id': username,
                 'email': email,
@@ -108,15 +121,15 @@ def signup():
                 'created_at': datetime.utcnow()
             }
             mongo.db.users.insert_one(user_data)
-            login_user(User(username, email), remember=True)  # Enable persistent login
+            login_user(User(username, email), remember=True)
             flash(trans_function('signup_success'), 'success')
             logger.info(f"New user created: {username}")
             return redirect(url_for('index'))
         except Exception as e:
             logger.error(f"Error during signup: {str(e)}")
             flash(trans_function('signup_error'), 'danger')
-            return render_template('auth/signup.html', form=form), 500
-    return render_template('auth/signup.html', form=form)
+            return render_template('users/signup.html', form=form), 500
+    return render_template('users/signup.html', form=form)
 
 @users_bp.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
@@ -129,7 +142,7 @@ def forgot_password():
             user = mongo.db.users.find_one({'email': email})
             if not user:
                 flash(trans_function('email_not_found'), 'danger')
-                return render_template('auth/forgot_password.html', form=form)
+                return render_template('users/forgot_password.html', form=form)
             reset_token = str(uuid.uuid4())
             expiry = datetime.utcnow() + timedelta(hours=1)
             mongo.db.users.update_one(
@@ -149,14 +162,14 @@ def forgot_password():
                 logger.error(f"Failed to send reset email to {email}: {str(e)}")
                 logger.info(f"Reset URL for {email}: {reset_url}")
                 flash(trans_function('reset_email_failed'), 'warning')
-                return render_template('auth/forgot_password.html', form=form)
+                return render_template('users/forgot_password.html', form=form)
             flash(trans_function('reset_email_sent'), 'success')
-            return render_template('auth/forgot_password.html', form=form)
+            return render_template('users/forgot_password.html', form=form)
         except Exception as e:
             logger.error(f"Error during forgot password: {str(e)}")
             flash(trans_function('forgot_password_error'), 'danger')
-            return render_template('auth/forgot_password.html', form=form), 500
-    return render_template('auth/forgot_password.html', form=form)
+            return render_template('users/forgot_password.html', form=form), 500
+    return render_template('users/forgot_password.html', form=form)
 
 @users_bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
@@ -173,7 +186,7 @@ def reset_password():
             })
             if not user:
                 flash(trans_function('invalid_or_expired_token'), 'danger')
-                return render_template('auth/reset_password.html', form=form, token=token)
+                return render_template('users/reset_password.html', form=form, token=token)
             mongo.db.users.update_one(
                 {'_id': user['_id']},
                 {
@@ -187,11 +200,11 @@ def reset_password():
         except Exception as e:
             logger.error(f"Error during password reset: {str(e)}")
             flash(trans_function('reset_password_error'), 'danger')
-            return render_template('auth/reset_password.html', form=form, token=token), 500
+            return render_template('users/reset_password.html', form=form, token=token), 500
     if not token:
         flash(trans_function('invalid_or_expired_token'), 'danger')
         return redirect(url_for('users.forgot_password'))
-    return render_template('auth/reset_password.html', form=form, token=token)
+    return render_template('users/reset_password.html', form=form, token=token)
 
 @users_bp.route('/profile', methods=['GET'])
 @login_required
