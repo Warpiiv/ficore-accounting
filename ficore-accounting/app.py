@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, url_for, flash
+from flask import Flask, session, redirect, url_for, flash, render_template
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 import os
