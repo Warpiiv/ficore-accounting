@@ -7,6 +7,7 @@ TRANSLATIONS = {
         'forbidden': 'Access Forbidden',
         'status': 'Status',
         # General
+        'Language updated successfully': 'Language updated successfully',
         'type': 'Type',
         # Auth
         'invalid_username': 'Username must be at least 3 characters long',
@@ -291,6 +292,7 @@ TRANSLATIONS = {
         'forbidden': 'An Hana Shiga',
         'status': 'Matsayi',
         # General
+        'Language updated successfully': 'An sabunta yare cikin nasara',
         'type': 'Nau’i'
     }
 }
