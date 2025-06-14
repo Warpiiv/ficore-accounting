@@ -1,6 +1,7 @@
 from flask import Flask, session, redirect, url_for, flash, render_template, request
 from flask_pymongo import PyMongo
 from flask_cors import CORS
+from flask_login import LoginManager, UserMixin, login_user, current_user
 import os
 import jinja2
 from flask_wtf import CSRFProtect
@@ -19,10 +20,29 @@ CSRFProtect(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANANT_SESSION_LIFETIME'] = 3600
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 app.jinja_env.undefined = jinja2.Undefined  # Ensure undefined variables don’t crash
 
 mongo = PyMongo(app)
+
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'signin'
+
+# Simple User model for Flask-Login
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+# User loader for Flask-Login
+@login_manager.user_loader
+def load_user(user_id):
+    # Replace with actual user lookup from MongoDB
+    user_data = mongo.db.users.find_one({'_id': user_id})
+    if user_data:
+        return User(user_id)
+    return None
 
 # Register blueprints
 from invoices.routes import invoices_bp
@@ -101,9 +121,20 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template('errors/500.html'), 500
 
-# Auth routes (placeholders)
-@app.route('/auth/signin')
+# Auth routes
+@app.route('/auth/signin', methods=['GET', 'POST'])
 def signin():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        # Placeholder: Replace with actual authentication logic
+        user_id = request.form.get('user_id')  # Example form field
+        user = mongo.db.users.find_one({'_id': user_id})
+        if user:
+            login_user(User(user_id))
+            flash('Logged in successfully.', 'success')
+            return redirect(url_for('index'))
+        flash('Invalid credentials.', 'error')
     return render_template('auth/signin.html')
 
 @app.route('/auth/signup')
