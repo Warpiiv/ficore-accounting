@@ -34,11 +34,9 @@ app.register_blueprint(users_bp, url_prefix='/users')
 
 # Translations
 from translations import TRANSLATIONS
-import jinja2  # Import jinja2 explicitly
 
-# Add trans filter to Jinja2 with logging for missing translations
-@app.template_filter('trans')
-def trans_filter(key):
+# Define trans function for global use and filter
+def trans_function(key):
     try:
         lang = session.get('lang', 'en')
         translation = TRANSLATIONS.get(lang, {}).get(key, key)
@@ -46,8 +44,16 @@ def trans_filter(key):
             logger.info(f"Missing translation for key '{key}' in language '{lang}'")
         return translation
     except Exception as e:
-        logger.error(f"Error in trans filter: {e}")
+        logger.error(f"Error in trans function: {e}")
         return key  # Fallback to key on error
+
+# Add trans as a global function
+app.jinja_env.globals['trans'] = trans_function
+
+# Add trans as a filter for fallback compatibility
+@app.template_filter('trans')
+def trans_filter(key):
+    return trans_function(key)  # Reuse the same logic
 
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
