@@ -5,6 +5,7 @@ TRANSLATIONS = {
         'track_transaction': 'Track Income/Expense',
         'customer_name': 'Customer Name',
         'description': 'Description',
+        'core_ficore_africa_accounting': 'Ficore Accounting Software',
         'amount': 'Amount (₦)',
         'save': 'Save',
         'money_in': 'Money In',
@@ -17,6 +18,7 @@ TRANSLATIONS = {
     },
     'ha': {
         'welcome': 'Barka da zuwa! Sarrafa kasuwancinku cikin sauƙi.',
+        'core_ficore_africa_accounting': 'Ficore Accounting Software',
         'create_invoice': 'Ƙirƙiri Daftari',
         'track_transaction': 'Bincika Kuɗin Shiga/Fita',
         'customer_name': 'Sunan Abokin Ciniki',
