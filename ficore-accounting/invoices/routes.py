@@ -5,7 +5,7 @@ from flask_pymongo import PyMongo
 from datetime import datetime
 from app import app
 
-invoices_bp = Blueprint('invoices', __name__, template_folder='../templates')
+invoices_bp = Blueprint('invoices', __name__, template_folder='templates/invoices')
 mongo = PyMongo(app)
 
 class InvoiceForm(FlaskForm):
@@ -18,7 +18,7 @@ def invoice_dashboard():
     invoices = list(mongo.db.invoices.find())
     for invoice in invoices:
         invoice['_id'] = str(invoice['_id'])
-    return render_template('invoices/view.html', invoices=invoices)
+    return render_template('view.html', invoices=invoices)
 
 @invoices_bp.route('/create', methods=['GET', 'POST'])
 def create_invoice():
@@ -35,4 +35,4 @@ def create_invoice():
         invoice['_id'] = str(result.inserted_id)
         flash('Invoice created successfully!', 'success')
         return redirect(url_for('invoices.invoice_dashboard'))
-    return render_template('invoices/create.html', form=form)
+    return render_template('create.html', form=form)
