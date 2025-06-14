@@ -1,0 +1,75 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script>{% extends 'base.html' %}
+{% block title %}{{ trans('core_provide_feedback') | default('Provide Feedback') }}{% endblock %}
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">{{ trans('core_provide_feedback') | default('Provide Feedback') }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <form class="validate-form" method="POST" action="{{ url_for('feedback') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group mb-3">
+                    <label for="tool_name" class="form-label">{{ trans('select_tool') | default('Select Tool') }}</label>
+                    <select name="tool_name" id="tool_name" class="form-select" required>
+                        <option value="">{{ trans('choose_option') | default('Choose...') }}</option>
+                        {% for tool in tool_options %}
+                            <option value="{{ tool }}">{{ trans(tool) | default(tool | capitalize) }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">{{ trans('invalid_tool') | default('Please select a valid tool') }}</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="rating" class="form-label">{{ trans('rating') | default('Rating (1-5)') }}</label>
+                    <input type="number" name="rating" id="rating" class="form-control" min="1" max="5" required>
+                    <div class="invalid-feedback">{{ trans('invalid_rating') | default('Please provide a rating between 1 and 5') }}</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="comment" class="form-label">{{ trans('comment') | default('Comment') }}</label>
+                    <textarea name="comment" id="comment" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">{{ trans('submit') | default('Submit') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
