@@ -88,6 +88,8 @@ body {
     justify-content: space-between;
     position: relative;
     z-index: 1000;
+    width: 100%; /* Ensure full width */
+    margin: 0; /* Remove any margin */
 }
 
 .navbar-brand {
@@ -109,7 +111,6 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-size: 0.9rem;
-    width: 100%; /* Full-width for mobile */
 }
 
 .btn-primary:hover {
@@ -123,6 +124,9 @@ body {
     text-align: center;
     padding: 0.5rem;
     font-size: 0.85rem;
+    width: 100%; /* Ensure full width */
+    margin: 0; /* Remove any margin */
+    padding-top: 1rem; /* Add top padding */
 }
 
 /* Consent Banner */
@@ -144,7 +148,7 @@ body {
     border-radius: 8px;
     padding: 2rem; /* Increased padding */
     margin: 2rem auto; /* Centered with margin */
-    max-width: 400px; /* Increased width */
+    max-width: 450px; /* Slightly increased width */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
@@ -152,7 +156,7 @@ body {
 }
 
 .form-group {
-    margin-bottom: 1.5rem; /* Increased spacing */
+    margin-bottom: 1.5rem; /* Increased spacing between form elements */
     width: 100%;
 }
 
@@ -199,23 +203,94 @@ body {
     padding: 0.75rem;
     border-radius: 8px;
     font-size: 1rem;
-    width: 100%; /* Full-width for mobile */
+    width: 100%; /* Full-width for mobile friendliness */
     margin-bottom: 1rem; /* Increased spacing */
 }
 
 .btn-login:hover {
-    background: var(--button-gradient-hover);
+    background: var(--button-gradient-hover); /* Improved contrast/hover state */
 }
 
 .btn-link {
     color: var(--accent-indigo);
     text-decoration: none;
     margin-top: 0.5rem; /* Increased spacing */
-    display: block; /* Separate links */
+    display: block; /* Separate links clearly */
 }
 
 .btn-link:hover {
     text-decoration: underline;
+}
+
+/* Cards */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    color: var(--card-text);
+    font-size: 0.9rem;
+}
+
+.amount-highlight {
+    color: var(--amount-highlight);
+    font-weight: bold;
+}
+
+.text-danger {
+    color: var(--error-highlight);
+    font-size: 0.8rem;
+}
+
+/* Tables */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.table th,
+.table td {
+    padding: 0.5rem;
+    border: 1px solid var(--table-border);
+    text-align: left;
+}
+
+.table th {
+    background-color: var(--table-header-bg);
+    color: var(--table-text);
+    font-weight: 600;
+}
+
+.table td {
+    color: var(--table-text);
+}
+
+/* List Group */
+.list-group-item {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.list-group-item.d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* Footer */
@@ -223,7 +298,8 @@ body {
     background: linear-gradient(90deg, #003087, #004D40);
     color: white;
     padding: 1rem 0;
-    margin-top: auto;
+    margin-top: auto; /* Push to bottom */
+    width: 100%; /* Ensure full width */
 }
 
 .footer .container {
@@ -276,12 +352,33 @@ body {
         font-size: 1rem;
     }
 
+    .card {
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.4rem;
+    }
+
+    .card-text {
+        font-size: 1rem;
+    }
+
     .form-container {
         padding: 2.5rem;
     }
 
     .form-control, .form-select {
         font-size: 1rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem;
+    }
+
+    .list-group-item {
+        padding: 0.75rem;
     }
 }
 
@@ -292,6 +389,10 @@ body {
 
     .nav-link {
         font-size: 0.8rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
     }
 
     .form-container {
