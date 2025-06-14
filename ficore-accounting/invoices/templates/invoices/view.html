@@ -1,15 +1,56 @@
-{% extends "base.html" %}
-{% block title %}View Invoices{% endblock %}
+{% extends 'base.html' %}
+{% block title %}{{ trans('core_invoices') | default('Invoices') }}{% endblock %}
 {% block content %}
-<div class="container">
-    <h2 class="mb-4">Invoices</h2>
-    <ul class="list-group">
-        {% for invoice in invoices %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ invoice.customer_name }} - <span class="amount-highlight">{{ invoice.amount }}</span> ({{ invoice.status }})
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('invoices.create_invoice') }}" class="btn btn-primary mt-3">Create New Invoice</a>
+<div class="container my-5">
+    <h1 class="text-center mb-4">{{ trans('core_invoices') | default('Invoices') }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <div class="text-end mb-3">
+                <a href="{{ url_for('invoices.create_invoice') }}" class="btn btn-primary">
+                    {{ trans('create_invoice') | default('Create Invoice') }}
+                </a>
+            </div>
+            {% if invoices %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{{ trans('customer_name') | default('Customer Name') }}</th>
+                                <th>{{ trans('description') | default('Description') }}</th>
+                                <th>{{ trans('amount') | default('Amount') }}</th>
+                                <th>{{ trans('status') | default('Status') }}</th>
+                                <th>{{ trans('created_at') | default('Created At') }}</th>
+                                <th>{{ trans('actions') | default('Actions') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for invoice in invoices %}
+                                <tr>
+                                    <td>{{ invoice.customer_name }}</td>
+                                    <td>{{ invoice.description }}</td>
+                                    <td class="amount-highlight">{{ invoice.amount | format_currency }}</td>
+                                    <td>{{ trans(invoice.status) | default(invoice.status | capitalize) }}</td>
+                                    <td>{{ invoice.created_at | format_datetime }}</td>
+                                    <td>
+                                        <a href="{{ url_for('invoices.update_invoice', invoice_id=invoice._id) }}" class="btn btn-sm btn-primary">
+                                            {{ trans('edit') | default('Edit') }}
+                                        </a>
+                                        <form action="{{ url_for('invoices.delete_invoice', invoice_id=invoice._id) }}" method="POST" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ trans('confirm_delete') | default('Are you sure?') }}')">
+                                                {{ trans('delete') | default('Delete') }}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center">{{ trans('no_invoices') | default('No invoices found') }}</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}
