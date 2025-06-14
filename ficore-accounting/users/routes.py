@@ -5,7 +5,7 @@ from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import app
 
-users_bp = Blueprint('users', __name__, template_folder='templates/users')
+users_bp = Blueprint('users', __name__, template_folder='templates/users/users')
 mongo = PyMongo(app)
 
 class LoginForm(FlaskForm):
