@@ -158,7 +158,7 @@ def setup_database():
         mongo.db.users.create_index([('reset_token', 1)], sparse=True)
 
         # Create default admin user if not exists
-        if not mongo.db.users.find_one({'_id': 'admin'})
+        if not mongo.db.users.find_one({'_id': 'admin'}):
             mongo.db.users.insert_one({
                 '_id': 'admin',
                 'email': 'ficoreafrica@gmail.com',
