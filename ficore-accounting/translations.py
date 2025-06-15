@@ -64,7 +64,7 @@ TRANSLATIONS = {
         'invoice_deleted': 'Invoice deleted successfully',
         'invoice_not_found': 'Invoice not found',
         'no_invoices': 'No invoices found',
-        'core_something_went_wrong': 'Something went wrong',
+        'core_something_went_wrong': 'An error occurred, please try again',
         'invalid_date_format': 'Invalid date format',
         'invalid_amount': 'Amount must be greater than zero',
         'required_field': 'This field is required',
@@ -85,6 +85,9 @@ TRANSLATIONS = {
         'invoice_number': 'Invoice Number',
         'actions': 'Actions',
         'error_saving': 'Error saving invoice',
+        'Something went wrong': 'Something went wrong',
+        'invoices': 'Invoices',
+        'profile': 'Profile',
         # Auth
         'invalid_username': 'Username must be at least 3 characters long',
         'invalid_password': 'Password must be at least 8 characters long',
@@ -280,6 +283,9 @@ TRANSLATIONS = {
         'invoice_number': 'Lambar Daftari',
         'actions': 'Ayyuka',
         'error_saving': 'Kuskure wajen ajiyar daftari',
+        'Something went wrong': 'Wani abu ya faru ba daidai ba',
+        'invoices': 'Lissafin Kuɗi',
+        'profile': 'Bayanan Martaba',
         # Auth
         'invalid_username': 'Sunan mai amfani dole ne ya kasance aƙalla haruffa 3',
         'invalid_password': 'Kalmar sirri dole ne ta kasance aƙalla haruffa 8',
@@ -390,3 +396,6 @@ TRANSLATIONS = {
         'status': 'Matsayi'
     }
 }
+
+def trans_function(key, lang='en'):
+    return TRANSLATIONS.get(lang, {}).get(key, key)
