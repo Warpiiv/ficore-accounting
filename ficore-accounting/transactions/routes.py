@@ -1,8 +1,7 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, Response
+from flask import Blueprint, request, render_template, redirect, url_for, flash, Response, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, validators, BooleanField
 from flask_login import login_required, current_user
-from flask_pymongo import PyMongo
 from datetime import datetime, timedelta
 from utils import trans_function, is_valid_email
 import logging
@@ -13,13 +12,6 @@ from bson import ObjectId
 logger = logging.getLogger(__name__)
 
 transactions_bp = Blueprint('transactions', __name__, template_folder='templates')
-
-# Placeholder for PyMongo instance, initialized by app.py
-mongo = None
-
-def init_mongo(app):
-    global mongo
-    mongo = PyMongo(app)
 
 class TransactionForm(FlaskForm):
     type = SelectField('Type', choices=[
@@ -45,12 +37,10 @@ class TransactionForm(FlaskForm):
     ])
 
 @transactions_bp.route('/transaction_history', methods=['GET'])
-# TODO: Re-enable @login_required before production
-# @login_required
 def transaction_history():
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
-        # Handle filters
+        mongo = current_app.extensions['pymongo']
         date_filter = request.args.get('date', '')
         category_filter = request.args.get('category', '')
         description_filter = request.args.get('description', '')
@@ -77,12 +67,10 @@ def transaction_history():
         for transaction in transactions:
             transaction['_id'] = str(transaction['_id'])
 
-        # Calculate summary
         total_income = sum(t['amount'] for t in transactions if t['type'] == 'income')
         total_expense = sum(t['amount'] for t in transactions if t['type'] == 'expense')
         net_balance = total_income - total_expense
 
-        # Calculate category totals
         category_totals = {}
         for t in transactions:
             category = t['category']
@@ -120,13 +108,12 @@ def transaction_history():
                              }), 500
 
 @transactions_bp.route('/add', methods=['GET', 'POST'])
-# TODO: Re-enable @login_required before production
-# @login_required
 def add_transaction():
     form = TransactionForm()
     if form.validate_on_submit():
         try:
             user_id = current_user.id if current_user.is_authenticated else 'guest'
+            mongo = current_app.extensions['pymongo']
             transaction = {
                 'user_id': user_id,
                 'type': form.type.data,
@@ -150,10 +137,9 @@ def add_transaction():
     return render_template('transactions/add.html', form=form)
 
 @transactions_bp.route('/update/<transaction_id>', methods=['GET', 'POST'])
-# TODO: Re-enable @login_required before production
-# @login_required
 def update_transaction(transaction_id):
     user_id = current_user.id if current_user.is_authenticated else 'guest'
+    mongo = current_app.extensions['pymongo']
     transaction = mongo.db.transactions.find_one({'_id': ObjectId(transaction_id), 'user_id': user_id})
     if not transaction:
         flash(trans_function('transaction_not_found'), 'danger')
@@ -196,11 +182,10 @@ def update_transaction(transaction_id):
     return render_template('transactions/add.html', form=form, transaction_id=transaction_id)
 
 @transactions_bp.route('/delete/<transaction_id>', methods=['POST'])
-# TODO: Re-enable @login_required before production
-# @login_required
 def delete_transaction(transaction_id):
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
+        mongo = current_app.extensions['pymongo']
         result = mongo.db.transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': user_id})
         if result.deleted_count == 0:
             flash(trans_function('transaction_not_found'), 'danger')
@@ -214,11 +199,10 @@ def delete_transaction(transaction_id):
         return redirect(url_for('transactions.transaction_history')), 500
 
 @transactions_bp.route('/export', methods=['GET'])
-# TODO: Re-enable @login_required before production
-# @login_required
 def export_transactions():
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
+        mongo = current_app.extensions['pymongo']
         transactions = list(mongo.db.transactions.find({'user_id': user_id}))
         output = StringIO()
         writer = csv.writer(output)
