@@ -19,7 +19,7 @@
             <h2 class="text-2xl font-semibold">{{ trans('feedback') | default('Provide Feedback') }}</h2>
             <p class="mt-2">{{ trans('feedback_desc') | default('Share your thoughts on the app') }}</p>
         </a>
-        <a href="{{ url_for('admin_dashboard') }}"
+        <a href="{{ url_for('dashboard.admin') }}"
            class="bg-red-600 text-white rounded-lg p-6 text-center hover:bg-red-700 transition">
             <h2 class="text-2xl font-semibold">{{ trans('admin_dashboard') | default('Admin Dashboard') }}</h2>
             <p class="mt-2">{{ trans('admin_dashboard_desc') | default('Manage users and settings') }}</p>
