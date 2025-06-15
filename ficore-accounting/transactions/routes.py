@@ -3,11 +3,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, validators, BooleanField
 from flask_login import login_required, current_user
 from flask_pymongo import PyMongo
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils import trans_function, is_valid_email
 from app import app, mail
 import logging
-from datetime import timedelta
 import csv
 from io import StringIO
 from bson import ObjectId
@@ -91,11 +90,29 @@ def transaction_history():
                              total_expense=total_expense,
                              net_balance=net_balance,
                              category_totals=category_totals,
-                             categories=[c[0] for c in TransactionForm().category.choices])
+                             categories=[c[0] for c in TransactionForm().category.choices],
+                             filter_values={
+                                 'date': date_filter,
+                                 'category': category_filter,
+                                 'description': description_filter,
+                                 'tags': tags_filter
+                             })
     except Exception as e:
         logger.error(f"Error fetching transactions: {str(e)}")
         flash(trans_function('core_something_went_wrong'), 'danger')
-        return render_template('transactions/history.html', transactions=[]), 500
+        return render_template('transactions/history.html',
+                             transactions=[],
+                             total_income=0,
+                             total_expense=0,
+                             net_balance=0,
+                             category_totals={},
+                             categories=[c[0] for c in TransactionForm().category.choices],
+                             filter_values={
+                                 'date': date_filter,
+                                 'category': category_filter,
+                                 'description': description_filter,
+                                 'tags': tags_filter
+                             }), 500
 
 @transactions_bp.route('/add', methods=['GET', 'POST'])
 # TODO: Re-enable @login_required before production
