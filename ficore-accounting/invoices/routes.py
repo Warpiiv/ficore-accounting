@@ -28,10 +28,13 @@ class InvoiceForm(FlaskForm):
     ])
 
 @invoices_bp.route('/invoice_dashboard', methods=['GET'])
-@login_required
+# TODO: Re-enable @login_required before production
+# @login_required
 def invoice_dashboard():
     try:
-        invoices = list(mongo.db.invoices.find({'user_id': current_user.id}))
+        # Use guest user_id for unauthenticated access
+        user_id = current_user.id if current_user.is_authenticated else 'guest'
+        invoices = list(mongo.db.invoices.find({'user_id': user_id}))
         for invoice in invoices:
             invoice['_id'] = str(invoice['_id'])
         return render_template('invoices/view.html', invoices=invoices)
@@ -41,13 +44,16 @@ def invoice_dashboard():
         return render_template('invoices/view.html', invoices=[]), 500
 
 @invoices_bp.route('/create', methods=['GET', 'POST'])
-@login_required
+# TODO: Re-enable @login_required before production
+# @login_required
 def create_invoice():
     form = InvoiceForm()
     if form.validate_on_submit():
         try:
+            # Use guest user_id for unauthenticated access
+            user_id = current_user.id if current_user.is_authenticated else 'guest'
             invoice = {
-                'user_id': current_user.id,
+                'user_id': user_id,
                 'customer_name': form.customer_name.data.strip(),
                 'description': form.description.data.strip(),
                 'amount': float(form.amount.data),
@@ -56,7 +62,7 @@ def create_invoice():
             }
             result = mongo.db.invoices.insert_one(invoice)
             flash(trans_function('invoice_created'), 'success')
-            logger.info(f"Invoice created by user {current_user.id}: {result.inserted_id}")
+            logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
             return redirect(url_for('invoices.invoice_dashboard'))
         except Exception as e:
             logger.error(f"Error creating invoice: {str(e)}")
@@ -65,9 +71,12 @@ def create_invoice():
     return render_template('invoices/create.html', form=form)
 
 @invoices_bp.route('/update/<invoice_id>', methods=['GET', 'POST'])
-@login_required
+# TODO: Re-enable @login_required before production
+# @login_required
 def update_invoice(invoice_id):
-    invoice = mongo.db.invoices.find_one({'_id': invoice_id, 'user_id': current_user.id})
+    # Use guest user_id for unauthenticated access
+    user_id = current_user.id if current_user.is_authenticated else 'guest'
+    invoice = mongo.db.invoices.find_one({'_id': invoice_id, 'user_id': user_id})
     if not invoice:
         flash(trans_function('invoice_not_found'), 'danger')
         return redirect(url_for('invoices.invoice_dashboard'))
@@ -81,7 +90,7 @@ def update_invoice(invoice_id):
     if form.validate_on_submit():
         try:
             mongo.db.invoices.update_one(
-                {'_id': invoice_id, 'user_id': current_user.id},
+                {'_id': invoice_id, 'user_id': user_id},
                 {
                     '$set': {
                         'customer_name': form.customer_name.data.strip(),
@@ -92,7 +101,7 @@ def update_invoice(invoice_id):
                 }
             )
             flash(trans_function('invoice_updated'), 'success')
-            logger.info(f"Invoice updated by user {current_user.id}: {invoice_id}")
+            logger.info(f"Invoice updated by user {user_id}: {invoice_id}")
             return redirect(url_for('invoices.invoice_dashboard'))
         except Exception as e:
             logger.error(f"Error updating invoice: {str(e)}")
@@ -101,15 +110,18 @@ def update_invoice(invoice_id):
     return render_template('invoices/create.html', form=form, invoice_id=invoice_id)
 
 @invoices_bp.route('/delete/<invoice_id>', methods=['POST'])
-@login_required
+# TODO: Re-enable @login_required before production
+# @login_required
 def delete_invoice(invoice_id):
     try:
-        result = mongo.db.invoices.delete_one({'_id': invoice_id, 'user_id': current_user.id})
+        # Use guest user_id for unauthenticated access
+        user_id = current_user.id if current_user.is_authenticated else 'guest'
+        result = mongo.db.invoices.delete_one({'_id': invoice_id, 'user_id': user_id})
         if result.deleted_count == 0:
             flash(trans_function('invoice_not_found'), 'danger')
         else:
             flash(trans_function('invoice_deleted'), 'success')
-            logger.info(f"Invoice deleted by user {current_user.id}: {invoice_id}")
+            logger.info(f"Invoice deleted by user {user_id}: {invoice_id}")
         return redirect(url_for('invoices.invoice_dashboard'))
     except Exception as e:
         logger.error(f"Error deleting invoice: {str(e)}")
