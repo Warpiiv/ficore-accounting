@@ -30,7 +30,7 @@
                     </div>
                     <div class="flex items-end">
                         <button type="submit" class="btn btn-primary mr-2">{{ trans('filter') | default('Filter') }}</button>
-                        <a href="{{ url_for('invoices.export_csv') }}" class="btn btn-secondary">{{ trans('export_csv') | default('Export to CSV') }}</a>
+                        <a href="{{ url_for('invoices.export_invoices_csv') }}" class="btn btn-secondary">{{ trans('export_csv') | default('Export to CSV') }}</a>
                     </div>
                 </form>
             </div>
