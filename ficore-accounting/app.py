@@ -216,7 +216,7 @@ def feedback():
             if not tool_name or tool_name not in tool_options:
                 flash(trans_function('invalid_tool'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
-            if not rating or not rating.is_digit() or int(rating) < 1 or int(rating) > 5:
+            if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
                 flash(trans_function('invalid_rating'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
@@ -261,6 +261,4 @@ def internal_server_error(e):
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
     logger.info(f"Starting Flask app on port {port}")
-    app.run(host='0.“
-
-0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=False)
