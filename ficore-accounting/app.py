@@ -14,10 +14,6 @@ from translations import TRANSLATIONS
 from utils import trans_function
 from flask_session import Session
 
-mongo = PyMongo(app)
-
-init_mongo(app)
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,7 +27,6 @@ CSRFProtect(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')
 app.config['SESSION_TYPE'] = 'mongodb'
-app.config['SESSION_MONGODB'] = PyMongo(app).cx
 app.config['SESSION_MONGODB_DB'] = 'minirecords'
 app.config['SESSION_MONGODB_COLLECT'] = 'sessions'
 app.config['SESSION_PERMANENT'] = True
@@ -49,7 +44,9 @@ app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'support@ficoreminirecords.com')
 
+# Initialize extensions after app creation
 mongo = PyMongo(app)
+app.config['SESSION_MONGODB'] = mongo.cx  # Set MongoDB connection for Flask-Session
 mail = Mail(app)
 sess = Session(app)
 
@@ -73,9 +70,13 @@ def load_user(user_id):
     return None
 
 # Register blueprints
-from invoices.routes import invoices_bp
+from invoices.routes import invoices_bp, init_mongo
 from transactions.routes import transactions_bp
 from users.routes import users_bp
+
+# Initialize mongo for invoices blueprint
+init_mongo(app)
+
 app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
 app.register_blueprint(users_bp, url_prefix='/users')
