@@ -149,20 +149,16 @@ def set_dark_mode():
     session['dark_mode'] = str(data.get('dark_mode', False)).lower()
     return Response(status=204)
 
-# Database setup route
-@app.route('/setup', methods=['GET'])
+# Database setup
 def setup_database():
-    setup_key = request.args.get('key')
-    if setup_key != os.getenv('SETUP_KEY', 'setup-secret'):
-        return render_template('errors/403.html'), 403
     try:
         # Create users collection and indexes
         mongo.db.users.create_index([('_id', 1)], unique=True)
         mongo.db.users.create_index([('email', 1)], unique=True)
         mongo.db.users.create_index([('reset_token', 1)], sparse=True)
-        
+
         # Create default admin user if not exists
-        if not mongo.db.users.find_one({'_id': 'admin'}):
+        if not mongo.db.users.find_one({'_id': 'admin'})
             mongo.db.users.insert_one({
                 '_id': 'admin',
                 'email': 'ficoreafrica@gmail.com',
@@ -191,11 +187,27 @@ def setup_database():
         # Create sessions collection index
         mongo.db.sessions.create_index([('expires', 1)], expireAfterSeconds=0)
 
-        flash(trans_function('database_setup_success'), 'success')
-        logger.info("Database setup completed successfully")
-        return redirect(url_for('index'))
+        logger.info("Database initialization completed successfully")
+        return True
     except Exception as e:
-        logger.error(f"Error setting up database: {str(e)}")
+        logger.error(f"Error initializing database: {str(e)}")
+        return False
+
+# Manual database setup route
+@app.route('/setup', methods=['GET'])
+def setup_database_route():
+    setup_key = request.args.get('key')
+    if setup_key != os.getenv('SETUP_KEY', 'setup-secret'):
+        return render_template('errors/403.html'), 403
+    
+    if os.getenv('FLASK_ENV', 'development') == 'production' and not os.getenv('ALLOW_DB_SETUP', 'false').lower() == 'true':
+        flash(trans_function('database_setup_production_disabled'), 'danger')
+        return render_template('errors/403.html'), 403
+
+    if setup_database():
+        flash(trans_function('database_setup_success'), 'success')
+        return redirect(url_for('index'))
+    else:
         flash(trans_function('database_setup_error'), 'danger')
         return render_template('errors/500.html'), 500
 
@@ -238,7 +250,7 @@ def feedback():
         except Exception as e:
             logger.error(f"Error processing feedback: {str(e)}")
             flash(trans_function('feedback_error'), 'danger')
-            return render_template('general/feedback.html', tool_options=tool_options), 500
+            return render_template('general/feedback.html', tool_options=tool_options)), 500
 
     return render_template('general/feedback.html', tool_options=tool_options)
 
@@ -261,9 +273,18 @@ def page_not_found(e):
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('errors/500.html', message=trans_function('internal_server_error')), 500
+    return render_template('errors/500.html', message=trans_function('internal_server_error'))), 500
+
+# Initialize database on startup
+with app.app_context():
+    if os.getenv('FLASK_ENV', 'development') != 'production' or os.getenv('ALLOW_DB_SETUP', 'false').lower() == 'true':
+        if not setup_database():
+            logger.error("Application startup aborted due to database initialization failure")
+            raise RuntimeError("Database initialization failed")
+    else:
+        logger.info("Database initialization skipped in production environment")
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
     logger.info(f"Starting Flask app on port {port}")
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=False))
