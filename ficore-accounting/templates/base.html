@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ session.lang | default('en') }}" class="{{ 'dark-mode' if session.get('dark_mode', 'false') == 'true' else '' }}">
+<html lang="{{ session.lang | default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -120,10 +120,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             const modeToggle = document.getElementById('modeToggle');
             const body = document.body;
-            const currentMode = localStorage.getItem('darkMode') || 'false';
+            let darkMode = localStorage.getItem('darkMode');
 
-            // Initialize mode based on localStorage
-            if (currentMode === 'true') {
+            // Initialize dark mode based on localStorage or system preference
+            if (darkMode === null) {
+                darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'true' : 'false';
+                localStorage.setItem('darkMode', darkMode);
+            }
+
+            // Apply initial dark mode state
+            if (darkMode === 'true') {
                 body.classList.add('dark-mode');
                 modeToggle.innerHTML = '<i class="fas fa-sun" aria-hidden="true"></i>';
             } else {
@@ -136,6 +142,29 @@
                 const isDarkMode = body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
                 modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
+
+                // Optional: Sync with server (uncomment if backend endpoint exists)
+                /*
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                fetch('{{ url_for("set_dark_mode") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({ darkMode: isDarkMode })
+                }).catch(error => console.error('Error syncing dark mode:', error));
+                */
+            });
+
+            // Listen for system color scheme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (localStorage.getItem('darkMode') === null) {
+                    const isDarkMode = e.matches;
+                    body.classList.toggle('dark-mode', isDarkMode);
+                    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
+                    modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
+                }
             });
 
             // Enhanced form validation
