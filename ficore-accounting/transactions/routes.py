@@ -30,10 +30,13 @@ class TransactionForm(FlaskForm):
     ])
 
 @transactions_bp.route('/transaction_history', methods=['GET'])
-@login_required
+# TODO: Re-enable @login_required before production
+# @login_required
 def transaction_history():
     try:
-        transactions = list(mongo.db.transactions.find({'user_id': current_user.id}))
+        # Use guest user_id for unauthenticated access
+        user_id = current_user.id if current_user.is_authenticated else 'guest'
+        transactions = list(mongo.db.transactions.find({'user_id': user_id}))
         for transaction in transactions:
             transaction['_id'] = str(transaction['_id'])
         return render_template('transactions/history.html', transactions=transactions)
@@ -43,13 +46,16 @@ def transaction_history():
         return render_template('transactions/history.html', transactions=[]), 500
 
 @transactions_bp.route('/add', methods=['GET', 'POST'])
-@login_required
+# TODO: Re-enable @login_required before production
+# @login_required
 def add_transaction():
     form = TransactionForm()
     if form.validate_on_submit():
         try:
+            # Use guest user_id for unauthenticated access
+            user_id = current_user.id if current_user.is_authenticated else 'guest'
             transaction = {
-                'user_id': current_user.id,
+                'user_id': user_id,
                 'type': form.type.data,
                 'category': form.category.data,
                 'amount': float(form.amount.data),
@@ -58,7 +64,7 @@ def add_transaction():
             }
             result = mongo.db.transactions.insert_one(transaction)
             flash(trans_function('transaction_added'), 'success')
-            logger.info(f"Transaction added by user {current_user.id}: {result.inserted_id}")
+            logger.info(f"Transaction added by user {user_id}: {result.inserted_id}")
             return redirect(url_for('transactions.transaction_history'))
         except Exception as e:
             logger.error(f"Error adding transaction: {str(e)}")
@@ -67,9 +73,12 @@ def add_transaction():
     return render_template('transactions/add.html', form=form)
 
 @transactions_bp.route('/update/<transaction_id>', methods=['GET', 'POST'])
-@login_required
+# TODO: Re-enable @login_required before production
+# @login_required
 def update_transaction(transaction_id):
-    transaction = mongo.db.transactions.find_one({'_id': transaction_id, 'user_id': current_user.id})
+    # Use guest user_id for unauthenticated access
+    user_id = current_user.id if current_user.is_authenticated else 'guest'
+    transaction = mongo.db.transactions.find_one({'_id': transaction_id, 'user_id': user_id})
     if not transaction:
         flash(trans_function('transaction_not_found'), 'danger')
         return redirect(url_for('transactions.transaction_history'))
@@ -84,7 +93,7 @@ def update_transaction(transaction_id):
     if form.validate_on_submit():
         try:
             mongo.db.transactions.update_one(
-                {'_id': transaction_id, 'user_id': current_user.id},
+                {'_id': transaction_id, 'user_id': user_id},
                 {
                     '$set': {
                         'type': form.type.data,
@@ -96,7 +105,7 @@ def update_transaction(transaction_id):
                 }
             )
             flash(trans_function('transaction_updated'), 'success')
-            logger.info(f"Transaction updated by user {current_user.id}: {transaction_id}")
+            logger.info(f"Transaction updated by user {user_id}: {transaction_id}")
             return redirect(url_for('transactions.transaction_history'))
         except Exception as e:
             logger.error(f"Error updating transaction: {str(e)}")
@@ -105,15 +114,18 @@ def update_transaction(transaction_id):
     return render_template('transactions/add.html', form=form, transaction_id=transaction_id)
 
 @transactions_bp.route('/delete/<transaction_id>', methods=['POST'])
-@login_required
+# TODO: Re-enable @login_required before production
+# @login_required
 def delete_transaction(transaction_id):
     try:
-        result = mongo.db.transactions.delete_one({'_id': transaction_id, 'user_id': current_user.id})
+        # Use guest user_id for unauthenticated access
+        user_id = current_user.id if current_user.is_authenticated else 'guest'
+        result = mongo.db.transactions.delete_one({'_id': transaction_id, 'user_id': user_id})
         if result.deleted_count == 0:
             flash(trans_function('transaction_not_found'), 'danger')
         else:
             flash(trans_function('transaction_deleted'), 'success')
-            logger.info(f"Transaction deleted by user {current_user.id}: {transaction_id}")
+            logger.info(f"Transaction deleted by user {user_id}: {transaction_id}")
         return redirect(url_for('transactions.transaction_history'))
     except Exception as e:
         logger.error(f"Error deleting transaction: {str(e)}")
