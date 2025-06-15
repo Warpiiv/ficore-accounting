@@ -24,32 +24,32 @@ CORS(app)
 CSRFProtect(app)
 
 # Configuration
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')  # Set in Render environment
-app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')  # Set in Render environment
-app.config['SESSION_TYPE'] = 'mongodb'  # Use MongoDB for session storage
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
+app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')
+app.config['SESSION_TYPE'] = 'mongodb'
 app.config['SESSION_MONGODB'] = PyMongo(app).cx
 app.config['SESSION_MONGODB_DB'] = 'minirecords'
 app.config['SESSION_MONGODB_COLLECT'] = 'sessions'
 app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=3600)  # 1 hour
-app.config['SESSION_COOKIE_SECURE'] = os.getenv('FLASK_ENV', 'development') == 'production'  # Secure cookies in production
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=3600)
+app.config['SESSION_COOKIE_SECURE'] = os.getenv('FLASK_ENV', 'development') == 'production'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.jinja_env.undefined = jinja2.Undefined
 
 # Flask-Mail configuration
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')  # Set in Render environment
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'true').lower() == 'true'
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # Set in Render environment
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Set in Render environment
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'support@ficoreminirecords.com')
 
 mongo = PyMongo(app)
 mail = Mail(app)
-sess = Session(app)  # Initialize Flask-Session
+sess = Session(app)
 
-# Initialize Flask-Login (retained for future use)
+# Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login'
@@ -113,6 +113,16 @@ def format_datetime(value):
         logger.warning(f"Error formatting datetime {value}: {str(e)}")
         return str(value)
 
+@app.template_filter('format_date')
+def format_date(value):
+    try:
+        if isinstance(value, datetime):
+            return value.strftime('%Y-%m-%d')
+        return str(value)
+    except Exception as e:
+        logger.warning(f"Error formatting date {value}: {str(e)}")
+        return str(value)
+
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
     return {'translations': TRANSLATIONS.get(lang, TRANSLATIONS['en'])}
@@ -132,12 +142,6 @@ def set_language(lang):
 def set_dark_mode():
     data = request.get_json()
     session['dark_mode'] = str(data.get('dark_mode', False)).lower()
-    # Commented out for no-auth mode; restore when re-enabling authentication
-    # if current_user.is_authenticated:
-    #     mongo.db.users.update_one(
-    #         {'_id': current_user.id},
-    #         {'$set': {'dark_mode': session['dark_mode'] == 'true'}}
-    #     )
     return Response(status=204)
 
 # Database setup route
@@ -167,6 +171,9 @@ def setup_database():
         # Create invoices collection and indexes
         mongo.db.invoices.create_index([('user_id', 1)])
         mongo.db.invoices.create_index([('created_at', -1)])
+        mongo.db.invoices.create_index([('status', 1)])
+        mongo.db.invoices.create_index([('due_date', 1)])
+        mongo.db.invoices.create_index([('invoice_number', 1)], unique=True)
 
         # Create transactions collection and indexes
         mongo.db.transactions.create_index([('user_id', 1)])
@@ -190,7 +197,7 @@ def setup_database():
 # General routes
 @app.route('/')
 def index():
-    return redirect(url_for('invoices.invoice_dashboard'))
+    return render_template('general/home.html')
 
 @app.route('/about')
 def about():
@@ -209,12 +216,12 @@ def feedback():
             if not tool_name or tool_name not in tool_options:
                 flash(trans_function('invalid_tool'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
-            if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
+            if not rating or not rating.is_digit() or int(rating) < 1 or int(rating) > 5:
                 flash(trans_function('invalid_rating'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
             feedback_entry = {
-                'user_id': None,  # Use None for unauthenticated users
+                'user_id': None,
                 'tool_name': tool_name,
                 'rating': int(rating),
                 'comment': comment or None,
@@ -232,16 +239,10 @@ def feedback():
 
 @app.route('/dashboard/admin')
 def admin_dashboard():
-    # TODO: Re-enable authentication before production
-    # if not current_user.is_authenticated or not mongo.db.users.find_one({'_id': current_user.id, 'is_admin': True}):
-    #     return render_template('errors/403.html'), 403
     return render_template('dashboard/admin_dashboard.html')
 
 @app.route('/dashboard/general')
 def general_dashboard():
-    # TODO: Re-enable authentication before production
-    # if not current_user.is_authenticated:
-    #     return redirect(url_for('users.login'))
     return render_template('dashboard/general_dashboard.html')
 
 # Error handlers
@@ -260,4 +261,6 @@ def internal_server_error(e):
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 10000))
     logger.info(f"Starting Flask app on port {port}")
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.“
+
+0.0', port=port, debug=False)
