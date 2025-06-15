@@ -54,8 +54,8 @@
 }
 
 /* Transitions for Smooth Changes */
-body, .navbar, .header-message, .consent-banner, .btn, .card, .form-container {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+body, .navbar, .header-message, .consent-banner, .btn, .card, .form-container, .tile {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, background 0.3s ease;
 }
 
 /* Base Styles */
@@ -71,26 +71,25 @@ body {
 }
 
 .container {
-    max-width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0.5rem 1rem;
+    padding: 2rem;
     margin-top: 3rem;
 }
 
 /* Navbar */
 .navbar {
-  background: var(--navbar-gradient);
-  padding: 0.5rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 999;
-  margin: 0;
-
+    background: var(--navbar-gradient);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    margin: 0;
 }
 
 .navbar-brand {
@@ -105,16 +104,18 @@ body {
     font-size: 0.9rem;
 }
 
-.btn-primary {
+/* Buttons */
+.btn, .btn-primary {
     background: var(--button-gradient);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-size: 0.9rem;
+    cursor: pointer;
 }
 
-.btn-primary:hover {
+.btn:hover, .btn-primary:hover {
     background: var(--button-gradient-hover);
 }
 
@@ -133,14 +134,13 @@ body {
     margin: 0;
 }
 
-
 /* Cards */
 .card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 1rem;
-    margin: 1.5rem 0 1rem; /* Top margin added */
+    margin: 1.5rem 0 1rem;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
@@ -166,13 +166,14 @@ body {
     font-size: 0.8rem;
 }
 
-/* Forms */.form-container {
+/* Forms */
+.form-container {
     background: var(--form-bg);
     padding: 2rem;
     border-radius: 8px;
     text-align: center;
-    margin: 1rem auto; /* centers horizontally and reduces bottom spacing */
-    max-width: 400px; /* optional: keep form width clean */
+    margin: 1rem auto;
+    max-width: 400px;
 }
 
 .form-group {
@@ -221,8 +222,7 @@ body {
     margin-bottom: 1rem;
 }
 
-.table th,
-.table td {
+.table th, .table td {
     padding: 0.5rem;
     border: 1px solid var(--table-border);
     text-align: left;
@@ -253,25 +253,56 @@ body {
     align-items: center;
 }
 
-/* Buttons */
-.btn {
-    background: var(--button-gradient);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
+/* Grid Layout */
+.grid {
+    display: grid;
+    gap: 1.5rem;
 }
 
-.btn:hover {
-    background: var(--button-gradient-hover);
+.grid-cols-1 {
+    grid-template-columns: 1fr;
 }
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* Tiles */
+.tile {
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    color: white;
+    text-align: center;
+}
+
+.tile h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.tile p {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+
+.tile:hover {
+    transform: translateY(-5px);
+}
+
+/* Tile Background Colors */
+.bg-blue-600 { background-color: #2563eb; }
+.bg-green-600 { background-color: #16a34a; }
+.bg-purple-600 { background-color: #9333ea; }
+.bg-red-600 { background-color: #dc2626; }
+
+.hover\:bg-blue-700:hover { background-color: #1d4ed8; }
+.hover\:bg-green-700:hover { background-color: #15803d; }
+.hover\:bg-purple-700:hover { background-color: #7e22ce; }
+.hover\:bg-red-700:hover { background-color: #b91c1c; }
 
 /* Media Queries */
 @media (min-width: 768px) {
     .container {
-        max-width: 1200px;
         padding: 1rem 2rem;
         margin-top: 4rem;
     }
@@ -308,13 +339,16 @@ body {
         font-size: 1rem;
     }
 
-    .table th,
-    .table td {
+    .table th, .table td {
         padding: 0.75rem;
     }
 
     .list-group-item {
         padding: 0.75rem;
+    }
+
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
