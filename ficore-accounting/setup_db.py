@@ -39,6 +39,9 @@ def setup_database():
         # Invoices collection
         db.invoices.create_index([('user_id', 1)])
         db.invoices.create_index([('created_at', -1)])
+        db.invoices.create_index([('status', 1)])  # Index for filtering by status
+        db.invoices.create_index([('due_date', 1)])  # Index for due date queries
+        db.invoices.create_index([('invoice_number', 1)], unique=True)  # Unique index for invoice number
 
         # Transactions collection
         db.transactions.create_index([('user_id', 1)])
