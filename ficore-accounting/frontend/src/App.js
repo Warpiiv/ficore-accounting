@@ -20,8 +20,9 @@ function App() {
         </header>
         <Routes>
           <Route path="/" element={<Home language={language} />} />
-          <Route path="/invoice" element={<InvoiceForm language={language} />} />
-          <Route path="/transaction" element={<TransactionForm language={language} />} />
+          <Route path="/invoices/create" element={<InvoiceForm language={language} />} />
+          <Route path="/invoices/update/:invoiceId" element={<InvoiceForm language={language} />} />
+          <Route path="/transactions" element={<TransactionForm language={language} />} />
         </Routes>
       </div>
     </Router>
