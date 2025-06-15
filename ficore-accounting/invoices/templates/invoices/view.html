@@ -5,6 +5,35 @@
     <h1 class="text-center mb-4">{{ trans('core_invoices') | default('Invoices') }}</h1>
     <div class="card">
         <div class="card-body">
+            <div class="mb-4">
+                <form class="grid grid-cols-1 md:grid-cols-4 gap-4" method="GET" action="{{ url_for('invoices.invoice_dashboard') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div>
+                        <label class="block text-sm font-medium">{{ trans('status') | default('Status') }}</label>
+                        <select name="status" class="form-control">
+                            <option value="">{{ trans('all') | default('All') }}</option>
+                            <option value="pending" {{ 'selected' if status_filter == 'pending' else '' }}>{{ trans('pending') | default('Pending') }}</option>
+                            <option value="settled" {{ 'selected' if status_filter == 'settled' else '' }}>{{ trans('settled') | default('Settled') }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">{{ trans('customer_name') | default('Customer Name') }}</label>
+                        <input type="text" name="customer" class="form-control" value="{{ customer_filter or '' }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">{{ trans('start_date') | default('Start Date') }}</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ start_date or '' }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">{{ trans('end_date') | default('End Date') }}</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ end_date or '' }}">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="btn btn-primary mr-2">{{ trans('filter') | default('Filter') }}</button>
+                        <a href="{{ url_for('invoices.export_csv') }}" class="btn btn-secondary">{{ trans('export_csv') | default('Export to CSV') }}</a>
+                    </div>
+                </form>
+            </div>
             <div class="text-end mb-3">
                 <a href="{{ url_for('invoices.create_invoice') }}" class="btn btn-primary">
                     {{ trans('create_invoice') | default('Create Invoice') }}
@@ -15,22 +44,28 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th>{{ trans('invoice_number') | default('Invoice Number') }}</th>
                                 <th>{{ trans('customer_name') | default('Customer Name') }}</th>
                                 <th>{{ trans('description') | default('Description') }}</th>
                                 <th>{{ trans('amount') | default('Amount') }}</th>
                                 <th>{{ trans('status') | default('Status') }}</th>
                                 <th>{{ trans('created_at') | default('Created At') }}</th>
+                                <th>{{ trans('due_date') | default('Due Date') }}</th>
+                                <th>{{ trans('settled_date') | default('Settled Date') }}</th>
                                 <th>{{ trans('actions') | default('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for invoice in invoices %}
-                                <tr>
+                                <tr class="{{ 'bg-yellow-100' if invoice.is_overdue else 'bg-yellow-50' if invoice.status == 'pending' else 'bg-green-50' }}">
+                                    <td>{{ invoice.invoice_number }}</td>
                                     <td>{{ invoice.customer_name }}</td>
                                     <td>{{ invoice.description }}</td>
                                     <td class="amount-highlight">{{ invoice.amount | format_currency }}</td>
                                     <td>{{ trans(invoice.status) | default(invoice.status | capitalize) }}</td>
                                     <td>{{ invoice.created_at | format_datetime }}</td>
+                                    <td>{{ invoice.due_date | format_date if invoice.due_date else '-' }}</td>
+                                    <td>{{ invoice.settled_date | format_date if invoice.settled_date else '-' }}</td>
                                     <td>
                                         <a href="{{ url_for('invoices.update_invoice', invoice_id=invoice._id) }}" class="btn btn-sm btn-primary">
                                             {{ trans('edit') | default('Edit') }}
