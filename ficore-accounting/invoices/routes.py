@@ -1,10 +1,9 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, send_file
+from flask import Blueprint, request, render_template, redirect, url_for, flash, send_file, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, DateField, validators
 from flask_login import login_required, current_user
-from flask_pymongo import PyMongo
 from datetime import datetime
-from utils import trans_function  # Fixed typo in module name and import syntax
+from utils import trans_function
 import logging
 import csv
 from io import StringIO
@@ -12,14 +11,6 @@ from io import StringIO
 logger = logging.getLogger(__name__)
 
 invoices_bp = Blueprint('invoices', __name__, template_folder='templates')
-
-# Note: PyMongo instance should be passed from app.py or initialized properly
-# For now, assuming it's injected via app context; will address in deployment notes
-mongo = None  # Placeholder; will be set in app.py or via app.config
-
-def init_mongo(app):
-    global mongo
-    mongo = PyMongo(app)
 
 class InvoiceForm(FlaskForm):
     customer_name = StringField('Customer Name', [
@@ -43,6 +34,7 @@ class InvoiceForm(FlaskForm):
 def invoice_dashboard():
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
+        mongo = current_app.extensions['pymongo']  # Access mongo from app context
         status_filter = request.args.get('status', '')
         customer_filter = request.args.get('customer', '')
         start_date = request.args.get('start_date', '')
@@ -77,6 +69,7 @@ def create_invoice():
     if form.validate_on_submit():
         try:
             user_id = current_user.id if current_user.is_authenticated else 'guest'
+            mongo = current_app.extensions['pymongo']
             invoice = {
                 'user_id': user_id,
                 'customer_name': form.customer_name.data.strip(),
@@ -101,6 +94,7 @@ def create_invoice():
 @invoices_bp.route('/update/<invoice_id>', methods=['GET', 'POST'])
 def update_invoice(invoice_id):
     user_id = current_user.id if current_user.is_authenticated else 'guest'
+    mongo = current_app.extensions['pymongo']
     invoice = mongo.db.invoices.find_one({'_id': invoice_id, 'user_id': user_id})
     if not invoice:
         flash(trans_function('invoice_not_found'), 'danger')
@@ -144,6 +138,7 @@ def update_invoice(invoice_id):
 def delete_invoice(invoice_id):
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
+        mongo = current_app.extensions['pymongo']
         result = mongo.db.invoices.delete_one({'_id': invoice_id, 'user_id': user_id})
         if result.deleted_count == 0:
             flash(trans_function('invoice_not_found'), 'danger')
@@ -160,6 +155,7 @@ def delete_invoice(invoice_id):
 def export_invoices_csv():
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
+        mongo = current_app.extensions['pymongo']
         invoices = list(mongo.db.invoices.find({'user_id': user_id}))
         output = StringIO()
         writer = csv.writer(output)
