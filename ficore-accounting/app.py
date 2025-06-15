@@ -14,6 +14,10 @@ from translations import TRANSLATIONS
 from utils import trans_function
 from flask_session import Session
 
+mongo = PyMongo(app)
+
+init_mongo(app)
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
