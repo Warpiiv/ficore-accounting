@@ -7,6 +7,7 @@ from utils import trans_function
 import logging
 import csv
 from io import StringIO
+import pymongo
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ class InvoiceForm(FlaskForm):
 def invoice_dashboard():
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
-        mongo = current_app.extensions['pymongo']  # Access mongo from app context
+        mongo = current_app.extensions['pymongo']
         status_filter = request.args.get('status', '')
         customer_filter = request.args.get('customer', '')
         start_date = request.args.get('start_date', '')
@@ -70,21 +71,31 @@ def create_invoice():
         try:
             user_id = current_user.id if current_user.is_authenticated else 'guest'
             mongo = current_app.extensions['pymongo']
-            invoice = {
-                'user_id': user_id,
-                'customer_name': form.customer_name.data.strip(),
-                'description': form.description.data.strip(),
-                'amount': float(form.amount.data),
-                'status': form.status.data,
-                'due_date': form.due_date.data,
-                'settled_date': form.settled_date.data if form.status.data == 'settled' else None,
-                'created_at': datetime.utcnow(),
-                'invoice_number': str(mongo.db.invoices.count_documents({}) + 1).zfill(6)
-            }
-            result = mongo.db.invoices.insert_one(invoice)
-            flash(trans_function('invoice_created'), 'success')
-            logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
-            return redirect(url_for('invoices.invoice_dashboard'))
+            # Generate invoice number with retry
+            for attempt in range(3):
+                count = mongo.db.invoices.count_documents({})
+                invoice_number = str(count + 1).zfill(6)
+                invoice = {
+                    'user_id': user_id,
+                    'customer_name': form.customer_name.data.strip(),
+                    'description': form.description.data.strip(),
+                    'amount': float(form.amount.data),
+                    'status': form.status.data,
+                    'due_date': form.due_date.data,
+                    'settled_date': form.settled_date.data if form.status.data == 'settled' else None,
+                    'created_at': datetime.utcnow(),
+                    'invoice_number': invoice_number
+                }
+                try:
+                    result = mongo.db.invoices.insert_one(invoice)
+                    flash(trans_function('invoice_created'), 'success')
+                    logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
+                    return redirect(url_for('invoices.invoice_dashboard'))
+                except pymongo.errors.DuplicateKeyError:
+                    if attempt == 2:
+                        raise
+                    continue
+            raise Exception("Failed to generate unique invoice number")
         except Exception as e:
             logger.error(f"Error creating invoice: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
