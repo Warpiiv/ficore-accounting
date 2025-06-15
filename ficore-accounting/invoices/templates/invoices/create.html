@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}{{ trans('create_invoice') | default('Create Invoice') }}{% endblock %}
+{% block titleResolving title %}{{ trans('create_invoice') | default('Create Invoice') }}{% endblock %}
 {% block content %}
 <div class="container my-5">
     <h1 class="text-center mb-4">{{ invoice_id | default(trans('create_invoice') | default('Create Invoice')) if invoice_id else trans('create_invoice') | default('Create Invoice') }}</h1>
@@ -22,6 +22,23 @@
                     <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0" required>
                     <div class="invalid-feedback">{{ form.amount.errors[0] if form.amount.errors else trans('required_field') | default('This field is required') }}</div>
                 </div>
+                <div class="form-group mb-3">
+                    <label for="status" class="form-label">{{ trans('status') | default('Status') }}</label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="pending" {{ 'selected' if form.status.data == 'pending' else '' }}>{{ trans('pending') | default('Pending') }}</option>
+                        <option value="settled" {{ 'selected' if form.status.data == 'settled' else '' }}>{{ trans('settled') | default('Settled') }}</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="due_date" class="form-label">{{ trans('due_date') | default('Due Date') }}</label>
+                    <input type="date" name="due_date" id="due_date" class="form-control" value="{{ form.due_date.data | format_date if form.due_date.data else '' }}">
+                </div>
+                {% if form.status.data == 'settled' %}
+                <div class="form-group mb-3">
+                    <label for="settled_date" class="form-label">{{ trans('settled_date') | default('Settled Date') }}</label>
+                    <input type="date" name="settled_date" id="settled_date" class="form-control" value="{{ form.settled_date.data | format_date if form.settled_date.data else '' }}">
+                </div>
+                {% endif %}
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">{{ trans('save') | default('Save') }}</button>
                 </div>
