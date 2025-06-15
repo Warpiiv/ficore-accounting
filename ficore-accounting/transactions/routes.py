@@ -5,7 +5,6 @@ from flask_login import login_required, current_user
 from flask_pymongo import PyMongo
 from datetime import datetime, timedelta
 from utils import trans_function, is_valid_email
-from app import app, mail
 import logging
 import csv
 from io import StringIO
@@ -14,7 +13,13 @@ from bson import ObjectId
 logger = logging.getLogger(__name__)
 
 transactions_bp = Blueprint('transactions', __name__, template_folder='templates')
-mongo = PyMongo(app)
+
+# Placeholder for PyMongo instance, initialized by app.py
+mongo = None
+
+def init_mongo(app):
+    global mongo
+    mongo = PyMongo(app)
 
 class TransactionForm(FlaskForm):
     type = SelectField('Type', choices=[
