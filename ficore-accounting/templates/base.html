@@ -74,7 +74,7 @@
                             <li><a class="dropdown-item" href="{{ url_for('users.login') }}" style="font-size: 0.85rem;">{{ trans('core_login') | default('Login') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('users.signup') }}" style="font-size: 0.85rem;">{{ trans('core_signup') | default('Signup') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('users.profile') }}" style="font-size: 0.85rem;">{{ trans('core_profile') | default('Profile') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('logout') }}" style="font-size: 0.85rem;">{{ trans('core_logout') | default('Logout') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('users.logout') }}" style="font-size: 0.85rem;">{{ trans('core_logout') | default('Logout') }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -105,7 +105,7 @@
                 <a href="mailto:ficoreafrica@gmail.com" class="text-white"><i class="fas fa-envelope"></i> {{ trans('core_contact_us') | default('Contact Us') }}</a>
                 <a href="{{ url_for('feedback') }}" class="text-white"><i class="fas fa-comment"></i> {{ trans('core_provide_feedback') | default('Provide Feedback') }}</a>
                 {% if current_user.is_authenticated %}
-                <a href="{{ url_for('logout') }}" class="text-white"><i class="fas fa-sign-out-alt"></i> {{ trans('core_logout') | default('Logout') }}</a>
+                <a href="{{ url_for('users.logout') }}" class="text-white"><i class="fas fa-sign-out-alt"></i> {{ trans('core_logout') | default('Logout') }}</a>
                 {% else %}
                 <a href="{{ url_for('users.login') }}" class="text-white"><i class="fas fa-sign-in-alt"></i> {{ trans('core_login') | default('Login') }}</a>
                 {% endif %}
