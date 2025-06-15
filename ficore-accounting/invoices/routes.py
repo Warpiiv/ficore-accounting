@@ -1,19 +1,25 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash
+from flask import Blueprint, request, render_template, redirect, url_for, flash, send_file
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, DateField, validators
 from flask_login import login_required, current_user
 from flask_pymongo import PyMongo
 from datetime import datetime
-from utilszioniimport trans_function
+from utils import trans_function  # Fixed typo in module name and import syntax
 import logging
 import csv
 from io import StringIO
-from flask import send_file
 
 logger = logging.getLogger(__name__)
 
 invoices_bp = Blueprint('invoices', __name__, template_folder='templates')
-mongo = PyMongo(app)
+
+# Note: PyMongo instance should be passed from app.py or initialized properly
+# For now, assuming it's injected via app context; will address in deployment notes
+mongo = None  # Placeholder; will be set in app.py or via app.config
+
+def init_mongo(app):
+    global mongo
+    mongo = PyMongo(app)
 
 class InvoiceForm(FlaskForm):
     customer_name = StringField('Customer Name', [
