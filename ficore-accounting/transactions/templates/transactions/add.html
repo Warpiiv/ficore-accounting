@@ -31,13 +31,32 @@
                 </div>
                 <div class="form-group mb-3">
                     <label for="amount" class="form-label">{{ trans('amount') | default('Amount (₦)') }}</label>
-                    <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0" required>
-                    <div class="invalid-feedback">{{ form.amount.errors[0] if form.amount.errors else trans('required_field') | default('This field is required') }}</div>
+                    <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0.01" required>
+                    <div class="invalid-feedback">{{ form.amount.errors[0] if form.amount.errors else trans('invalid_amount') | default('Amount must be greater than zero') }}</div>
                 </div>
                 <div class="form-group mb-3">
                     <label for="description" class="form-label">{{ trans('description') | default('Description') }}</label>
                     <textarea name="description" id="description" class="form-control" required>{{ form.description.data or '' }}</textarea>
                     <div class="invalid-feedback">{{ form.description.errors[0] if form.description.errors else trans('required_field') | default('This field is required') }}</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="tags" class="form-label">{{ trans('tags') | default('Tags') }}</label>
+                    <input type="text" name="tags" id="tags" class="form-control" value="{{ form.tags.data or '' }}" placeholder="{{ trans('tags_placeholder') | default('Enter tags, separated by commas') }}">
+                    <div class="invalid-feedback">{{ form.tags.errors[0] if form.tags.errors }}</div>
+                </div>
+                <div class="form-group mb-3 form-check">
+                    <input type="checkbox" name="is_recurring" id="is_recurring" class="form-check-input" {% if form.is_recurring.data %}checked{% endif %}>
+                    <label for="is_recurring" class="form-check-label">{{ trans('recurring') | default('Recurring Transaction') }}</label>
+                </div>
+                <div class="form-group mb-3" id="recurring_period_group" {% if not form.is_recurring.data %}style="display: none;"{% endif %}>
+                    <label for="recurring_period" class="form-label">{{ trans('recurring_period') | default('Recurring Period') }}</label>
+                    <select name="recurring_period" id="recurring_period" class="form-select">
+                        {% for value, label in form.recurring_period.choices %}
+                            <option value="{{ value }}" {% if form.recurring_period.data == value %}selected{% endif %}>
+                                {{ trans(value) | default(label) }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">{{ trans('save') | default('Save') }}</button>
@@ -46,4 +65,9 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('is_recurring').addEventListener('change', function() {
+        document.getElementById('recurring_period_group').style.display = this.checked ? 'block' : 'none';
+    });
+</script>
 {% endblock %}
