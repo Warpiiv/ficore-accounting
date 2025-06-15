@@ -219,7 +219,7 @@ def profile():
         flash(trans_function('core_something_went_wrong'), 'danger')
         return redirect(url_for('index')), 500
 
-@users_bp.route '/update_profile', methods=['GET', 'POST'])
+@users_bp.route('/update_profile', methods=['GET', 'POST'])
 def update_profile():
     # TODO: Re-enable @login_required before production
     form = ProfileForm(data={
