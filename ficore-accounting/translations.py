@@ -4,7 +4,7 @@ TRANSLATIONS = {
         'database_setup_success': 'Database setup completed successfully',
         'database_setup_error': 'Error setting up database. Please try again',
          #Module: core
-        'core_invoice': 'Invoice',
+        'core_invoice': 'Create Invoice',
         'core_signup': 'Signup',
         'created_at': 'Created At',
         'pending': 'Pending',
@@ -98,7 +98,7 @@ TRANSLATIONS = {
         'core_home': 'Home',
         'core_internal_server_error': 'Internal Server Error',
         'core_invalid_request': 'Invalid request. Please try again.',
-        'core_invoices': 'Invoices',
+        'core_invoices': 'List of Invoices',
         'core_join_waitlist': 'Join Waitlist',
         'core_learn_more': 'Learn more',
         'core_login': 'Login',
