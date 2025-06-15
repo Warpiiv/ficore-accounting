@@ -61,8 +61,9 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="mainMenuDropdown">
                             <li><a class="dropdown-item" href="{{ url_for('index') }}" style="font-size: 0.85rem;">{{ trans('core_home') | default('Home') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('invoices.invoice_dashboard') }}" style="font-size: 0.85rem;">{{ trans('core_invoices') | default('Invoices') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('transactions.transaction_history') }}" style="font-size: 0.85rem;">{{ trans('core_transactions') | default('Transactions') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('invoices.create_invoice') }}" style="font-size: 0.85rem;">{{ trans('core_invoice') | default('Create Invoice') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('invoices.invoice_dashboard') }}" style="font-size: 0.85rem;">{{ trans('core_invoices') | default('Invoices Dashboard') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transactions.transaction_history') }}" style="font-size: 0.85rem;">{{ trans('core_transactions') | default('Transactions Dashboard') }}</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -71,10 +72,9 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="toolsAuthDropdown">
                             <li><a class="dropdown-item" href="{{ url_for('users.login') }}" style="font-size: 0.85rem;">{{ trans('core_login') | default('Login') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('users.signup') }}" style="font-size: 0.85rem;">{{ trans('core_signup') | default('Signup') }}</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('users.profile') }}" style="font-size: 0.85rem;">{{ trans('core_profile') | default('Profile') }}</a></li>
-                            {% if current_user.is_authenticated %}
                             <li><a class="dropdown-item" href="{{ url_for('logout') }}" style="font-size: 0.85rem;">{{ trans('core_logout') | default('Logout') }}</a></li>
-                            {% endif %}
                         </ul>
                     </li>
                 </ul>
