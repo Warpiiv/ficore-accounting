@@ -250,7 +250,7 @@ def feedback():
         except Exception as e:
             logger.error(f"Error processing feedback: {str(e)}")
             flash(trans_function('feedback_error'), 'danger')
-            return render_template('general/feedback.html', tool_options=tool_options)), 500
+            return render_template('general/feedback.html', tool_options=tool_options), 500
 
     return render_template('general/feedback.html', tool_options=tool_options)
 
