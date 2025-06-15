@@ -85,10 +85,12 @@ body {
   align-items: center;
   justify-content: space-between;
   position: relative;
-  top: 2rem;
+  top: 0;
   left: 0;
   width: 100%;
   z-index: 999;
+  margin: 0;
+
 }
 
 .navbar-brand {
@@ -128,6 +130,7 @@ body {
     left: 0;
     right: 0;
     z-index: 1000;
+    margin: 0;
 }
 
 
