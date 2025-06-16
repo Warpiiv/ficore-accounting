@@ -93,7 +93,7 @@
     <footer class="footer">
         <div class="container text-center py-2" role="contentinfo">
             <p>{{ trans('core_about_records') | default('About Ficore Records') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2025') }}</p>
-            <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_records') | default('Ficore Records is a simplified Software for SMEs') }} <a href="{{ url_for('about') }}" class="text-white text-decorationunderline">{{ trans('core_learn_more') | default('Learn more') }}</a></p>
+            <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_records') | default('Ficore Records is a simplified Software for SMEs') }} <a href="{{ url_for('about') }}" class="text-white text-decoration-underline">{{ trans('core_learn_more') | default('Learn more') }}</a></p>
             <div class="social-icons d-flex justify-content-center gap-2">
                 <a href="{{ LINKEDIN_URL }}" target="_blank" aria-label="{{ trans('core_connect_on_linkedin') | default('Connect on LinkedIn') }}" class="d-flex align-items-center text-white">
                     <i class="fab fa-linkedin me-1"></i> LinkedIn
@@ -109,7 +109,7 @@
                 <a href="mailto:ficoreafrica@gmail.com" class="text-white"><i class="fas fa-envelope"></i> {{ trans('core_contact_us') | default('Contact Us') }}</a>
                 <a href="{{ url_for('feedback') }}" class="text-white"><i class="fas fa-comment"></i> {{ trans('core_provide_feedback') | default('Provide Feedback') }}</a>
                 {% if current_user.is_authenticated %}
-                <a href="{{ url_for('users.logout') }}" class="text-white"><i class="fas fa-sign-out-alt"></i> {{zte('core_logout') | default('Logout') }}</a>
+                <a href="{{ url_for('users.logout') }}" class="text-white"><i class="fas fa-sign-out-alt"></i> {{ trans('core_logout') | default('Logout') }}</a>
                 {% else %}
                 <a href="{{ url_for('users.login') }}" class="text-white"><i class="fas fa-sign-in-alt"></i> {{ trans('core_login') | default('Login') }}</a>
                 {% endif %}
@@ -217,6 +217,18 @@
                         e.preventDefault();
                         alert('{{ trans('core_please_complete_all_records') | default('Please complete all records correctly') }}');
                     }
+                });
+            });
+
+            // Handle alert close to realign header/navbar
+            document.querySelectorAll('.alert .btn-close').forEach(button => {
+                button.addEventListener('click', function() {
+                    setTimeout(() => {
+                        window.scrollTo(0, 0); // Scroll to top to ensure realignment
+                        document.body.style.transition = 'none'; // Disable transition temporarily
+                        void document.body.offsetHeight; // Force reflow
+                        document.body.style.transition = ''; // Re-enable transition
+                    }, 100); // Slight delay to allow Bootstrap fade-out animation
                 });
             });
 
