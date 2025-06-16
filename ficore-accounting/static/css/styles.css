@@ -303,7 +303,7 @@ body {
 }
 
 .tile p {
-    text-decoration: none;
+    text-decoration: none !important;
     font-size: 0.95rem;
     color: #e0e0e0;
     line-height: 1.4;
