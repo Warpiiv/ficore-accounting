@@ -70,12 +70,9 @@ def load_user(user_id):
     return None
 
 # Register blueprints
-from invoices.routes import invoices_bp, init_mongo
+from invoices.routes import invoices_bp
 from transactions.routes import transactions_bp
 from users.routes import users_bp
-
-# Initialize mongo for invoices blueprint
-init_mongo(app)
 
 app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
