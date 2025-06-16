@@ -16,7 +16,7 @@
             <h2>{{ trans('feedback') | default('Provide Feedback') }}</h2>
             <p>{{ trans('feedback_desc') | default('Share your thoughts on the app') }}</p>
         </a>
-        <a href="{{ url_for('dashboard.admin') }}" class="tile bg-red-600 hover:bg-red-700">
+        <a href="{{ url_for('admin_dashboard') }}" class="tile bg-red-600 hover:bg-red-700">
             <h2>{{ trans('admin_dashboard') | default('Admin Dashboard') }}</h2>
             <p>{{ trans('admin_dashboard_desc') | default('Manage users and settings') }}</p>
         </a>
