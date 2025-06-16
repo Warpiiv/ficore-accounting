@@ -1,10 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_pymongo import PyMongo
-from app import app, mail, User  # Import User from app
 from flask_mail import Message
 import logging
 import uuid
@@ -14,7 +12,6 @@ from utils import trans_function, is_valid_email
 logger = logging.getLogger(__name__)
 
 users_bp = Blueprint('users', __name__, template_folder='templates')
-mongo = PyMongo(app)
 
 class LoginForm(FlaskForm):
     username = StringField('Username', [
@@ -74,8 +71,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         try:
+            mongo = current_app.extensions['pymongo']
             user = mongo.db.users.find_one({'_id': form.username.data.strip()})
             if user and check_password_hash(user['password'], form.password.data):
+                from app import User  # Import here to avoid circular import
                 login_user(User(user['_id'], user['email']), remember=True)
                 flash(trans_function('logged_in'), 'success')
                 logger.info(f"User {form.username.data} logged in successfully")
@@ -96,6 +95,7 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         try:
+            mongo = current_app.extensions['pymongo']
             username = form.username.data.strip()
             email = form.email.data.strip()
             if mongo.db.users.find_one({'_id': username}) or mongo.db.users.find_one({'email': email}):
@@ -110,6 +110,7 @@ def signup():
                 'created_at': datetime.utcnow()
             }
             mongo.db.users.insert_one(user_data)
+            from app import User  # Import here to avoid circular import
             login_user(User(username, email), remember=True)
             flash(trans_function('signup_success'), 'success')
             logger.info(f"New user created: {username}")
@@ -128,6 +129,7 @@ def forgot_password():
     form = ForgotPasswordForm()
     if form.validate_on_submit():
         try:
+            mongo = current_app.extensions['pymongo']
             email = form.email.data.strip()
             user = mongo.db.users.find_one({'email': email})
             if not user:
@@ -146,6 +148,7 @@ def forgot_password():
                 body=f"{trans_function('reset_password_body')}\n\n{reset_url}\n\n{trans_function('reset_password_expiry')}"
             )
             try:
+                from app import mail
                 mail.send(msg)
                 logger.info(f"Password reset email sent to {email}")
             except Exception as e:
@@ -170,6 +173,7 @@ def reset_password():
     form = ResetPasswordForm()
     if form.validate_on_submit():
         try:
+            mongo = current_app.extensions['pymongo']
             token = request.form.get('token') or token
             user = mongo.db.users.find_one({
                 'reset_token': token,
@@ -201,6 +205,7 @@ def reset_password():
 def profile():
     # TODO: Re-enable @login_required before production
     try:
+        mongo = current_app.extensions['pymongo']
         # Use a default user for unauthenticated access
         user_id = current_user.id if current_user.is_authenticated else 'guest'
         user = mongo.db.users.find_one({'_id': user_id}) if current_user.is_authenticated else {
@@ -228,6 +233,7 @@ def update_profile():
     })
     if form.validate_on_submit():
         try:
+            mongo = current_app.extensions['pymongo']
             new_username = form.username.data.strip()
             new_email = form.email.data.strip()
             user_id = current_user.id if current_user.is_authenticated else None
