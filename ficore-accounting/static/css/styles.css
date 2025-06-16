@@ -84,7 +84,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -126,7 +126,7 @@ body {
     text-align: center;
     padding: 0.5rem;
     font-size: 0.85rem;
-    position: relative;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -273,6 +273,7 @@ body {
     border-radius: 0.75rem;
     color: white;
     text-align: center;
+    background: var(--button-gradient);
 }
 
 .tile h2 {
@@ -287,6 +288,7 @@ body {
 
 .tile:hover {
     transform: translateY(-5px);
+    background: var(--button-gradient-hover);
 }
 
 /* Tile Background Colors */
@@ -368,4 +370,19 @@ body {
     .form-control, .form-select {
         font-size: 0.85rem;
     }
+}
+
+.footer {
+    background: var(--navbar-gradient);
+    color: white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+.footer .container {
+    text-align: center;
+    padding: 1rem;
 }
