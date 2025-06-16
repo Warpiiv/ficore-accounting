@@ -303,8 +303,13 @@ body {
 }
 
 .tile p {
-    margin-top: 0.5rem;
-    font-size: 1rem;
+    text-decoration: none;
+    font-size: 0.95rem;
+    color: #e0e0e0;
+    line-height: 1.4;
+    opacity: 0.85;
+    font-style: italic;
+    padding-left: 0.25rem;
 }
 
 .tile:hover {
