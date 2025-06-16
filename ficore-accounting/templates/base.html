@@ -22,7 +22,7 @@
           {% if messages %}
             <div class="container">
                 {% for category, message in messages %}
-                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: sticky; top: 0; z-index: 1001;">
+                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: absolute; top: 0; left: 0; right: 0; z-index: 1001; width: 100%; margin: 0; padding: 10px;">
                     {{ trans(message) | default(message) }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}"></button>
                   </div>
@@ -202,14 +202,11 @@
             document.querySelectorAll('.alert .btn-close').forEach(button => {
                 button.addEventListener('click', function() {
                     setTimeout(() => {
-                        document.body.style.removeProperty('transition');
-                        document.querySelector('.wrapper').style.removeProperty('margin-top');
-                        window.scrollTo(0, 0);
-                        const wrapper = document.querySelector('.wrapper');
-                        wrapper.style.display = 'none';
-                        wrapper.offsetHeight;
-                        wrapper.style.display = '';
-                    }, 150);
+                        // No need for extensive reflow since alert is absolute
+                        window.scrollTo(0, 0); // Ensure top alignment
+                        const alert = this.closest('.alert');
+                        if (alert) alert.style.display = 'none'; // Hide alert after close
+                    }, 150); // Match Bootstrap fade-out animation
                 });
             });
 
