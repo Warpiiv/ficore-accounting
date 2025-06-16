@@ -296,13 +296,10 @@ body {
 .footer {
     background: var(--navbar-gradient);
     color: white;
-    padding: 1rem;
+    padding: 0.5rem; /* compact padding */
     text-align: center;
-    max-height: 200px; /* Increased height to accommodate more content */
-    overflow-y: auto; /* Enable vertical scrolling for overflow content */
     width: 100%;
     box-sizing: border-box;
-    margin-top: 1rem; /* Reduced margin to decrease space before footer */
 }
 
 /* Media Queries */
