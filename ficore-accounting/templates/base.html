@@ -86,6 +86,10 @@
         {% block content %}{% endblock %}
     </div>
 
+    <div class="middle-banner">
+        {{ trans('core_helping_african_smes') | default('Helping African SMEs…') }}
+    </div>
+
     <footer class="footer">
         <div class="container text-center py-4" role="contentinfo">
             <p>{{ trans('core_about_minirecords') | default('About Ficore MiniRecords') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2025') }}</p>
