@@ -295,15 +295,17 @@ body {
     color: white;
     text-align: center;
     background: var(--button-gradient);
+    text-decoration: none; /* Remove underline on entire tile (anchor) */
 }
 
 .tile h2 {
     font-size: 1.25rem;
     font-weight: 600;
+    text-decoration: underline; /* Keep underline on title */
 }
 
 .tile p {
-    text-decoration: none !important;
+    text-decoration: none !important; /* Ensure no underline on subtitle */
     font-size: 0.95rem;
     color: #e0e0e0;
     line-height: 1.4;
