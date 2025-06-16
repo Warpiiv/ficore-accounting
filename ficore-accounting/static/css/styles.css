@@ -24,6 +24,7 @@
     --table-text: #333333;
     --amount-highlight: #1E3A8A;
     --error-highlight: #D32F2F;
+    --middle-banner-gradient: linear-gradient(90deg, #E0E0E0, #B0BEC5); /* Subtle gradient for middle banner */
 }
 
 /* Dark Mode Overrides */
@@ -51,6 +52,7 @@
     --table-text: #E0E0E0;
     --amount-highlight: #1E3A8A;
     --error-highlight: #D32F2F;
+    --middle-banner-gradient: linear-gradient(90deg, #424242, #616161); /* Subtle gradient for dark mode */
 }
 
 /* Transitions for Smooth Changes */
@@ -384,14 +386,14 @@ body {
 
 .footer .container {
     text-align: center;
-    padding: 0.5rem; /* Reduced padding */
+    padding: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
 .footer p, .footer .footer-disclaimer, .footer .social-icons a, .footer .footer-buttons a {
-    font-size: 0.85rem; /* Reduced font size for lighter appearance */
+    font-size: 0.85rem;
 }
 
 .footer .social-icons {
@@ -404,4 +406,16 @@ body {
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
+}
+
+/* Middle Banner */
+.middle-banner {
+    background: var(--middle-banner-gradient);
+    color: var(--text-color);
+    text-align: center;
+    padding: 0.25rem; /* Thin section */
+    font-size: 0.9rem;
+    width: 100%;
+    position: relative;
+    margin-bottom: 0; /* Ensure it sits just above footer */
 }
