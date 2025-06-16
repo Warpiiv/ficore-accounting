@@ -8,6 +8,7 @@ import logging
 import csv
 from io import StringIO
 import pymongo
+from bson import ObjectId  # Added for ObjectId conversion
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,11 @@ class InvoiceForm(FlaskForm):
 
 @invoices_bp.route('/invoice_dashboard', methods=['GET'])
 def invoice_dashboard():
+    # Initialize filter variables for robustness
+    status_filter = ''
+    customer_filter = ''
+    start_date = ''
+    end_date = ''
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
@@ -119,7 +125,7 @@ def create_invoice():
 def update_invoice(invoice_id):
     user_id = current_user.id if current_user.is_authenticated else 'guest'
     mongo = current_app.extensions['pymongo']
-    invoice = mongo.db.invoices.find_one({'_id': invoice_id, 'user_id': user_id})
+    invoice = mongo.db.invoices.find_one({'_id': ObjectId(invoice_id), 'user_id': user_id})  # Convert to ObjectId
     if not invoice:
         flash(trans_function('invoice_not_found'), 'danger')
         return redirect(url_for('invoices.invoice_dashboard'))
@@ -136,7 +142,7 @@ def update_invoice(invoice_id):
     if form.validate_on_submit():
         try:
             mongo.db.invoices.update_one(
-                {'_id': invoice_id, 'user_id': user_id},
+                {'_id': ObjectId(invoice_id), 'user_id': user_id},  # Convert to ObjectId
                 {
                     '$set': {
                         'customer_name': form.customer_name.data.strip(),
@@ -163,7 +169,7 @@ def delete_invoice(invoice_id):
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
-        result = mongo.db.invoices.delete_one({'_id': invoice_id, 'user_id': user_id})
+        result = mongo.db.invoices.delete_one({'_id': ObjectId(invoice_id), 'user_id': user_id})  # Convert to ObjectId
         if result.deleted_count == 0:
             flash(trans_function('invoice_not_found'), 'danger')
         else:
