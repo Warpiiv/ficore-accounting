@@ -4,7 +4,7 @@
 <div class="container">
     <h1 class="text-center text-4xl font-bold mb-8">{{ trans('welcome') | default('Welcome to Ficore Records') }}</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a href="{{ url_for('dashboard.general_dashboard') }}" class="tile bg-orange-600 hover:bg-orange-700">
+        <a href="{{ url_for('general_dashboard') }}" class="tile bg-orange-600 hover:bg-orange-700">
             <h2>{{ trans('general_dashboard') | default('General Dashboard') }}</h2>
             <p>{{ trans('general_dashboard_desc') | default('See overall financial summary and stats') }}</p>
         </a>
