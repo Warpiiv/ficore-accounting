@@ -133,41 +133,31 @@
             }
 
             // Apply initial dark mode state
-            if (darkMode === 'true') {
-                body.classList.add('dark-mode');
-                modeToggle.innerHTML = '<i class="fas fa-sun" aria-hidden="true"></i>';
-            } else {
-                body.classList.remove('dark-mode');
-                modeToggle.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
+            function applyDarkMode(isDark) {
+                body.classList.toggle('dark-mode', isDark === 'true');
+                modeToggle.innerHTML = isDark === 'true' ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
             }
+            applyDarkMode(darkMode);
 
-            // Toggle dark mode on click
+            // Debounced toggle function to prevent rapid clicks
+            let toggleTimeout;
             modeToggle.addEventListener('click', function() {
-                const isDarkMode = body.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
-                modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
-
-                // Optional: Sync with server (uncomment if backend endpoint exists)
-                /*
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                fetch('{{ url_for("set_dark_mode") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-Token': csrfToken
-                    },
-                    body: JSON.stringify({ darkMode: isDarkMode })
-                }).catch(error => console.error('Error syncing dark mode:', error));
-                */
+                if (toggleTimeout) clearTimeout(toggleTimeout);
+                toggleTimeout = setTimeout(() => {
+                    const isDarkMode = !body.classList.contains('dark-mode');
+                    body.classList.toggle('dark-mode', isDarkMode);
+                    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
+                    modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
+                    console.log('Dark mode toggled to:', isDarkMode ? 'dark' : 'light');
+                }, 200); // 200ms debounce delay
             });
 
             // Listen for system color scheme changes
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
                 if (localStorage.getItem('darkMode') === null) {
                     const isDarkMode = e.matches;
-                    body.classList.toggle('dark-mode', isDarkMode);
-                    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
-                    modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
+                    applyDarkMode(isDarkMode ? 'true' : 'false');
+                    console.log('System preference changed to:', isDarkMode ? 'dark' : 'light');
                 }
             });
 
@@ -181,14 +171,12 @@
                         const category = input.getType();
                         const required = input.hasAttribute('required');
 
-                        // Basic required field validation
                         if (required && !value) {
                             input.classList.add('is-invalid');
                             valid = false;
                             return;
                         }
 
-                        // Number input validation
                         if (category === 'number' && value) {
                             const min = input.getAttribute('min');
                             const maxNum = input.getAttribute('max_num');
@@ -200,7 +188,6 @@
                             }
                         }
 
-                        // Custom validation for ratings (1-5)
                         if (input.name === 'rating' && value) {
                             const ratingValue = parseInt(value);
                             if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 5) {
@@ -224,16 +211,14 @@
             document.querySelectorAll('.alert .btn-close').forEach(button => {
                 button.addEventListener('click', function() {
                     setTimeout(() => {
-                        // Remove any residual inline styles that might cause space
                         document.body.style.removeProperty('transition');
                         document.querySelector('.wrapper').style.removeProperty('margin-top');
-                        // Force layout recalculation
                         window.scrollTo(0, 0);
                         const wrapper = document.querySelector('.wrapper');
                         wrapper.style.display = 'none';
-                        wrapper.offsetHeight; // Force reflow
+                        wrapper.offsetHeight;
                         wrapper.style.display = '';
-                    }, 150); // Adjusted delay to match Bootstrap's fade-out animation
+                    }, 150);
                 });
             });
 
