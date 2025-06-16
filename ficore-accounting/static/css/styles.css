@@ -102,9 +102,9 @@ body {
     justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
-    position: sticky;
+    position: fixed;    /* Change from sticky */
     top: 0;
-    z-index: 1000; /*stay above content*/
+    z-index: 1000; 
     transition: top 0.3s ease-in-out;
 }
 
