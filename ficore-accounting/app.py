@@ -14,6 +14,7 @@ from translations import TRANSLATIONS
 from utils import trans_function
 from flask_session import Session
 from pymongo import ASCENDING, DESCENDING, errors
+from pymongo.operations import UpdateOne
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -211,12 +212,16 @@ def setup_database():
                 null_count = db.invoices.count_documents({'invoice_number': None})
                 if null_count > 0:
                     logger.info(f"Found {null_count} invoices with null invoice_number. Assigning unique values...")
-                    # Use bulk write for efficiency
-                    bulk = db.invoices.initialize_ordered_bulk_op()
-                    for i, doc in enumerate(db.invoices.find({'invoice_number': None}), start=1):
-                        # Align with create_invoice format: 000001, 000002, etc.
-                        bulk.find({'_id': doc['_id']}).update({'$set': {'invoice_number': str(i).zfill(6)}})
-                    bulk.execute()
+                    # Use bulk_write for efficiency
+                    operations = [
+                        UpdateOne(
+                            {'_id': doc['_id']},
+                            {'$set': {'invoice_number': str(i).zfill(6)}}
+                        )
+                        for i, doc in enumerate(db.invoices.find({'invoice_number': None}), start=1)
+                    ]
+                    if operations:
+                        db.invoices.bulk_write(operations, ordered=True)
                     logger.info("Updated null invoice_numbers with unique values")
 
                 # Create invoice indexes
