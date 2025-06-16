@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block titleResolving title %}{{ trans('create_invoice') | default('Create Invoice') }}{% endblock %}
+{% block title %}{{ trans('create_invoice') | default('Create Invoice') }}{% endblock %}
 {% block content %}
 <div class="container my-5">
     <h1 class="text-center mb-4">{{ invoice_id | default(trans('create_invoice') | default('Create Invoice')) if invoice_id else trans('create_invoice') | default('Create Invoice') }}</h1>
