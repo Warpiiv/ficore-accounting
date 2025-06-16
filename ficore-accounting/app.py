@@ -48,6 +48,9 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'support@fi
 
 # Initialize extensions after app creation
 mongo = PyMongo(app)
+# Fix for KeyError: 'pymongo' - Register mongo in app.extensions
+app.extensions = getattr(app, 'extensions', {})
+app.extensions['pymongo'] = mongo
 app.config['SESSION_MONGODB'] = mongo.cx  # Set MongoDB connection for Flask-Session
 mail = Mail(app)
 sess = Session(app)
