@@ -3,6 +3,7 @@ TRANSLATIONS = {
         # Setup
         'database_setup_success': 'Database setup completed successfully',
         'database_setup_error': 'Database setup failed',
+        'core_helping_african_smes': 'Helping African SMEs simplify records and grow financially.',
         # Module: core
         'core_invoice': 'Create Invoice',
         'core_signup': 'Signup',
@@ -390,7 +391,7 @@ TRANSLATIONS = {
         'view_all_transactions': 'Duba Duk Ma’amaloli',
         # Financial
         'create_invoice': 'Ƙirƙiri Daftari',
-        # Consent Banner
+        'core_helping_african_smes': 'Taimaka wa Ƙanana Masana’antu na Afirka wajen sauƙaƙe rajista da haɓaka kuɗi.',
         'core_consent_banner_minirecords': 'Ta amfani da Ficore MiniRecords, ka fahimci cewa muna ba da kayan aiki don shiri kawai, ba banki ba.',
         # Errors
         'status': 'Matsayi'
