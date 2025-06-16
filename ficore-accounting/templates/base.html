@@ -19,9 +19,9 @@
 <body>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <div class="container mt-2">
+        <div class="container">
             {% for category, message in messages %}
-              <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: relative; z-index: 1001; margin-bottom: 0;">
+              <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: sticky; top: 0; z-index: 1001; margin-bottom: 0;">
                 {{ trans(message) | default(message) }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}"></button>
               </div>
@@ -87,10 +87,10 @@
     </div>
 
     <footer class="footer">
-        <div class="container text-center py-4" role="contentinfo">
+        <div class="container text-center py-2" role="contentinfo"> <!-- Reduced padding with py-2 -->
             <p>{{ trans('core_about_minirecords') | default('About Ficore MiniRecords') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2025') }}</p>
             <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_minirecords') | default('Ficore MiniRecords is a simplified Software for SMEs') }} <a href="{{ url_for('about') }}" class="text-white text-decoration-underline">{{ trans('core_learn_more') | default('Learn more') }}</a></p>
-            <div class="social-icons d-flex justify-content-center gap-3">
+            <div class="social-icons d-flex justify-content-center gap-2">
                 <a href="{{ LINKEDIN_URL }}" target="_blank" aria-label="{{ trans('core_connect_on_linkedin') | default('Connect on LinkedIn') }}" class="d-flex align-items-center text-white">
                     <i class="fab fa-linkedin me-1"></i> LinkedIn
                 </a>
@@ -101,7 +101,7 @@
                     <i class="fab fa-facebook me-1"></i> Facebook
                 </a>
             </div>
-            <div class="footer-buttons mt-3">
+            <div class="footer-buttons mt-2">
                 <a href="mailto:ficoreafrica@gmail.com" class="text-white"><i class="fas fa-envelope"></i> {{ trans('core_contact_us') | default('Contact Us') }}</a>
                 <a href="{{ url_for('feedback') }}" class="text-white"><i class="fas fa-comment"></i> {{ trans('core_provide_feedback') | default('Provide Feedback') }}</a>
                 {% if current_user.is_authenticated %}
