@@ -298,8 +298,10 @@ body {
     color: white;
     padding: 1rem;
     text-align: center;
+    max-height: 100px; /* Limit footer height */
+    overflow-y: auto; /* Allow scrolling if content exceeds height */
+    box-sizing: border-box;
 }
-
 /* Media Queries */
 @media (min-width: 768px) {
     .container {
