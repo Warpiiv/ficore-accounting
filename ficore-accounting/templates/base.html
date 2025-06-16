@@ -124,32 +124,23 @@
         document.addEventListener('DOMContentLoaded', function() {
             const modeToggle = document.getElementById('modeToggle');
             const body = document.body;
-            let darkMode = localStorage.getItem('darkMode');
-
-            // Initialize dark mode based on localStorage or system preference
-            if (darkMode === null) {
-                darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'true' : 'false';
-                localStorage.setItem('darkMode', darkMode);
-            }
+            let darkMode = localStorage.getItem('darkMode') || 'false'; // Default to 'false' if null
 
             // Apply initial dark mode state
             function applyDarkMode(isDark) {
-                body.classList.toggle('dark-mode', isDark === 'true');
-                modeToggle.innerHTML = isDark === 'true' ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
+                const isDarkMode = isDark === 'true';
+                body.classList.toggle('dark-mode', isDarkMode);
+                modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
+                localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false'); // Persist immediately
+                console.log('Dark mode set to:', isDarkMode ? 'dark' : 'light');
             }
             applyDarkMode(darkMode);
 
-            // Debounced toggle function to prevent rapid clicks
-            let toggleTimeout;
+            // Toggle dark mode on click
             modeToggle.addEventListener('click', function() {
-                if (toggleTimeout) clearTimeout(toggleTimeout);
-                toggleTimeout = setTimeout(() => {
-                    const isDarkMode = !body.classList.contains('dark-mode');
-                    body.classList.toggle('dark-mode', isDarkMode);
-                    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
-                    modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
-                    console.log('Dark mode toggled to:', isDarkMode ? 'dark' : 'light');
-                }, 200); // 200ms debounce delay
+                const currentDarkMode = localStorage.getItem('darkMode') === 'true';
+                const newDarkMode = !currentDarkMode;
+                applyDarkMode(newDarkMode ? 'true' : 'false');
             });
 
             // Listen for system color scheme changes
