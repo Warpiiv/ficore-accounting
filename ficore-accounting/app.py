@@ -149,8 +149,7 @@ def set_dark_mode():
 # Database setup
 def setup_database():
     try:
-        # Create users collection and indexes
-        mongo.db.users.create_index([('_id', 1)], unique=True)
+        # Create users collection and indexes (skip _id as it's automatically unique)
         mongo.db.users.create_index([('email', 1)], unique=True)
         mongo.db.users.create_index([('reset_token', 1)], sparse=True)
 
