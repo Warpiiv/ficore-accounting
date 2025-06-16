@@ -131,6 +131,7 @@
                 darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'true' : 'false';
                 localStorage.setItem('darkMode', darkMode);
             }
+            console.log('Initial darkMode state:', darkMode);
 
             // Apply initial dark mode state
             if (darkMode === 'true') {
@@ -146,19 +147,7 @@
                 const isDarkMode = body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
                 modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
-
-                // Optional: Sync with server (uncomment if backend endpoint exists)
-                /*
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                fetch('{{ url_for("set_dark_mode") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-Token': csrfToken
-                    },
-                    body: JSON.stringify({ darkMode: isDarkMode })
-                }).catch(error => console.error('Error syncing dark mode:', error));
-                */
+                console.log('Toggled darkMode state:', isDarkMode);
             });
 
             // Listen for system color scheme changes
@@ -168,6 +157,7 @@
                     body.classList.toggle('dark-mode', isDarkMode);
                     localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
                     modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
+                    console.log('System changed darkMode state:', isDarkMode);
                 }
             });
 
