@@ -22,7 +22,7 @@
           {% if messages %}
             <div class="container">
                 {% for category, message in messages %}
-                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: sticky; top: 0; z-index: 1001; margin-bottom: 0;">
+                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: sticky; top: 0; z-index: 1001;">
                     {{ trans(message) | default(message) }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}"></button>
                   </div>
@@ -224,11 +224,16 @@
             document.querySelectorAll('.alert .btn-close').forEach(button => {
                 button.addEventListener('click', function() {
                     setTimeout(() => {
-                        window.scrollTo(0, 0); // Scroll to top to ensure realignment
-                        document.body.style.transition = 'none'; // Disable transition temporarily
-                        void document.body.offsetHeight; // Force reflow
-                        document.body.style.transition = ''; // Re-enable transition
-                    }, 100); // Slight delay to allow Bootstrap fade-out animation
+                        // Remove any residual inline styles that might cause space
+                        document.body.style.removeProperty('transition');
+                        document.querySelector('.wrapper').style.removeProperty('margin-top');
+                        // Force layout recalculation
+                        window.scrollTo(0, 0);
+                        const wrapper = document.querySelector('.wrapper');
+                        wrapper.style.display = 'none';
+                        wrapper.offsetHeight; // Force reflow
+                        wrapper.style.display = '';
+                    }, 150); // Adjusted delay to match Bootstrap's fade-out animation
                 });
             });
 
