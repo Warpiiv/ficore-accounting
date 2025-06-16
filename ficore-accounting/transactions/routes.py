@@ -38,6 +38,11 @@ class TransactionForm(FlaskForm):
 
 @transactions_bp.route('/transaction_history', methods=['GET'])
 def transaction_history():
+    # Fix for UnboundLocalError - Initialize filter variables
+    date_filter = ''
+    category_filter = ''
+    description_filter = ''
+    tags_filter = ''
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
