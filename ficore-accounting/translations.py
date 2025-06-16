@@ -4,6 +4,10 @@ TRANSLATIONS = {
         'database_setup_success': 'Database setup completed successfully',
         'database_setup_error': 'Database setup failed',
         'core_helping_african_smes': 'Helping African SMEs simplify records and grow financially.',
+        'general_dashboard_desc': 'View a summary of your financial records and activities.',
+        'create_invoice_desc': 'Generate and manage professional invoices for your clients.',
+        'add_transaction_desc': 'Record all your income and expenses to track cash flow.',
+        'core_please_complete_all_records': 'Please ensure all records are complete and accurate.',
         # Module: core
         'core_invoice': 'Create Invoice',
         'core_signup': 'Signup',
@@ -389,6 +393,11 @@ TRANSLATIONS = {
         'transaction': 'Ma’amala',
         'view_all_invoices': 'Duba Duk Lissafin Kuɗi',
         'view_all_transactions': 'Duba Duk Ma’amaloli',
+        'general_dashboard_desc': 'Duba taƙaitaccen bayanin bayanan ku na kuɗi da ayyukan ku.',
+        'create_invoice_desc': 'Ƙirƙiri da sarrafa takardun kudi na sana\'a ga abokan cinikin ku.',
+        'add_transaction_desc': 'Yi rikodin duk kuɗin shiga da kuɗin fita don bin diddigin gudana na kuɗi.',
+        'core_please_complete_all_records': 'Don Allah tabbatar da cewa duk bayanan sun cika kuma suna da inganci.',
+
         # Financial
         'create_invoice': 'Ƙirƙiri Daftari',
         'core_helping_african_smes': 'Taimaka wa Ƙanana Masana’antu na Afirka wajen sauƙaƙe rajista da haɓaka kuɗi.',
