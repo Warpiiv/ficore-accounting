@@ -17,79 +17,83 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="container">
-            {% for category, message in messages %}
-              <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: sticky; top: 0; z-index: 1001; margin-bottom: 0;">
-                {{ trans(message) | default(message) }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}"></button>
-              </div>
-            {% endfor %}
+    <div class="wrapper">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="container">
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: sticky; top: 0; z-index: 1001; margin-bottom: 0;">
+                    {{ trans(message) | default(message) }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}"></button>
+                  </div>
+                {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="header-message">
+            {{ trans('core_welcome_to_records') | default('Welcome to Ficore Records!') }}
         </div>
-      {% endif %}
-    {% endwith %}
 
-    <div class="header-message">
-        {{ trans('core_welcome_to_records') | default('Welcome to Ficore Records!') }}
-    </div>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='img/ficore_records_logo.png') }}" alt="{{ trans('core_records_logo') | default('Ficore Records Logo') }}" class="logo-centered" style="border-radius: 50%; object-fit: contain; width: 80px; height: 80px;">
+                </a>
+                <a href="{{ url_for('set_language', lang='ha' if session.lang == 'en' else 'en') }}"
+                   class="btn btn-primary navbar-btn btn-outline-light language-btn ms-1 me-1"
+                   title="{{ trans('core_change_language') | default('Change Language') }}"
+                   aria-label="{{ trans('core_switch_to') | default('Switch to') }} {{ 'Hausa' if session.lang == 'en' else 'English' }}"
+                   role="button">
+                    <i class="fas fa-globe me-1" aria-hidden="true"></i>
+                    {{ 'Hausa' if session.lang == 'en' else 'English' }}
+                </a>
+                <button id="modeToggle" class="ms-1 me-1" aria-label="{{ trans('core_toggle_dark_mode') | default('Toggle Dark Mode') }}">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ trans('core_toggle_navigation') | default('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon" style="font-size: 1.2rem; width: 2rem; height: 2rem; background-color: white; color: #003366; border-radius: 5px;"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="mainMenuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.85rem;">
+                                {{ trans('core_main_menu') | default('Main Menu') }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="mainMenuDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('index') }}" style="font-size: 0.85rem;">{{ trans('core_home') | default('Home') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('invoices.create_invoice') }}" style="font-size: 0.85rem;">{{ trans('core_invoice') | default('Create Invoice') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('invoices.invoice_dashboard') }}" style="font-size: 0.85rem;">{{ trans('core_invoices') | default('Invoices Dashboard') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('transactions.transaction_history') }}" style="font-size: 0.85rem;">{{ trans('core_transactions') | default('Transactions Dashboard') }}</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="toolsAuthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.85rem;">
+                                {{ trans('core_account') | default('Account') }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="toolsAuthDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('users.login') }}" style="font-size: 0.85rem;">{{ trans('core_login') | default('Login') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('users.signup') }}" style="font-size: 0.85rem;">{{ trans('core_signup') | default('Signup') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('users.profile') }}" style="font-size: 0.85rem;">{{ trans('core_profile') | default('Profile') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('users.logout') }}" style="font-size: 0.85rem;">{{ trans('core_logout') | default('Logout') }}</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='img/ficore_records_logo.png') }}" alt="{{ trans('core_records_logo') | default('Ficore Records Logo') }}" class="logo-centered" style="border-radius: 50%; object-fit: contain; width: 80px; height: 80px;">
-            </a>
-            <a href="{{ url_for('set_language', lang='ha' if session.lang == 'en' else 'en') }}"
-               class="btn btn-primary navbar-btn btn-outline-light language-btn ms-1 me-1"
-               title="{{ trans('core_change_language') | default('Change Language') }}"
-               aria-label="{{ trans('core_switch_to') | default('Switch to') }} {{ 'Hausa' if session.lang == 'en' else 'English' }}"
-               role="button">
-                <i class="fas fa-globe me-1" aria-hidden="true"></i>
-                {{ 'Hausa' if session.lang == 'en' else 'English' }}
-            </a>
-            <button id="modeToggle" class="ms-1 me-1" aria-label="{{ trans('core_toggle_dark_mode') | default('Toggle Dark Mode') }}">
-                <i class="fas fa-moon" aria-hidden="true"></i>
-            </button>
-            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ trans('core_toggle_navigation') | default('Toggle navigation') }}">
-                <span class="navbar-toggler-icon" style="font-size: 1.2rem; width: 2rem; height: 2rem; background-color: white; color: #003366; border-radius: 5px;"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="mainMenuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.85rem;">
-                            {{ trans('core_main_menu') | default('Main Menu') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="mainMenuDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('index') }}" style="font-size: 0.85rem;">{{ trans('core_home') | default('Home') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('invoices.create_invoice') }}" style="font-size: 0.85rem;">{{ trans('core_invoice') | default('Create Invoice') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('invoices.invoice_dashboard') }}" style="font-size: 0.85rem;">{{ trans('core_invoices') | default('Invoices Dashboard') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('transactions.transaction_history') }}" style="font-size: 0.85rem;">{{ trans('core_transactions') | default('Transactions Dashboard') }}</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="toolsAuthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.85rem;">
-                            {{ trans('core_account') | default('Account') }}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="toolsAuthDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('users.login') }}" style="font-size: 0.85rem;">{{ trans('core_login') | default('Login') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('users.signup') }}" style="font-size: 0.85rem;">{{ trans('core_signup') | default('Signup') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('users.profile') }}" style="font-size: 0.85rem;">{{ trans('core_profile') | default('Profile') }}</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('users.logout') }}" style="font-size: 0.85rem;">{{ trans('core_logout') | default('Logout') }}</a></li>
-                        </ul>
-                    </li>
-                </ul>
+        <div class="container">
+            <div class="content">
+                {% block content %}{% endblock %}
             </div>
         </div>
-    </nav>
-
-    <div class="content">
-        {% block content %}{% endblock %}
     </div>
 
     <footer class="footer">
         <div class="container text-center py-2" role="contentinfo">
             <p>{{ trans('core_about_records') | default('About Ficore Records') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2025') }}</p>
-            <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_records') | default('Ficore Records is a simplified Software for SMEs') }} <a href="{{ url_for('about') }}" class="text-white text-decoration-underline">{{ trans('core_learn_more') | default('Learn more') }}</a></p>
+            <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_records') | default('Ficore Records is a simplified Software for SMEs') }} <a href="{{ url_for('about') }}" class="text-white text-decorationunderline">{{ trans('core_learn_more') | default('Learn more') }}</a></p>
             <div class="social-icons d-flex justify-content-center gap-2">
                 <a href="{{ LINKEDIN_URL }}" target="_blank" aria-label="{{ trans('core_connect_on_linkedin') | default('Connect on LinkedIn') }}" class="d-flex align-items-center text-white">
                     <i class="fab fa-linkedin me-1"></i> LinkedIn
@@ -105,7 +109,7 @@
                 <a href="mailto:ficoreafrica@gmail.com" class="text-white"><i class="fas fa-envelope"></i> {{ trans('core_contact_us') | default('Contact Us') }}</a>
                 <a href="{{ url_for('feedback') }}" class="text-white"><i class="fas fa-comment"></i> {{ trans('core_provide_feedback') | default('Provide Feedback') }}</a>
                 {% if current_user.is_authenticated %}
-                <a href="{{ url_for('users.logout') }}" class="text-white"><i class="fas fa-sign-out-alt"></i> {{ trans('core_logout') | default('Logout') }}</a>
+                <a href="{{ url_for('users.logout') }}" class="text-white"><i class="fas fa-sign-out-alt"></i> {{zte('core_logout') | default('Logout') }}</a>
                 {% else %}
                 <a href="{{ url_for('users.login') }}" class="text-white"><i class="fas fa-sign-in-alt"></i> {{ trans('core_login') | default('Login') }}</a>
                 {% endif %}
@@ -189,7 +193,7 @@
                             const min = input.getAttribute('min');
                             const maxNum = input.getAttribute('max_num');
                             const numValue = parseFloat(value);
-                            if ((min && numValue) <= parseFloat(min)) || (max_num && numValue <= parseFloat(maxNum))) {
+                            if ((min && numValue <= parseFloat(min)) || (maxNum && numValue >= parseFloat(maxNum))) {
                                 input.classList.add('is-invalid');
                                 valid = false;
                                 return;
@@ -197,9 +201,9 @@
                         }
 
                         // Custom validation for ratings (1-5)
-                            if (input.name === 'rating' && value) {
+                        if (input.name === 'rating' && value) {
                             const ratingValue = parseInt(value);
-                            if (isNaN(ratingValue) || ratingValue <= 1 || ratingValue >= 5) {
+                            if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 5) {
                                 input.classList.add('is-invalid');
                                 valid = false;
                                 return;
@@ -211,7 +215,7 @@
 
                     if (!valid) {
                         e.preventDefault();
-                        validation('{{ trans('core_please_complete_all_records') | default('Please complete all records correctly') }}');
+                        alert('{{ trans('core_please_complete_all_records') | default('Please complete all records correctly') }}');
                     }
                 });
             });
