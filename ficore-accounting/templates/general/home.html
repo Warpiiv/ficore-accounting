@@ -2,7 +2,7 @@
 {% block title %}{{ trans('home') | default('Home') }}{% endblock %}
 {% block content %}
 <div class="container">
-    <h1 class="text-center text-4xl font-bold mb-8">{{ trans('welcome') | default('Welcome to Ficore Accounting') }}</h1>
+    <h1 class="text-center text-4xl font-bold mb-8">{{ trans('welcome') | default('Welcome to Ficore Records') }}</h1>
     <div class="grid grid-cols-1 md:grid-cols-2">
         <a href="{{ url_for('invoices.invoice_dashboard') }}" class="tile bg-blue-600 hover:bg-blue-700">
             <h2>{{ trans('core_invoices') | default('Manage Invoices') }}</h2>
