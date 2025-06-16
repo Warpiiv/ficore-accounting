@@ -62,7 +62,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="mainMenuDropdown">
                                 <li><a class="dropdown-item" href="{{ url_for('index') }}" style="font-size: 0.85rem;">{{ trans('core_home') | default('Home') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.general_dashboard') }}" style="font-size: 0.85rem;">{{ trans('general_dashboard') | default('General Dashboard') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('general_dashboard') }}" style="font-size: 0.85rem;">{{ trans('general_dashboard') | default('General Dashboard') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}" style="font-size: 0.85rem;">{{ trans('admin_dashboard') | default('Admin Dashboard') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('invoices.create_invoice') }}" style="font-size: 0.85rem;">{{ trans('core_invoice') | default('Create Invoice') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('invoices.invoice_dashboard') }}" style="font-size: 0.85rem;">{{ trans('core_invoices') | default('Invoices Dashboard') }}</a></li>
