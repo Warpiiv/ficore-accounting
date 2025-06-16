@@ -150,38 +150,69 @@ def set_dark_mode():
 def setup_database():
     try:
         # Create users collection and indexes (skip _id as it's automatically unique)
-        mongo.db.users.create_index([('email', 1)], unique=True)
-        mongo.db.users.create_index([('reset_token', 1)], sparse=True)
+        try:
+            mongo.db.users.create_index([('email', 1)], unique=True)
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create email index: {str(e)}")
+        
+        try:
+            mongo.db.users.create_index([('reset_token', 1)], sparse=True)
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create reset_token index: {str(e)}")
 
         # Create default admin user if not exists
         if not mongo.db.users.find_one({'_id': 'admin'}):
-            mongo.db.users.insert_one({
-                '_id': 'admin',
-                'email': 'ficoreafrica@gmail.com',
-                'password': generate_password_hash('Admin123!'),
-                'dark_mode': False,
-                'is_admin': True,
-                'created_at': datetime.utcnow()
-            })
-            logger.info("Default admin user created")
+            try:
+                mongo.db.users.insert_one({
+                    '_id': 'admin',
+                    'email': 'ficoreafrica@gmail.com',
+                    'password': generate_password_hash('Admin123!'),
+                    'dark_mode': False,
+                    'is_admin': True,
+                    'created_at': datetime.utcnow()
+                })
+                logger.info("Default admin user created")
+            except Exception as e:
+                if "duplicate key" in str(e):
+                    logger.info("Admin user already exists, skipping creation")
+                else:
+                    logger.error(f"Error creating admin user: {str(e)}")
 
         # Create invoices collection and indexes
-        mongo.db.invoices.create_index([('user_id', 1)])
-        mongo.db.invoices.create_index([('created_at', -1)])
-        mongo.db.invoices.create_index([('status', 1)])
-        mongo.db.invoices.create_index([('due_date', 1)])
-        mongo.db.invoices.create_index([('invoice_number', 1)], unique=True)
+        try:
+            mongo.db.invoices.create_index([('user_id', 1)])
+            mongo.db.invoices.create_index([('created_at', -1)])
+            mongo.db.invoices.create_index([('status', 1)])
+            mongo.db.invoices.create_index([('due_date', 1)])
+            mongo.db.invoices.create_index([('invoice_number', 1)], unique=True)
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create invoice indexes: {str(e)}")
 
         # Create transactions collection and indexes
-        mongo.db.transactions.create_index([('user_id', 1)])
-        mongo.db.transactions.create_index([('created_at', -1)])
+        try:
+            mongo.db.transactions.create_index([('user_id', 1)])
+            mongo.db.transactions.create_index([('created_at', -1)])
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create transaction indexes: {str(e)}")
 
         # Create feedback collection and indexes
-        mongo.db.feedback.create_index([('user_id', 1)], sparse=True)
-        mongo.db.feedback.create_index([('timestamp', -1)])
+        try:
+            mongo.db.feedback.create_index([('user_id', 1)], sparse=True)
+            mongo.db.feedback.create_index([('timestamp', -1)])
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create feedback indexes: {str(e)}")
 
         # Create sessions collection index
-        mongo.db.sessions.create_index([('expires', 1)], expireAfterSeconds=0)
+        try:
+            mongo.db.sessions.create_index([('expires', 1)], expireAfterSeconds=0)
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create sessions index: {str(e)}")
 
         logger.info("Database initialization completed successfully")
         return True
