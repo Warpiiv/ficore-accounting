@@ -130,7 +130,7 @@ body {
     border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 1rem;
-    margin: 1.5rem 0;
+    margin: 1rem 0; /* Reduced margin to decrease padding between cards and footer */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
@@ -298,10 +298,13 @@ body {
     color: white;
     padding: 1rem;
     text-align: center;
-    max-height: 100px; /* Limit footer height */
-    overflow-y: auto; /* Allow scrolling if content exceeds height */
+    max-height: 200px; /* Increased height to accommodate more content */
+    overflow-y: auto; /* Enable vertical scrolling for overflow content */
+    width: 100%;
     box-sizing: border-box;
+    margin-top: 1rem; /* Reduced margin to decrease space before footer */
 }
+
 /* Media Queries */
 @media (min-width: 768px) {
     .container {
@@ -354,6 +357,7 @@ body {
 
     .footer {
         padding: 1.5rem;
+        max-height: 250px; /* Adjusted for larger screens */
     }
 }
 
@@ -377,5 +381,10 @@ body {
     .header-message {
         font-size: 0.75rem;
         padding: 0.5rem;
+    }
+
+    .footer {
+        padding: 0.75rem;
+        max-height: 150px; /* Adjusted for smaller screens */
     }
 }
