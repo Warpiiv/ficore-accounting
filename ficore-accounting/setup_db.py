@@ -30,41 +30,71 @@ def setup_database(mongo_uri=MONGO_URI):
         db = client[db_name]
 
         # Users collection - skip _id index as it's automatically unique
-        db.users.create_index([('email', ASCENDING)], unique=True)
-        db.users.create_index([('reset_token', ASCENDING)], sparse=True)
+        try:
+            db.users.create_index([('email', ASCENDING)], unique=True)
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create email index: {str(e)}")
+        
+        try:
+            db.users.create_index([('reset_token', ASCENDING)], sparse=True)
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create reset_token index: {str(e)}")
         
         if not db.users.find_one({'_id': 'admin'}):
-            db.users.insert_one({
-                '_id': 'admin',
-                'email': 'ficoreafrica@gmail.com',
-                'password': generate_password_hash(ADMIN_PASSWORD),
-                'dark_mode': False,
-                'is_admin': True,
-                'created_at': datetime.utcnow()
-            })
-            logger.info("Default admin user created")
+            try:
+                db.users.insert_one({
+                    '_id': 'admin',
+                    'email': 'ficoreafrica@gmail.com',
+                    'password': generate_password_hash(ADMIN_PASSWORD),
+                    'dark_mode': False,
+                    'is_admin': True,
+                    'created_at': datetime.utcnow()
+                })
+                logger.info("Default admin user created")
+            except Exception as e:
+                if "duplicate key" in str(e):
+                    logger.info("Admin user already exists, skipping creation")
+                else:
+                    logger.error(f"Error creating admin user: {str(e)}")
 
         # Invoices collection
-        db.invoices.create_index([('user_id', ASCENDING)])
-        db.invoices.create_index([('created_at', DESCENDING)])
-        db.invoices.create_index([('status', ASCENDING)])
-        db.invoices.create_index([('due_date', ASCENDING)])
-        db.invoices.create_index([('invoice_number', ASCENDING)], unique=True)
+        try:
+            db.invoices.create_index([('user_id', ASCENDING)])
+            db.invoices.create_index([('created_at', DESCENDING)])
+            db.invoices.create_index([('status', ASCENDING)])
+            db.invoices.create_index([('due_date', ASCENDING)])
+            db.invoices.create_index([('invoice_number', ASCENDING)], unique=True)
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create invoice indexes: {str(e)}")
 
         # Transactions collection
-        db.transactions.create_index([('user_id', ASCENDING)])
-        db.transactions.create_index([('created_at', DESCENDING)])
-        db.transactions.create_index([('category', ASCENDING)])  # For filtering
-        db.transactions.create_index([('description', ASCENDING)])  # For regex searches
-        db.transactions.create_index([('tags', ASCENDING)])  # For regex searches
+        try:
+            db.transactions.create_index([('user_id', ASCENDING)])
+            db.transactions.create_index([('created_at', DESCENDING)])
+            db.transactions.create_index([('category', ASCENDING)])  # For filtering
+            db.transactions.create_index([('description', ASCENDING)])  # For regex searches
+            db.transactions.create_index([('tags', ASCENDING)])  # For regex searches
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create transaction indexes: {str(e)}")
 
         # Feedback collection
-        db.feedback.create_index([('user_id', ASCENDING)], sparse=True)
-        db.feedback.create_index([('timestamp', DESCENDING)])
+        try:
+            db.feedback.create_index([('user_id', ASCENDING)], sparse=True)
+            db.feedback.create_index([('timestamp', DESCENDING)])
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create feedback indexes: {str(e)}")
 
         # Sessions collection
-        db.sessions.create_index([('expires', ASCENDING)], expireAfterSeconds=0)
-        logger.info("Sessions collection index created")
+        try:
+            db.sessions.create_index([('expires', ASCENDING)], expireAfterSeconds=0)
+        except Exception as e:
+            if "already exists" not in str(e):
+                logger.warning(f"Could not create sessions index: {str(e)}")
 
         # Optional: Schema validation for feedback
         try:
