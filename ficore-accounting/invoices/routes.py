@@ -71,37 +71,50 @@ def create_invoice():
         try:
             user_id = current_user.id if current_user.is_authenticated else 'guest'
             mongo = current_app.extensions['pymongo']
-            # Generate invoice number with retry
-            for attempt in range(3):
-                count = mongo.db.invoices.count_documents({})
-                invoice_number = str(count + 1).zfill(6)
-                invoice = {
-                    'user_id': user_id,
-                    'customer_name': form.customer_name.data.strip(),
-                    'description': form.description.data.strip(),
-                    'amount': float(form.amount.data),
-                    'status': form.status.data,
-                    'due_date': form.due_date.data,
-                    'settled_date': form.settled_date.data if form.status.data == 'settled' else None,
-                    'created_at': datetime.utcnow(),
-                    'invoice_number': invoice_number
-                }
+            # Generate invoice number atomically
+            last_invoice = mongo.db.invoices.find_one(sort=[('invoice_number', -1)])
+            if last_invoice and last_invoice.get('invoice_number'):
                 try:
-                    result = mongo.db.invoices.insert_one(invoice)
-                    flash(trans_function('invoice_created'), 'success')
-                    logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
-                    return redirect(url_for('invoices.invoice_dashboard'))
-                except pymongo.errors.DuplicateKeyError:
-                    if attempt == 2:
-                        raise
-                    continue
-            raise Exception("Failed to generate unique invoice number")
+                    last_num = int(last_invoice['invoice_number'])
+                    invoice_number = str(last_num + 1).zfill(6)
+                except ValueError:
+                    # Handle cases where invoice_number isn't a number
+                    count = mongo.db.invoices.count_documents({})
+                    invoice_number = str(count + 1).zfill(6)
+            else:
+                invoice_number = '000001'
+
+            invoice = {
+                'user_id': user_id,
+                'customer_name': form.customer_name.data.strip(),
+                'description': form.description.data.strip(),
+                'amount': float(form.amount.data),
+                'status': form.status.data,
+                'due_date': form.due_date.data,
+                'settled_date': form.settled_date.data if form.status.data == 'settled' else None,
+                'created_at': datetime.utcnow(),
+                'invoice_number': invoice_number
+            }
+            try:
+                result = mongo.db.invoices.insert_one(invoice)
+                flash(trans_function('invoice_created'), 'success')
+                logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
+                return redirect(url_for('invoices.invoice_dashboard'))
+            except pymongo.errors.DuplicateKeyError:
+                # Single retry in case of race condition
+                last_invoice = mongo.db.invoices.find_one(sort=[('invoice_number', -1)])
+                last_num = int(last_invoice['invoice_number']) if last_invoice and last_invoice.get('invoice_number') else 0
+                invoice['invoice_number'] = str(last_num + 1).zfill(6)
+                result = mongo.db.invoices.insert_one(invoice)
+                flash(trans_function('invoice_created'), 'success')
+                logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
+                return redirect(url_for('invoices.invoice_dashboard'))
         except Exception as e:
             logger.error(f"Error creating invoice: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
             return render_template('invoices/create.html', form=form), 500
     return render_template('invoices/create.html', form=form)
-
+    
 @invoices_bp.route('/update/<invoice_id>', methods=['GET', 'POST'])
 def update_invoice(invoice_id):
     user_id = current_user.id if current_user.is_authenticated else 'guest'
