@@ -102,6 +102,9 @@ body {
     justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 1000; /*stay above content*/
 }
 
 .navbar-brand {
@@ -346,7 +349,7 @@ body {
     }
 
     .navbar {
-        padding: 1rem 2rem;
+        padding: 0.5rem 1rem;
     }
 
     .navbar-brand {
