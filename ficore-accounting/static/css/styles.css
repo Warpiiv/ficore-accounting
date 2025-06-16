@@ -3,7 +3,7 @@
     /* Light Mode Colors */
     --background-gradient: #F5F5F5;
     --text-color: #333333;
-    --navbar-gradient: linear-gradient(90deg, #4B0082, #1E3A8A);
+    --navbar-gradient: linear-gradient(90deg, #6A1B9A, #3B82F6); /* Lightened gradient */
     --header-message-gradient: linear-gradient(90deg, #4B0082, #D4A055);
     --consent-banner-bg: #EDE7F6;
     --consent-banner-text: #333333;
@@ -30,7 +30,7 @@
 .dark-mode {
     --background-gradient: linear-gradient(135deg, #212121, #424242);
     --text-color: #E0E0E0;
-    --navbar-gradient: linear-gradient(90deg, #7B1FA2, #1E3A8A);
+    --navbar-gradient: linear-gradient(90deg, #9C27B0, #3B82F6); /* Lightened gradient for dark mode */
     --header-message-gradient: linear-gradient(90deg, #7B1FA2, #F57F17);
     --consent-banner-bg: #424242;
     --consent-banner-text: #E0E0E0;
@@ -384,5 +384,24 @@ body {
 
 .footer .container {
     text-align: center;
-    padding: 1rem;
+    padding: 0.5rem; /* Reduced padding */
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer p, .footer .footer-disclaimer, .footer .social-icons a, .footer .footer-buttons a {
+    font-size: 0.85rem; /* Reduced font size for lighter appearance */
+}
+
+.footer .social-icons {
+    justify-content: center;
+    gap: 1rem;
+}
+
+.footer .footer-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
