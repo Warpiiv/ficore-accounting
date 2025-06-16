@@ -29,8 +29,7 @@ def setup_database(mongo_uri=MONGO_URI):
         db_name = get_db_name_from_uri(mongo_uri)
         db = client[db_name]
 
-        # Users collection
-        db.users.create_index([('_id', ASCENDING)], unique=True)
+        # Users collection - skip _id index as it's automatically unique
         db.users.create_index([('email', ASCENDING)], unique=True)
         db.users.create_index([('reset_token', ASCENDING)], sparse=True)
         
@@ -68,21 +67,24 @@ def setup_database(mongo_uri=MONGO_URI):
         logger.info("Sessions collection index created")
 
         # Optional: Schema validation for feedback
-        db.command({
-            'collMod': 'feedback',
-            'validator': {
-                '$jsonSchema': {
-                    'bsonType': 'object',
-                    'required': ['timestamp'],
-                    'properties': {
-                        'user_id': {'bsonType': ['string', 'null']},
-                        'timestamp': {'bsonType': 'date'},
-                        'comment': {'bsonType': 'string'},
-                        'rating': {'bsonType': ['int', 'double', 'null']}
+        try:
+            db.command({
+                'collMod': 'feedback',
+                'validator': {
+                    '$jsonSchema': {
+                        'bsonType': 'object',
+                        'required': ['timestamp'],
+                        'properties': {
+                            'user_id': {'bsonType': ['string', 'null']},
+                            'timestamp': {'bsonType': 'date'},
+                            'comment': {'bsonType': 'string'},
+                            'rating': {'bsonType': ['int', 'double', 'null']}
+                        }
                     }
                 }
-            }
-        })
+            })
+        except Exception as e:
+            logger.warning(f"Could not set schema validation for feedback collection: {str(e)}")
 
         logger.info(f"Database '{db_name}' setup completed successfully")
         return True
