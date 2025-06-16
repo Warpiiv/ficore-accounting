@@ -17,10 +17,10 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <div class="wrapper">
+    <div class="wrapper" style="position: relative;">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
-            <div class="container">
+            <div class="alert-container">
                 {% for category, message in messages %}
                   <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: absolute; top: 0; left: 0; right: 0; z-index: 1001; width: 100%; margin: 0; padding: 10px;">
                     {{ trans(message) | default(message) }}
@@ -35,7 +35,7 @@
             {{ trans('core_welcome_to_records') | default('Welcome to Ficore Records!') }}
         </div>
 
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-lg" style="position: sticky; top: 0; z-index: 1000;">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url_for('index') }}">
                     <img src="{{ url_for('static', filename='img/ficore_records_logo.png') }}" alt="{{ trans('core_records_logo') | default('Ficore Records Logo') }}" class="logo-centered" style="border-radius: 50%; object-fit: contain; width: 80px; height: 80px;">
