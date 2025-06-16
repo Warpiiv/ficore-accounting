@@ -211,7 +211,7 @@
 
                     if (!valid) {
                         e.preventDefault();
-                        validation('{{ trans('core_please_complete_all_records') | defaultValidation('Please complete all records correctly') }}');
+                        validation('{{ trans('core_please_complete_all_records') | default('Please complete all records correctly') }}');
                     }
                 });
             });
