@@ -73,23 +73,19 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
-    margin-top: 3rem;
+    padding: 2rem 1rem;
+    min-height: 100vh; /* Ensure content area takes full height */
 }
 
 /* Navbar */
 .navbar {
     background: var(--navbar-gradient);
-    padding: 0.5rem 1rem;
+    padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-    z-index: 999;
-    margin: 0;
+    box-sizing: border-box;
 }
 
 .navbar-brand {
@@ -124,14 +120,8 @@ body {
     background: var(--header-message-gradient);
     color: white;
     text-align: center;
-    padding: 0.5rem;
+    padding: 0.75rem;
     font-size: 0.85rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    margin: 0;
 }
 
 /* Cards */
@@ -140,7 +130,7 @@ body {
     border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 1rem;
-    margin: 1.5rem 0 1rem;
+    margin: 1.5rem 0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
@@ -302,15 +292,22 @@ body {
 .hover\:bg-purple-700:hover { background-color: #7e22ce; }
 .hover\:bg-red-700:hover { background-color: #b91c1c; }
 
+/* Footer */
+.footer {
+    background: var(--navbar-gradient);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
 /* Media Queries */
 @media (min-width: 768px) {
     .container {
-        padding: 1rem 2rem;
-        margin-top: 4rem;
+        padding: 2rem;
     }
 
     .navbar {
-        padding: 0.8rem 2rem;
+        padding: 1rem 2rem;
     }
 
     .navbar-brand {
@@ -352,6 +349,10 @@ body {
     .grid-cols-2 {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .footer {
+        padding: 1.5rem;
+    }
 }
 
 @media (max-width: 360px) {
@@ -370,19 +371,9 @@ body {
     .form-control, .form-select {
         font-size: 0.85rem;
     }
-}
 
-.footer {
-    background: var(--navbar-gradient);
-    color: white;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 999;
-}
-
-.footer .container {
-    text-align: center;
-    padding: 1rem;
+    .header-message {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
 }
