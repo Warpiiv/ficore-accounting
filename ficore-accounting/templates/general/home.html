@@ -3,14 +3,26 @@
 {% block content %}
 <div class="container">
     <h1 class="text-center text-4xl font-bold mb-8">{{ trans('welcome') | default('Welcome to Ficore Records') }}</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="{{ url_for('dashboard.general_dashboard') }}" class="tile bg-orange-600 hover:bg-orange-700">
+            <h2>{{ trans('general_dashboard') | default('General Dashboard') }}</h2>
+            <p>{{ trans('general_dashboard_desc') | default('See overall financial summary and stats') }}</p>
+        </a>
         <a href="{{ url_for('invoices.invoice_dashboard') }}" class="tile bg-blue-600 hover:bg-blue-700">
             <h2>{{ trans('core_invoices') | default('Manage Invoices') }}</h2>
             <p>{{ trans('invoices_desc') | default('Create, edit, and track invoices') }}</p>
         </a>
+        <a href="{{ url_for('invoices.create_invoice') }}" class="tile bg-blue-400 hover:bg-blue-500">
+            <h2>{{ trans('create_invoice') | default('Create Invoice') }}</h2>
+            <p>{{ trans('create_invoice_desc') | default('Quickly create a new invoice for a customer') }}</p>
+        </a>
         <a href="{{ url_for('transactions.transaction_history') }}" class="tile bg-green-600 hover:bg-green-700">
             <h2>{{ trans('transactions') | default('Manage Transactions') }}</h2>
             <p>{{ trans('transactions_desc') | default('Record and view transactions') }}</p>
+        </a>
+        <a href="{{ url_for('transactions.add_transaction') }}" class="tile bg-green-400 hover:bg-green-500">
+            <h2>{{ trans('track_transaction') | default('Add Transaction') }}</h2>
+            <p>{{ trans('add_transaction_desc') | default('Add a new income or expense transaction') }}</p>
         </a>
         <a href="{{ url_for('feedback') }}" class="tile bg-purple-600 hover:bg-purple-700">
             <h2>{{ trans('feedback') | default('Provide Feedback') }}</h2>
