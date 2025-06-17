@@ -476,12 +476,14 @@ main {
     color: var(--accent-blue);
     margin-bottom: 0.5rem;
     text-align: center;
+    text-decoration: none;
 }
 
 .card-text {
     color: var(--text-color);
     font-size: 0.9rem;
     text-align: center;
+    text-decoration: none;
 }
 
 .amount-highlight {
