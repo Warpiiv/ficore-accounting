@@ -177,9 +177,9 @@ TRANSLATIONS = {
         'submit': 'Submit',
         'welcome': 'Welcome to Ficore Records',
         'home': 'Home',
-        'invoices_desc': 'See and track your invoices here',
+        'invoices_desc': 'See and Track your Invoices here',
         'transactions': 'Transactions',
-        'transactions_desc': 'See and Track the rRecord of your transactions',
+        'transactions_desc': 'See and Track the Record of your transactions',
         'feedback': 'Provide Feedback',
         'feedback_desc': 'Share your thoughts on the app',
         # Dashboard
