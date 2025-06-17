@@ -2,7 +2,7 @@
 {% block title %}{{ trans('create_invoice') | default('Create Invoice') }}{% endblock %}
 {% block content %}
 <div class="container my-5">
-    <h1 class="text-center mb-4">{{ invoice_id | default(trans('create_invoice') | default('Create Invoice')) if invoice_id else trans('create_invoice') | default('Create Invoice') }}</h1>
+    <h1 class="text-center mb-4 text-color">{{ invoice_id | default(trans('create_invoice') | default('Create Invoice')) if invoice_id else trans('create_invoice') | default('Create Invoice') }}</h1>
     <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-body">
             <form class="validate-form" method="POST" action="{{ url_for('invoices.update_invoice', invoice_id=invoice_id) if invoice_id else url_for('invoices.create_invoice') }}">
