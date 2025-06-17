@@ -43,6 +43,9 @@
     --success-color: #10b981; /* For success text, distinct from alerts */
     --card-header-bg: #f0f7ff;
     --table-row-even-bg: #FDFEFC; /* Subtle zebra striping for tables */
+    --table-row-bg-overdue: #fefcbf; /* Light yellow for overdue */
+    --table-row-bg-pending: #fef9c3; /* Light yellow for pending */
+    --table-row-bg-settled: #d1fae5; /* Light green for settled */
 
     /* Spacing variables */
     --spacing-xs: 0.5rem;
@@ -104,6 +107,9 @@
     --success-color: #34d399;
     --card-header-bg: #1e3a8a;
     --table-row-even-bg: #1a2333; /* Subtle zebra striping for tables */
+    --table-row-bg-overdue: #3f2f0a; /* Dark yellow for overdue */
+    --table-row-bg-pending: #2d2a0e; /* Dark yellow for pending */
+    --table-row-bg-settled: #0a2d1f; /* Dark green for settled */
 }
 
 /* --- Global Transitions & Accessibility (Reduced Motion) --- */
@@ -366,11 +372,11 @@ main {
 }
 
 /* Close button for alerts */
-.alert .alert-close-btn {
+.alert .alert-close-btn, .alert .btn-close {
     margin-left: auto;
     background: transparent;
     border: none;
-    color: inherit;
+    color: var(--alert-info-text);
     font-size: 1.2rem;
     line-height: 1;
     cursor: pointer;
@@ -379,15 +385,27 @@ main {
     transition: background-color 0.2s ease;
 }
 
-.alert .alert-close-btn:hover {
+.alert.success .alert-close-btn, .alert.success .btn-close {
+    color: var(--alert-success-text);
+}
+
+.alert.warning .alert-close-btn, .alert.warning .btn-close {
+    color: var(--alert-warning-text);
+}
+
+.alert.error .alert-close-btn, .alert.error .btn-close {
+    color: var(--alert-error-text);
+}
+
+.alert .alert-close-btn:hover, .alert .btn-close:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.dark-mode .alert .alert-close-btn:hover {
+.dark-mode .alert .alert-close-btn:hover, .dark-mode .alert .btn-close:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.alert .alert-close-btn:focus-visible {
+.alert .alert-close-btn:focus-visible, .alert .btn-close:focus-visible {
     outline: 2px solid var(--accent-blue);
     outline-offset: 2px;
 }
@@ -568,7 +586,7 @@ main {
     padding: var(--spacing-sm);
     border: 1px solid var(--table-border);
     text-align: left;
-    color: var(--table-text);
+    color: var(--text-color);
 }
 
 .table th {
@@ -580,7 +598,7 @@ main {
 }
 
 .table td {
-    color: var(--table-text);
+    color: var(--text-color);
 }
 
 .table tr {
@@ -600,6 +618,32 @@ main {
     background-color: var(--table-row-even-bg);
 }
 
+/* Override hardcoded background classes */
+.table tbody tr.bg-yellow-100 {
+    background-color: var(--table-row-bg-overdue);
+}
+
+.table tbody tr.bg-yellow-50 {
+    background-color: var(--table-row-bg-pending);
+}
+
+.table tbody tr.bg-green-50 {
+    background-color: var(--table-row-bg-settled);
+}
+
+.table tbody tr.table-success {
+    background-color: var(--table-row-bg-settled);
+}
+
+.table tbody tr.table-danger {
+    background-color: var(--alert-error-bg);
+}
+
+/* Ensure text contrast in tables */
+.table td, .table th, .table p, .table li {
+    color: var(--text-color);
+}
+
 /* --- List Group --- */
 .list-group-item {
     background: var(--card-bg);
@@ -614,6 +658,11 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+/* Ensure text contrast in list items */
+.list-group-item li, .list-group-item p {
+    color: var(--text-color);
 }
 
 /* --- Grid Layout --- */
