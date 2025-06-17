@@ -165,6 +165,15 @@ h1, h2, h3 {
     color: var(--accent-blue);
 }
 
+/* --- Logo Styling --- */
+.logo {
+    border-radius: 50%;
+    width: 60px; /* Wider for oval shape */
+    height: 45px; /* Shorter for oval shape */
+    object-fit: cover; /* Ensures image fits without distortion */
+    max-height: none; /* Override any max-height constraints */
+}
+
 /* --- Buttons --- */
 .btn-primary {
     background: var(--button-primary-bg);
@@ -653,5 +662,10 @@ h1, h2, h3 {
     .btn-primary, .btn-secondary {
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
+    }
+
+    .logo {
+        width: 48px; /* Smaller for mobile */
+        height: 36px;
     }
 }
