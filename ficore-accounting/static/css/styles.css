@@ -1,65 +1,71 @@
 /* Define CSS Custom Properties for Colors */
 :root {
     /* Light Mode Colors */
-    --background-gradient: #F5F5F5;
+    --background-main: #044BD9; /* Primary color for main UI (60%) */
+    --attention-color: #F24F13; /* CTAs, warnings, insights (10%) */
+    --engage-color: #F2A30F; /* Visuals, charts (30%) */
     --text-color: #333333;
-    --navbar-bg: #044BD9; /* Primary color for navbar */
-    --header-message-bg: #F24F13; /* Attention color for alerts */
+    --navbar-bg: #ffffff; /* Plain white for navbar */
+    --header-message-bg: #e7f3fe; /* Soft blue for alerts */
     --consent-banner-bg: #EDE7F6;
     --consent-banner-text: #333333;
-    --accent-primary: #044BD9; /* Primary color (60%) */
-    --accent-attention: #F24F13; /* Attention color (10%) */
-    --accent-engage: #F2A30F; /* Engage color (30%) */
-    --button-gradient: linear-gradient(135deg, #044BD9, #F24F13);
-    --button-gradient-hover: linear-gradient(135deg, #F2A30F, #044BD9);
-    --button-nav-gradient: linear-gradient(90deg, #044BD9, #F24F13);
-    --button-nav-gradient-hover: linear-gradient(90deg, #F2A30F, #044BD9);
-    --card-bg: #F2A30F; /* Engage color for cards */
+    --accent-indigo: #044BD9; /* Updated to primary color */
+    --accent-indigo-dark: #0337A6; /* Darker shade of primary */
+    --accent-attention: #F24F13; /* Attention color */
+    --accent-attention-dark: #C23E0F; /* Darker shade of attention */
+    --button-bg: #F24F13; /* Solid attention color for buttons */
+    --button-bg-hover: #C23E0F; /* Darker attention color for hover */
+    --button-nav-bg: #044BD9; /* Solid primary color for nav buttons */
+    --button-nav-bg-hover: #0337A6; /* Darker primary for hover */
+    --card-bg: #FFFFFF; /* Shiny white for cards */
     --card-border: #044BD9; /* Primary color for card borders */
-    --card-text: #333333;
+    --card-text: #6c757d;
     --form-bg: #F5F5F5;
     --table-border: #e0e0e0;
     --table-header-bg: #EDE7F6;
     --table-text: #333333;
-    --amount-highlight: #F24F13; /* Attention color for highlights */
+    --amount-highlight: #F2A30F; /* Engage color for highlights */
     --error-highlight: #F24F13; /* Attention color for errors */
 }
 
 /* Dark Mode Overrides */
 .dark-mode {
-    --background-gradient: linear-gradient(135deg, #212121, #424242);
+    --background-main: #0337A6; /* Darker primary for dark mode */
+    --attention-color: #F24F13;
+    --engage-color: #F2A30F;
     --text-color: #E0E0E0;
-    --navbar-bg: #0338A6; /* Darker primary for dark mode */
-    --header-message-bg: #C73E0F; /* Darker attention for dark mode */
+    --navbar-bg: #424242; /* Plain dark for navbar */
+    --header-message-bg: #424242; /* Dark mode alert bg */
     --consent-banner-bg: #424242;
     --consent-banner-text: #E0E0E0;
-    --accent-primary: #0338A6;
-    --accent-attention: #C73E0F;
-    --accent-engage: #D1890D;
-    --button-gradient: linear-gradient(135deg, #0338A6, #C73E0F);
-    --button-gradient-hover: linear-gradient(135deg, #D1890D, #0338A6);
-    --button-nav-gradient: linear-gradient(90deg, #0338A6, #C73E0F);
-    --button-nav-gradient-hover: linear-gradient(90deg, #D1890D, #0338A6);
-    --card-bg: #D1890D; /* Darker engage for cards */
-    --card-border: #0338A6;
-    --card-text: #E0E0E0;
+    --accent-indigo: #0337A6;
+    --accent-indigo-dark: #022873;
+    --accent-attention: #F24F13;
+    --accent-attention-dark: #C23E0F;
+    --button-bg: #F24F13;
+    --button-bg-hover: #C23E0F;
+    --button-nav-bg: #0337A6;
+    --button-nav-bg-hover: #022873;
+    --card-bg: #424242; /* Dark card background */
+    --card-border: #0337A6;
+    --card-text: #B0BEC5;
     --form-bg: #424242;
     --table-border: #616161;
     --table-header-bg: #424242;
     --table-text: #E0E0E0;
-    --amount-highlight: #C73E0F;
-    --error-highlight: #C73E0F;
+    --amount-highlight: #F2A30F;
+    --error-highlight: #F24F13;
 }
 
 /* Transitions for Smooth Changes */
 body, .navbar, .header-message, .consent-banner, .btn, .card, .form-container, .tile {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, background 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
 /* Base Styles */
 body {
     font-family: 'Poppins', 'Arial', sans-serif;
-    background: var(--background-gradient);
+    background: var(--background-main);
     color: var(--text-color);
     padding: 0;
     margin: 0;
@@ -94,7 +100,7 @@ body {
 /* Navbar */
 .navbar {
     background-color: var(--navbar-bg);
-    color: #FFFFFF;
+    color: #333333;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     padding: 1rem;
     display: flex;
@@ -109,16 +115,16 @@ body {
 }
 
 .navbar a, .navbar-brand, .nav-link {
-    color: #FFFFFF;
+    color: #333333;
 }
 
 .navbar a:hover {
-    color: #F2A30F; /* Engage color for hover */
+    color: #007bff;
 }
 
 /* Buttons */
 .btn, .btn-primary {
-    background: var(--button-gradient);
+    background: var(--button-bg);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -128,13 +134,13 @@ body {
 }
 
 .btn:hover, .btn-primary:hover {
-    background: var(--button-gradient-hover);
+    background: var(--button-bg-hover);
 }
 
 /* Header Message */
 .header-message {
     background: var(--header-message-bg);
-    color: #FFFFFF;
+    color: #084298;
     text-align: center;
     padding: 0.75rem;
     font-size: 0.85rem;
@@ -145,7 +151,7 @@ body {
 /* Alerts */
 .alert {
     background-color: var(--header-message-bg);
-    color: #FFFFFF;
+    color: #084298;
     margin: 0;
     padding: 0.75rem;
     position: absolute;
@@ -229,7 +235,7 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: var(--accent-primary);
+    border-color: var(--accent-indigo);
     box-shadow: 0 0 5px rgba(4, 75, 217, 0.5);
 }
 
@@ -307,7 +313,7 @@ body {
     border-radius: 0.75rem;
     color: white;
     text-align: center;
-    background: var(--button-gradient);
+    background: var(--button-bg);
     text-decoration: none;
 }
 
@@ -329,7 +335,7 @@ body {
 
 .tile:hover {
     transform: translateY(-5px);
-    background: var(--button-gradient-hover);
+    background: var(--button-bg-hover);
 }
 
 /* Tile Background Colors */
@@ -338,14 +344,14 @@ body {
 .bg-purple-600 { background-color: #9333ea; }
 .bg-red-600 { background-color: #F24F13; }
 
-.hover\:bg-blue-700:hover { background-color: #0338A6; }
+.hover\:bg-blue-700:hover { background-color: #0337A6; }
 .hover\:bg-green-700:hover { background-color: #15803d; }
 .hover\:bg-purple-700:hover { background-color: #7e22ce; }
-.hover\:bg-red-700:hover { background-color: #C73E0F; }
+.hover\:bg-red-700:hover { background-color: #C23E0F; }
 
 /* Footer */
 .footer {
-    background: var(--navbar-bg);
+    background: var(--button-nav-bg);
     color: white;
     padding: 0.5rem 1rem;
     text-align: center;
