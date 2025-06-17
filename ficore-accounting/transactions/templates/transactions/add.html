@@ -2,7 +2,7 @@
 {% block title %}{{ trans('track_transaction') | default('Add Transaction') }}{% endblock %}
 {% block content %}
 <div class="container my-5">
-    <h1 class="text-center mb-4">{{ transaction_id | default(trans('track_transaction') | default('Add Transaction')) if transaction_id else trans('track_transaction') | default('Add Transaction') }}</h1>
+    <h1 class="text-center mb-4 text-color">{{ transaction_id | default(trans('track_transaction') | default('Add Transaction')) if transaction_id else trans('track_transaction') | default('Add Transaction') }}</h1>
     <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-body">
             <form class="validate-form" method="POST" action="{{ url_for('transactions.update_transaction', transaction_id=transaction_id) if transaction_id else url_for('transactions.add_transaction') }}">
