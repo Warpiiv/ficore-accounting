@@ -11,14 +11,14 @@
     --alert-bg: #EDE9FE; /* Light purple for alerts */
     --alert-border: #7C3AED; /* Purple border for alerts */
     --alert-text: #4C1D95; /* Dark purple text for alerts */
-    --text-color: #333333;
+    --text-color: #E4F7E8;
     --navbar-bg: #ffffff; /* Plain white for navbar */
     --card-border: #D1D5DB; /* Subtle grey for card borders */
     --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Subtle shadow */
     --form-bg: #F5F5F5; /* Light grey for forms */
     --table-border: #e0e0e0;
     --table-header-bg: #EDE7F6;
-    --table-text: #333333;
+    --table-text: #E4F7E8;
     --amount-highlight: #044BD9; /* Blue for highlights */
     --error-highlight: #F28C38; /* Orange for errors */
 }
@@ -90,7 +90,7 @@ body {
 /* Navbar */
 .navbar {
     background-color: var(--navbar-bg);
-    color: #333333;
+    color: #E4F7E8;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     padding: 1rem;
     display: flex;
@@ -105,7 +105,7 @@ body {
 }
 
 .navbar a, .navbar-brand, .nav-link {
-    color: #333333;
+    color: #E4F7E8;
 }
 
 .navbar a:hover {
