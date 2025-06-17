@@ -36,9 +36,7 @@
             </div>
             <div class="text-end mb-3">
                 <a href="{{ url_for('invoices.create_invoice') }}" class="btn btn-primary">
-                    {{ trans('create_invoice指标
-
-System: Invoice') }}
+                    {{ trans('create_invoice') | default('Create Invoice') }}
                 </a>
             </div>
             {% if invoices %}
