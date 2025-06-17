@@ -1,37 +1,39 @@
 {% extends 'base.html' %}
-{% block title %}{{ trans('home') | default('Home') }}{% endblock %}
+{% block title %}{{ trans('home') | default('') }}{% endblock %}
 {% block content %}
 <div class="container">
-    <h1 class="text-center text-4xl font-bold mb-8">{{ trans('welcome') | default('Welcome to Ficore Records') }}</h1>
+    <h1 class="text-center text-4xl font-bold mb-8">{{ trans('welcome') | default('Welcome to Ficore') }}</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a href="{{ url_for('general_dashboard') }}" class="tile bg-orange-600 hover:bg-orange-700">
-            <h2>{{ trans('general_dashboard') | default('General Dashboard') }}</h2>
-            <p>{{ trans('general_dashboard_desc') | default('See overall financial summary and stats') }}</p>
-        </a>
-        <a href="{{ url_for('invoices.invoice_dashboard') }}" class="tile bg-blue-600 hover:bg-blue-700">
-            <h2>{{ trans('core_invoices') | default('Manage Invoices') }}</h2>
-            <p>{{ trans('invoices_desc') | default('Create, edit, and track invoices') }}</p>
-        </a>
-        <a href="{{ url_for('invoices.create_invoice') }}" class="tile bg-blue-400 hover:bg-blue-500">
-            <h2>{{ trans('create_invoice') | default('Create Invoice') }}</h2>
-            <p>{{ trans('create_invoice_desc') | default('Quickly create a new invoice for a customer') }}</p>
-        </a>
-        <a href="{{ url_for('transactions.transaction_history') }}" class="tile bg-green-600 hover:bg-green-700">
-            <h2>{{ trans('transactions') | default('Manage Transactions') }}</h2>
-            <p>{{ trans('transactions_desc') | default('Record and view transactions') }}</p>
-        </a>
-        <a href="{{ url_for('transactions.add_transaction') }}" class="tile bg-green-400 hover:bg-green-500">
-            <h2>{{ trans('track_transaction') | default('Add Transaction') }}</h2>
-            <p>{{ trans('add_transaction_desc') | default('Add a new income or expense transaction') }}</p>
-        </a>
-        <a href="{{ url_for('feedback') }}" class="tile bg-purple-600 hover:bg-purple-700">
-            <h2>{{ trans('feedback') | default('Provide Feedback') }}</h2>
-            <p>{{ trans('feedback_desc') | default('Share your thoughts on the app') }}</p>
-        </a>
-        <a href="{{ url_for('admin_dashboard') }}" class="tile bg-red-600 hover:bg-red-700">
-            <h2>{{ trans('admin_dashboard') | default('Admin Dashboard') }}</h2>
-            <p>{{ trans('admin_dashboard_desc') | default('Manage users and settings') }}</p>
-        </a>
+        <!-- Manage Invoices -->
+        <div class="card">
+            <h2 class="card-title">{{ trans('core_invoices') | default('Invoices') }}</h2>
+            <p class="card-text">{{ trans('invoices_des') | default('Create, edit, and track invoices') }}</p>
+            <a href="{{ url_for('invoices.invoice') }}" class="btn-primary">{{ trans('view_invoices') | default('View Invoices') }}</a>
+        </div>
+        <!-- Create Invoice -->
+        <div class="card">
+            <h2 class="card-title">{{ trans('create_invoice') | default('Create Invoice') }}</h2>
+            <p class="card-text">{{ trans('create_invoice_des') | default('Quickly create a new invoice for a customer') }}</p>
+            <a href="{{ url_for('invoices.create_invoice') }}" class="btn-primary">{{ trans('create') | default('Create') }}</a>
+        </div>
+        <!-- Manage Transactions -->
+        <div class="card">
+            <h2 class="card-title">{{ trans('transactions') | default('Transactions') }}</h2>
+            <p class="card-text">{{ trans('transactions_des') | default('Record and view transactions') }}</p>
+            <a href="{{ url_for('cards.transaction_history') }}" class="btn-primary">{{ trans('view_transactions') | default('View Transactions') }}</a>
+        </div>
+        <!-- Add Transaction -->
+        <div class="card">
+            <h2 class="card-title">{{ trans('track_transaction') | default('Add Transaction') }}</h2>
+            <p class="card-text">{{ trans('add_transaction_des') | default('Add a new income or expense transaction') }}</p>
+            <a href="{{ url_for('cards.add_transaction') }}" class="btn-primary">{{ trans('add') | default('Add') }}</a>
+        </div>
+        <!-- General Dashboard -->
+        <div class="card">
+            <h2 class="card-title">{{ trans('general') | default('') }}</h2>
+            <p class="card-text">{{ trans('general_des') | default('See overall financial summary and stats') }}</p>
+            <a href="{{ url_for('general') }}" class="btn-primary">{{ trans('view') | default('View') }}</a>
+        </div>
     </div>
 </div>
 {% endblock %}
