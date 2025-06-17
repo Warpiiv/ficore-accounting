@@ -2,11 +2,14 @@
     /* --- Light Mode Colors (Refined for Warmth & Clarity) --- */
     --background-main: #F2EFEA; /* Softer, warmer off-white */
     --card-bg: #ffffff;
-    --button-primary-bg: #B88A44;
+
+    /* Buttons */
+    --button-primary-bg: #B88A44; /* Specific brand color for primary button */
     --button-primary-hover: #E06A35;
-    --button-secondary-bg: #ffffff;
+    --button-secondary-bg-light-gradient: linear-gradient(to bottom, white, #f8faff);
     --button-secondary-border: #3A86FF;
     --button-secondary-hover: #e8f0ff; /* Light blue on hover */
+
     --footer-link-color: #4a5568; /* Darker grey for better contrast in light mode */
 
     /* Semantic Alert Colors - Light Mode */
@@ -29,23 +32,27 @@
     --text-color: #1e293b;
     --text-secondary: #4a5568; /* Added for less important text */
     --navbar-bg: #0F3D57;
-    --footer-bg: #0F3D57; /* Light ash for footer */
+    --navbar-text-color: white; /* Text color for content *on* the navbar */
+    --footer-bg: #0F3D57;
     --card-border: #e2e8f0;
     --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Softer shadow */
     --card-shadow-hover: 0 16px 32px rgba(0, 30, 80, 0.15); /* Stronger shadow on hover */
     --form-bg: #ffffff;
     --table-border: #e2e8f0;
     --table-header-bg: #0F3D57; /* Retaining light blue for header distinction */
-    --table-text: #1e293b;
+    --table-text: #1e293b; /* Explicitly for table cell text if different from main text-color */
     --amount-highlight: #3A86FF;
     --error-highlight: #0808d1; /* Used for form invalid states primarily */
-    --accent-blue: #3A86FF;
+    --accent-blue: #3A86FF; /* General accent/link blue */
     --success-color: #10b981; /* For success text, distinct from alerts */
     --card-header-bg: #0F3D57;
     --table-row-even-bg: #FDFEFC; /* Subtle zebra striping for tables */
     --table-row-bg-overdue: #fefcbf; /* Light yellow for overdue */
     --table-row-bg-pending: #fef9c3; /* Light yellow for pending */
     --table-row-bg-settled: #d1fae5; /* Light green for settled */
+
+    /* Theme-specific for Icons/Charts */
+    --theme-icon-chart-color: #3C7A6E;
 
     /* Spacing variables */
     --spacing-xs: 0.5rem;
@@ -58,19 +65,27 @@
     --button-padding-x: 1.25rem;
     --button-font-size: 0.9rem;
 
-    /* Navbar height */
-    --navbar-height: calc(var(--spacing-sm) * 2 + 60px);
+    /* Navbar height variables */
+    --navbar-logo-height: 45px;
+    --navbar-padding-vertical: 0.8rem;
+    --navbar-height: calc(var(--navbar-padding-vertical) * 2 + var(--navbar-logo-height));
+
+    /* Footer max-width */
+    --footer-max-width: 900px;
 }
 
 .dark-mode {
     /* --- Dark Mode Colors (Refined for Contrast & Sophistication) --- */
     --background-main: #0f172a;
     --card-bg: #1e293b;
+
+    /* Buttons */
     --button-primary-bg: #0808d1;
-    --button-primary-hover: #E06A35;
-    --button-secondary-bg: #1e293b;
+    --button-primary-hover: #E06A35; /* Using the same hover as light mode for consistency if desired, or set a dark mode specific one */
+    --button-secondary-bg-dark-gradient: linear-gradient(to bottom, #1e293b, #1a202c);
     --button-secondary-border: #63B3ED;
     --button-secondary-hover: #334155;
+
     --footer-link-color: #cbd5e0; /* Lighter grey for better contrast in dark mode */
 
     /* Semantic Alert Colors - Dark Mode */
@@ -93,6 +108,7 @@
     --text-color: #f1f5f9;
     --text-secondary: #94a3b8; /* Added for less important text in dark mode */
     --navbar-bg: #0f172a;
+    --navbar-text-color: #f1f5f9; /* Text color for content *on* the navbar in dark mode */
     --footer-bg: #2a3447; /* Darker ash for footer */
     --card-border: #334155;
     --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); /* Stronger shadow for depth */
@@ -100,16 +116,19 @@
     --form-bg: #1e293b;
     --table-border: #334155;
     --table-header-bg: #1e3a8a; /* Retaining dark blue for header distinction */
-    --table-text: #f1f5f9;
+    --table-text: #f1f5f9; /* Explicitly for table cell text if different from main text-color */
     --amount-highlight: #93c5fd;
-    --error-highlight: #0808d1;
-    --accent-blue: #93c5fd;
-    --success-color: #34d399;
+    --error-highlight: #0808d1; /* Keeping the same error highlight for consistency, or pick a dark-mode specific one */
+    --accent-blue: #93c5fd; /* General accent/link blue in dark mode */
+    --success-color: #34d399; /* For success text, distinct from alerts */
     --card-header-bg: #1e3a8a;
     --table-row-even-bg: #1a2333; /* Subtle zebra striping for tables */
     --table-row-bg-overdue: #3f2f0a; /* Dark yellow for overdue */
     --table-row-bg-pending: #2d2a0e; /* Dark yellow for pending */
     --table-row-bg-settled: #0a2d1f; /* Dark green for settled */
+
+    /* Theme-specific for Icons/Charts */
+    --theme-icon-chart-color: #3C7A6E; /* Keeping same as light for consistency, or set a dark mode specific one */
 }
 
 /* --- Global Transitions & Accessibility (Reduced Motion) --- */
@@ -185,7 +204,7 @@ main {
 .navbar {
     background-color: var(--navbar-bg);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-    padding: 0.8rem 2rem;
+    padding: var(--navbar-padding-vertical) 2rem; /* Using variable */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -203,7 +222,7 @@ main {
 }
 
 .navbar a, .navbar-brand, .nav-link {
-    color: var(--text-color);
+    color: var(--navbar-text-color); /* Ensures visibility on navbar */
 }
 
 .navbar a:hover {
@@ -214,14 +233,13 @@ main {
 .logo {
     border-radius: 50%;
     width: 60px;
-    height: 45px;
+    height: var(--navbar-logo-height); /* Using variable */
     object-fit: cover;
-    max-height: none;
 }
 
 /* --- Buttons --- */
 .btn-primary {
-    background: #B88A44;
+    background: var(--button-primary-bg); /* Using variable */
     color: white;
     border: none;
     padding: var(--button-padding-y) var(--button-padding-x);
@@ -255,7 +273,7 @@ main {
 }
 
 .btn-secondary {
-    background: linear-gradient(to bottom, white, #f8faff);
+    background: var(--button-secondary-bg-light-gradient); /* Using variable */
     color: var(--button-secondary-border);
     border: 2px solid var(--button-secondary-border);
     padding: var(--button-padding-y) var(--button-padding-x);
@@ -268,7 +286,7 @@ main {
 }
 
 .dark-mode .btn-secondary {
-    background: linear-gradient(to bottom, #1e293b, #1a202c);
+    background: var(--button-secondary-bg-dark-gradient); /* Using variable */
     border-color: var(--button-secondary-border);
     color: var(--text-color);
 }
@@ -310,29 +328,38 @@ main {
 
 /* --- Header Message --- */
 .header-message {
-    background: #0F3D57;
-    color: white;
+    background: var(--navbar-bg); /* Using navbar-bg as it's the header color */
+    color: var(--navbar-text-color); /* Ensuring text visibility */
     text-align: center;
     padding: 0.5rem;
     font-size: 0.85rem;
     width: 100%;
     box-sizing: border-box;
     border: 1px solid var(--alert-info-border);
-    animation: fadeIn 0.5s ease-out forwards; /* New: simpler fadeIn */
+    animation: fadeInThenOut 5s ease-in-out forwards; /* Changed animation name and properties */
     opacity: 0; /* Start hidden */
-    transform: translateY(-10px); /* Start slightly up */ 
+    transform: translateY(-10px); /* Start slightly up */
 }
 
-@keyframes fadeInOut {
-    0%, 100% {
+@keyframes fadeInThenOut { /* Renamed for clarity and to reflect behavior */
+    0% {
         opacity: 0;
         transform: translateY(-10px);
     }
-    15%, 85% {
+    10% { /* Fade in quickly */
         opacity: 1;
         transform: translateY(0);
     }
+    90% { /* Stay visible for most of the duration */
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% { /* Fade out at the end */
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }
+
 
 /* --- Alerts --- */
 .alert {
@@ -443,21 +470,21 @@ main {
 }
 
 .card-header {
-    background: #0F3D57;
+    background: var(--card-header-bg); /* Using variable */
     padding: var(--spacing-sm) var(--spacing-md);
     border-bottom: 1px solid var(--card-border);
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--navbar-text-color); /* Set color to be visible on dark header */
 }
 
 .card-body {
     padding: var(--spacing-sm);
-    color: var(--text-color);
+    /* color: var(--text-color); -- This is inherited from body, often not needed unless overriding */
 }
 
 .card h3, .card p, .card span {
     margin-bottom: 0.25rem;
-    color: var(--text-color);
+    /* color: var(--text-color); -- This is inherited from body, often not needed unless overriding */
 }
 
 .card-item {
@@ -469,7 +496,7 @@ main {
 
 .card-item p {
     line-height: 1.5;
-    color: var(--text-color);
+    /* color: var(--text-color); -- Inherited */
 }
 
 .card-title {
@@ -538,11 +565,11 @@ main {
 }
 
 .form-control::placeholder, .form-select::placeholder {
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 0.5); /* Good for light mode */
 }
 
 .dark-mode .form-control::placeholder, .dark-mode .form-select::placeholder {
-    color: rgba(241, 245, 249, 0.5);
+    color: rgba(241, 245, 249, 0.5); /* Good for dark mode */
 }
 
 .form-control:focus, .form-select:focus {
@@ -590,19 +617,20 @@ main {
     padding: var(--spacing-sm);
     border: 1px solid var(--table-border);
     text-align: left;
-    color: var(--text-color);
+    color: var(--table-text); /* Explicitly set table text color */
 }
 
 .table th {
-    background-color: #0F3D57;
+    background-color: var(--table-header-bg); /* Using variable */
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 0.85rem;
+    color: var(--navbar-text-color); /* Set color to be visible on dark header */
 }
 
 .table td {
-    color: var(--text-color);
+    /* color: var(--text-color); -- Inherited from table, or table-text var */
 }
 
 .table tr {
@@ -637,15 +665,17 @@ main {
 
 .table tbody tr.table-success {
     background-color: var(--table-row-bg-settled);
+    color: var(--alert-success-text); /* Ensure text contrast */
 }
 
 .table tbody tr.table-danger {
     background-color: var(--alert-error-bg);
+    color: var(--alert-error-text); /* Ensure text contrast */
 }
 
-/* Ensure text contrast in tables */
-.table td, .table th, .table p, .table li {
-    color: var(--text-color);
+/* Ensure text contrast in tables (redundant for td/th but good for p/li within them) */
+.table p, .table li {
+    color: var(--table-text);
 }
 
 /* --- List Group --- */
@@ -664,9 +694,9 @@ main {
     align-items: center;
 }
 
-/* Ensure text contrast in list items */
+/* Ensure text contrast in list items (redundant for li/p but good for children) */
 .list-group-item li, .list-group-item p {
-    color: var(--text-color);
+    /* color: var(--text-color); -- Inherited */
 }
 
 /* --- Grid Layout --- */
@@ -681,8 +711,8 @@ main {
 
 /* --- Footer --- */
 .footer {
-    background: #0F3D57;
-    color: var(--text-color);
+    background: var(--footer-bg); /* Using variable */
+    color: var(--navbar-text-color); /* Ensuring text visibility */
     padding: var(--spacing-md);
     text-align: center;
     width: 100%;
@@ -691,14 +721,14 @@ main {
 }
 
 .footer .container {
-    max-width: 900px;
+    max-width: var(--footer-max-width); /* Using variable */
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     font-size: 0.85rem;
     line-height: 1.3;
-    color: var(--text-color);
+    /* color: var(--text-color); -- Inherited from footer, or use explicit footer text color var */
 }
 
 .footer a {
@@ -739,13 +769,13 @@ main {
 /* --- Media Queries --- */
 @media (min-width: 768px) {
     :root {
-        --navbar-height: calc(var(--spacing-sm) * 2 + 60px);
+        /* No change needed here, as navbar-height is already dynamic */
     }
     .container {
         padding: var(--spacing-sm) var(--spacing-lg);
     }
     .navbar {
-        padding: var(--spacing-sm) 3rem;
+        padding: var(--navbar-padding-vertical) 3rem; /* Using variable */
     }
     .navbar-brand {
         font-size: 1.2rem;
@@ -793,11 +823,11 @@ main {
         padding: var(--spacing-md) 3rem;
     }
     .navbar {
-        padding: 0;
+        padding: 0; /* Already 0, but good to keep if specific intent */
     }
     .navbar .container {
         max-width: 1400px;
-        padding: var(--spacing-sm) 3rem;
+        padding: var(--navbar-padding-vertical) 3rem; /* Using variable */
     }
     .footer .container {
         max-width: 1400px;
