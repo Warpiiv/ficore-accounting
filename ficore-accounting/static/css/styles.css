@@ -1,60 +1,50 @@
 /* Define CSS Custom Properties for Colors */
 :root {
     /* Light Mode Colors */
-    --background-main: #044BD9; /* Primary color for main UI (60%) */
-    --attention-color: #F24F13; /* CTAs, warnings, insights (10%) */
-    --engage-color: #F2A30F; /* Visuals, charts (30%) */
+    --background-main: #E6F0FA; /* Light blue background */
+    --card-bg: #F5F5F5; /* Light grey for cards */
+    --button-primary-bg: #F28C38; /* Orange for primary CTAs */
+    --button-primary-hover: #D97706; /* Darker orange for hover */
+    --button-secondary-bg: transparent; /* Secondary buttons */
+    --button-secondary-border: #044BD9; /* Blue outline for secondary */
+    --button-secondary-hover: #E6F0FA; /* Light blue fill on hover */
+    --alert-bg: #EDE9FE; /* Light purple for alerts */
+    --alert-border: #7C3AED; /* Purple border for alerts */
+    --alert-text: #4C1D95; /* Dark purple text for alerts */
     --text-color: #333333;
     --navbar-bg: #ffffff; /* Plain white for navbar */
-    --header-message-bg: #e7f3fe; /* Soft blue for alerts */
-    --consent-banner-bg: #EDE7F6;
-    --consent-banner-text: #333333;
-    --accent-indigo: #044BD9; /* Updated to primary color */
-    --accent-indigo-dark: #0337A6; /* Darker shade of primary */
-    --accent-attention: #F24F13; /* Attention color */
-    --accent-attention-dark: #C23E0F; /* Darker shade of attention */
-    --button-bg: #F24F13; /* Solid attention color for buttons */
-    --button-bg-hover: #C23E0F; /* Darker attention color for hover */
-    --button-nav-bg: #044BD9; /* Solid primary color for nav buttons */
-    --button-nav-bg-hover: #0337A6; /* Darker primary for hover */
-    --card-bg: #FFFFFF; /* Shiny white for cards */
-    --card-border: #044BD9; /* Primary color for card borders */
-    --card-text: #6c757d;
-    --form-bg: #F5F5F5;
+    --card-border: #D1D5DB; /* Subtle grey for card borders */
+    --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    --form-bg: #F5F5F5; /* Light grey for forms */
     --table-border: #e0e0e0;
     --table-header-bg: #EDE7F6;
     --table-text: #333333;
-    --amount-highlight: #F2A30F; /* Engage color for highlights */
-    --error-highlight: #F24F13; /* Attention color for errors */
+    --amount-highlight: #044BD9; /* Blue for highlights */
+    --error-highlight: #F28C38; /* Orange for errors */
 }
 
 /* Dark Mode Overrides */
 .dark-mode {
-    --background-main: #0337A6; /* Darker primary for dark mode */
-    --attention-color: #F24F13;
-    --engage-color: #F2A30F;
+    --background-main: #1E3A8A; /* Darker blue for dark mode */
+    --card-bg: #374151; /* Dark grey for cards */
+    --button-primary-bg: #F28C38;
+    --button-primary-hover: #D97706;
+    --button-secondary-bg: transparent;
+    --button-secondary-border: #3B82F6;
+    --button-secondary-hover: #1E3A8A;
+    --alert-bg: #5B21B6; /* Darker purple for alerts */
+    --alert-border: #A78BFA;
+    --alert-text: #EDE9FE;
     --text-color: #E0E0E0;
-    --navbar-bg: #424242; /* Plain dark for navbar */
-    --header-message-bg: #424242; /* Dark mode alert bg */
-    --consent-banner-bg: #424242;
-    --consent-banner-text: #E0E0E0;
-    --accent-indigo: #0337A6;
-    --accent-indigo-dark: #022873;
-    --accent-attention: #F24F13;
-    --accent-attention-dark: #C23E0F;
-    --button-bg: #F24F13;
-    --button-bg-hover: #C23E0F;
-    --button-nav-bg: #0337A6;
-    --button-nav-bg-hover: #022873;
-    --card-bg: #424242; /* Dark card background */
-    --card-border: #0337A6;
-    --card-text: #B0BEC5;
-    --form-bg: #424242;
-    --table-border: #616161;
-    --table-header-bg: #424242;
+    --navbar-bg: #1F2937; /* Dark navbar */
+    --card-border: #4B5563;
+    --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    --form-bg: #374151;
+    --table-border: #4B5563;
+    --table-header-bg: #4B5563;
     --table-text: #E0E0E0;
-    --amount-highlight: #F2A30F;
-    --error-highlight: #F24F13;
+    --amount-highlight: #3B82F6;
+    --error-highlight: #F28C38;
 }
 
 /* Transitions for Smooth Changes */
@@ -123,8 +113,8 @@ body {
 }
 
 /* Buttons */
-.btn, .btn-primary {
-    background: var(--button-bg);
+.btn-primary {
+    background: var(--button-primary-bg);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -133,25 +123,41 @@ body {
     cursor: pointer;
 }
 
-.btn:hover, .btn-primary:hover {
-    background: var(--button-bg-hover);
+.btn-primary:hover {
+    background: var(--button-primary-hover);
+}
+
+.btn-secondary {
+    background: var(--button-secondary-bg);
+    color: var(--button-secondary-border);
+    border: 1px solid var(--button-secondary-border);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: var(--button-secondary-hover);
 }
 
 /* Header Message */
 .header-message {
-    background: var(--header-message-bg);
-    color: #084298;
+    background: var(--alert-bg);
+    color: var(--alert-text);
     text-align: center;
     padding: 0.75rem;
     font-size: 0.85rem;
     width: 100%;
     box-sizing: border-box;
+    border: 1px solid var(--alert-border);
 }
 
 /* Alerts */
 .alert {
-    background-color: var(--header-message-bg);
-    color: #084298;
+    background-color: var(--alert-bg);
+    color: var(--alert-text);
+    border: 1px solid var(--alert-border);
     margin: 0;
     padding: 0.75rem;
     position: absolute;
@@ -166,7 +172,7 @@ body {
     border-radius: 0.5rem;
     padding: 1.25rem;
     margin: 1rem 0 0.5rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--card-shadow);
 }
 
 .card h3, .card p, .card span {
@@ -235,7 +241,7 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: var(--accent-indigo);
+    border-color: var(--amount-highlight);
     box-shadow: 0 0 5px rgba(4, 75, 217, 0.5);
 }
 
@@ -313,7 +319,7 @@ body {
     border-radius: 0.75rem;
     color: white;
     text-align: center;
-    background: var(--button-bg);
+    background: var(--button-primary-bg);
     text-decoration: none;
 }
 
@@ -335,24 +341,24 @@ body {
 
 .tile:hover {
     transform: translateY(-5px);
-    background: var(--button-bg-hover);
+    background: var(--button-primary-hover);
 }
 
 /* Tile Background Colors */
 .bg-blue-600 { background-color: #044BD9; }
 .bg-green-600 { background-color: #16a34a; }
-.bg-purple-600 { background-color: #9333ea; }
-.bg-red-600 { background-color: #F24F13; }
+.bg-purple-600 { background-color: #7C3AED; }
+.bg-red-600 { background-color: #F28C38; }
 
 .hover\:bg-blue-700:hover { background-color: #0337A6; }
 .hover\:bg-green-700:hover { background-color: #15803d; }
-.hover\:bg-purple-700:hover { background-color: #7e22ce; }
-.hover\:bg-red-700:hover { background-color: #C23E0F; }
+.hover\:bg-purple-700:hover { background-color: #6D28D9; }
+.hover\:bg-red-700:hover { background-color: #D97706; }
 
 /* Footer */
 .footer {
-    background: var(--button-nav-bg);
-    color: white;
+    background: var(--navbar-bg);
+    color: var(--text-color);
     padding: 0.5rem 1rem;
     text-align: center;
     width: 100%;
