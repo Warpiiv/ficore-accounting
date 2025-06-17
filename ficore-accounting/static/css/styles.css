@@ -445,7 +445,7 @@ main {
     padding: var(--spacing-sm) var(--spacing-md);
     border-bottom: 1px solid var(--card-border);
     font-weight: 700;
-    color: #0F3D57;
+    color: var(--text-color);
 }
 
 .card-body {
