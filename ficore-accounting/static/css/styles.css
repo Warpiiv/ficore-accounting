@@ -1,13 +1,13 @@
 /* Define CSS Custom Properties for Colors */
 :root {
     /* Light Mode Colors */
-    --background-main: #E6F0FA; /* Light blue background */
+    --background-main: #D1D5DB;; /* Light blue background */
     --card-bg: #F5F5F5; /* Light grey for cards */
     --button-primary-bg: #F28C38; /* Orange for primary CTAs */
     --button-primary-hover: #D97706; /* Darker orange for hover */
     --button-secondary-bg: transparent; /* Secondary buttons */
     --button-secondary-border: #044BD9; /* Blue outline for secondary */
-    --button-secondary-hover: #E6F0FA; /* Light blue fill on hover */
+    --button-secondary-hover: #D1D5DB;; /* Light blue fill on hover */
     --alert-bg: #EDE9FE; /* Light purple for alerts */
     --alert-border: #7C3AED; /* Purple border for alerts */
     --alert-text: #4C1D95; /* Dark purple text for alerts */
