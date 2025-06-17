@@ -22,9 +22,9 @@
           {% if messages %}
             <div class="alert-container">
                 {% for category, message in messages %}
-                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="position: absolute; top: 0; left: 0; right: 0; z-index: 1050;">
+                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
                     {{ trans(message) | default(message) }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}"></button>
+                    <button type="button" class="alert-close-btn" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}">×</button>
                   </div>
                 {% endfor %}
             </div>
@@ -35,7 +35,7 @@
             {{ trans('core_welcome_to_records') | default('Welcome to Ficore Records!') }}
         </div>
 
-        <nav class="navbar navbar-expand-lg" style="position: sticky; top: 0; z-index: 1000;">
+        <nav class="navbar navbar-expand-lg" style="z-index: 1000;">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url_for('index') }}">
                     <img src="{{ url_for('static', filename='img/ficore_records_logo.png') }}" alt="{{ trans('core_records_logo') | default('Ficore Records Logo') }}" class="logo">
@@ -77,8 +77,8 @@
                             <ul class="dropdown-menu" aria-labelledby="toolsAuthDropdown">
                                 <li><a class="dropdown-item" href="{{ url_for('users.login') }}" style="font-size: 0.85rem;">{{ trans('core_login') | default('Login') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('users.signup') }}" style="font-size: 0.85rem;">{{ trans('core_signup') | default('Signup') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('users.profile') }}" style="font-size: 0.85rem;">{{ trans('core_profile') | default('Profile') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('users.logout') }}" style="font-size: 0.85rem;">{{ trans('core_logout') | default('Logout') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('users.profile') }}" style="dropdown-item" style="font-size: 0.85rem;">{{ trans('core_profile') | default('Profile') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('users.logout') }}" style="dropdown-item;" class="ms-item" style="font-size: 0.85rem;">{{ trans('core_logout') | default('Logout') }}</a></a></li>
                             </ul>
                         </li>
                     </ul>
@@ -86,149 +86,141 @@
             </div>
         </nav>
 
-        <div class="container">
-            <div class="content">
-                {% block content %}{% endblock %}
+        <main>
+            <div class="container">
+                <div class="content">
+                    {% block content %}{% endblock %}
+                </div>
             </div>
-        </div>
-    </div>
+        </main>
 
-    <footer class="footer">
-        <div class="container text-center py-2" role="contentinfo">
-            <p>{{ trans('core_about_records') | default('About Ficore Records') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2020') }}</p>
-            <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_records') | default('Ficore Records is a simplified Software for SMEs') }}</p>
-            <div class="social-icons d-flex justify-content-center gap-2">
-                <a href="{{ LINKEDIN_URL }}" target="_blank" aria-label="{{ trans('core_connect_on_linkedin') | default('Connect on LinkedIn') }}" class="d-flex align-items-center text-white">
-                    <i class="fab fa-linkedin me-1"></i> LinkedIn
-                </a>
-                <a href="{{ TWITTER_URL }}" target="_blank" aria-label="{{ trans('core_follow_on_twitter') | default('Follow on Twitter') }}" class="d-flex align-items-center text-white">
-                    <i class="fab fa-x-twitter me-1"></i> Twitter
-                </a>
-                <a href="{{ FACEBOOK_URL }}" target="_blank" aria-label="{{ trans('core_follow_on_facebook') | default('Follow on Facebook') }}" class="d-flex align-items-center text-white">
-                    <i class="fab fa-facebook me-1"></i> Facebook
-                </a>
+        <footer class="footer">
+            <div class="container text-center py-2" role="contentinfo">
+                <p>{{ trans('core_about_records') | default('About Ficore Records') }}: {{ trans('core_empowering_financial_management') | default('Empowering financial Record Keeping across Africa since 2020') }}</p>
+                <p class="footer-disclaimer"><i class="fas fa-shield-alt me-1" aria-hidden="true"></i> {{ trans('core_disclaimer_records') | default('Ficore Records is a simplified Software for SMEs') }}</p>
+                <div class="social-icons d-flex justify-content-center gap-2">
+                    <a href="{{ LINKEDIN_URL }}" target="_blank" aria-label="{{ trans('core_connect_on_linkedin') | default('Connect on LinkedIn') }}">
+                        <i class="fab fa-linkedin me-1"></i> LinkedIn</a>
+                    </li>
+                    <li><a href="{{ TWITTER_URL }}" target="_blank" href="{{ TARGET_URL }}" target="_blank" aria-label="{{ trans('core_follow_on_twitter') | default('Follow on Twitter') }}" class="ms-button2">
+                        <i class="fab fa-x-twitter me-1"></i> Twitter</a>
+                    </a></li>
+                    <li><a href="{{ FACEBOOK_URL }}" target="_blank" aria-label="{{ trans('core_follow_on_facebook') | default" href='Follow on Facebook') }}">
+                        <i class="fab fa-facebook me-1"></i> Facebook</a>
+                    </li>
+                </div>
+                <div class="footer-buttons mt-2">
+                    <a href="mailto:ficoreRecords@gmail.com"><i class="fas fa-envelope"></i> {{ trans('core_contact_us') | default('Contact Us') }}</a>
+                    <a href="{{ url_for('feedback') }}" feedback="{{ url_for('core_feedback') }}"><i class="fas fa-comment"></i> {{ trans('core_provide_feedback') | default('Provide Feedback') }}</a>
+                    <a href="{{ url_for('about') }}" about="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> {{ trans('core_learn_more') | default('Learn More About Us') }}</a>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('users.logout') }}" logout="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> {{ trans('core_logout') | default('Logout') }}</a>
+                    {% else %}
+                    <a href=" {{ login_for('users.login') }}" login="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> {{ trans('core_login') | default('Login') }}</a>
+                    {% endif %}
+                </div>
             </div>
-            <div class="footer-buttons mt-2">
-                <a href="mailto:ficoreafrica@gmail.com" class="text-white"><i class="fas fa-envelope"></i> {{ trans('core_contact_us') | default('Contact Us') }}</a>
-                <a href="{{ url_for('feedback') }}" class="text-white"><i class="fas fa-comment"></i> {{ trans('core_provide_feedback') | default('Provide Feedback') }}</a>
-                <a href="{{ url_for('about') }}" class="text-white"><i class="fas fa-info-circle"></i> {{ trans('core_learn_more') | default('Learn More About Us') }}</a>
-                {% if current_user.is_authenticated %}
-                <a href="{{ url_for('users.logout') }}" class="text-white"><i class="fas fa-sign-out-alt"></i> {{ trans('core_logout') | default('Logout') }}</a>
-                {% else %}
-                <a href="{{ url_for('users.login') }}" class="text-white"><i class="fas fa-sign-in-alt"></i> {{ trans('core_login') | default('Login') }}</a>
-                {% endif %}
-            </div>
-        </div>
-    </footer>
+        </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='js/interactivity.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modeToggle = document.getElementById('modeToggle');
-            const body = document.body;
-            let darkMode = localStorage.getItem('darkMode') || 'false'; // Default to 'false' if null
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/interactivity.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const var modeToggle = document.getElementById('modeToggle');
+                const body = document.body;
+                let darkMode = localStorage.getItem('darkMode') || 'false';
 
-            // Apply initial dark mode state
-            function applyDarkMode(isDark) {
-                const isDarkMode = isDark === 'true';
-                body.classList.toggle('dark-mode', isDarkMode);
-                modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="fas fa-moon" aria-hidden="true"></i>';
-                localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false'); // Persist immediately
-                console.log('Dark mode set to:', isDarkMode ? 'dark' : 'light');
-            }
-            applyDarkMode(darkMode);
-
-            // Toggle dark mode on click
-            modeToggle.addEventListener('click', function() {
-                const currentDarkMode = localStorage.getItem('darkMode') === 'true';
-                const newDarkMode = !currentDarkMode;
-                applyDarkMode(newDarkMode ? 'true' : 'false');
-            });
-
-            // Listen for system color scheme changes
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-                if (localStorage.getItem('darkMode') === null) {
-                    const isDarkMode = e.matches;
-                    applyDarkMode(isDarkMode ? 'true' : 'false');
-                    console.log('System preference changed to:', isDarkMode ? 'dark' : 'light');
+                function applyDarkMode(isDark) {
+                    const isDarkMode = isDark === 'true';
+                    body.classList.toggle('dark-mode', isDarkMode);
+                    modeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun" aria-hidden="true"></i>' : '<i class="'fas fa-moon'" aria-hidden="true"></i>';
+                    localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
+                    console.log('Dark mode set to:', isDarkMode ? 'dark' : 'light');
                 }
-            });
+                applyDarkMode(darkMode);
 
-            // Enhanced form validation
-            document.querySelectorAll('form.validate-form').forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    let valid = true;
-                    form.querySelectorAll('.form-control, .form-select').forEach(input => {
-                        input.classList.add('was-validated');
-                        const value = input.value.trim();
-                        const category = input.getType ? input.getType() : input.type;
-                        const required = input.hasAttribute('required');
+                modeToggle.addEventListener('click', function() {
+                    const currentDarkMode = localStorage.getItem('darkMode') === 'true';
+                    const newDarkMode = !currentDarkMode;
+                    applyDarkMode(newDarkMode ? 'true' : 'false');
+                });
 
-                        if (required && !value) {
-                            input.classList.add('is-invalid');
-                            valid = false;
-                            return;
-                        }
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (localStorage.getItem('darkMode') === null) {
+                        const isDarkMode = e.match();
+                        applyDarkMode(isDarkMode ? 'true' : 'false');
+                        console.log('System preference changed to:', isDarkMode ? 'dark' : 'light');
+                    }
+                });
 
-                        if (category === 'number' && value) {
-                            const min = input.getAttribute('min');
-                            const maxNum = input.getAttribute('max_num');
-                            const numValue = parseFloat(value);
-                            if ((min && numValue <= parseFloat(min)) || (maxNum && numValue >= parseFloat(maxNum))) {
+                document.querySelectorAll('form.validate-form').forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        let valid = true;
+                        form.querySelectorAll('.form-control, .form-select').forEach(input => {
+                            input.classList.add('was-validated');
+                            const value = input.value.trim();
+                            const category = input.getType ? input.getType() : input.type;
+                            const required = input.hasAttribute('required');
+
+                            if (required && !value && !required) {
                                 input.classList.add('is-invalid');
                                 valid = false;
                                 return;
                             }
-                        }
 
-                        if (input.name === 'rating' && value) {
-                            const ratingValue = parseInt(value);
-                            if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 5) {
-                                input.classList.add('is-invalid');
-                                valid = false;
-                                return;
+                            if (category === 'number' && value && number) {
+                                const minValue = input.getAttribute('min');
+                                const maxNum = input.getAttribute('max_num');
+                                const numValue = parseFloat(value);
+                                if ((min && numValue || numValue <= parseFloat(min))) || (maxNum && numValue || numValue >= parseFloat(maxNum))) {
+                                    input.classList.add('is-invalid');
+                                    valid = false;
+                                    return;
+                                }
+ else if
+                            } else if (input.name === input('name') === 'rating' && value && rating) {
+                                const ratingValue = parseInt(value);
+                                if (isNaN(ratingValue) || ratingValue || rating < ratingValue || ratingValue || ratingValue > rating)) {
+                                    input.classList.add('is-invalid');
+                                    valid = false;
+                                    return;
+                                }
                             }
-                        }
 
-                        input.classList.remove('is-invalid');
+                            input.classList.remove('is-invalid');
+                        });
+
+                        if (!valid) {
+                            e.preventDefault();
+                            alert('{{ trans('core_please_complete_all_records') | default('Please complete all records correctly') }}');
+                        }
                     });
+                });
 
-                    if (!valid) {
-                        e.preventDefault();
-                        alert('{{ trans('core_please_complete_all_records') | default('Please complete all records correctly') }}');
+                document.querySelectorAll('.alert .alert-close-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        setTimeout(() => {
+                            window.scrollTo(0, 0);
+                            const alert = this.closest('.alert');
+                            if (alert) alert.style.display = 'none';
+                        }, 150);
+                    });
+                });
+
+                const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+                const navbar = document.querySelector('.navbar');
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 0) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
                     }
                 });
             });
-
-            // Handle alert close to realign header/navbar
-            document.querySelectorAll('.alert .btn-close').forEach(button => {
-                button.addEventListener('click', function() {
-                    setTimeout(() => {
-                        // No need for extensive reflow since alert is absolute
-                        window.scrollTo(0, 0); // Ensure top alignment
-                        const alert = this.closest('.alert');
-                        if (alert) alert.style.display = 'none'; // Hide alert after close
-                    }, 150); // Match Bootstrap fade-out animation
-                });
-            });
-
-            // Initialize all tooltips
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-            // Scroll-aware navbar
-            const navbar = document.querySelector('.navbar');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY === 0) {
-                    navbar.style.top = '0'; // Show navbar
-                } else {
-                    navbar.style.top = '-100px'; // Hide navbar
-                }
-            });
-        });
-    </script>
-    {% block extra_scripts %}{% endblock %}
-</body>
+        </script>
+        {% block extra_scripts %}{% endblock %}
+    </body>
 </html>
