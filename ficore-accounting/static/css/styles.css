@@ -221,8 +221,8 @@ main {
 
 /* --- Buttons --- */
 .btn-primary {
-    background: var(--button-primary-bg);
-    color: #B88A44;
+    background: #B88A44;
+    color: white;
     border: none;
     padding: var(--button-padding-y) var(--button-padding-x);
     border-radius: 10px;
