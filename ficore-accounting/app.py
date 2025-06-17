@@ -38,6 +38,11 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.jinja_env.undefined = jinja2.Undefined
 
+# Social media URLs
+FACEBOOK_URL = os.getenv('FACEBOOK_URL', 'https://www.facebook.com')
+TWITTER_URL = os.getenv('TWITTER_URL', 'https://www.twitter.com')
+LINKEDIN_URL = os.getenv('LINKEDIN_URL', 'https://www.linkedin.com')
+
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
