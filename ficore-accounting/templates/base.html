@@ -111,6 +111,7 @@
             <div class="footer-buttons mt-2">
                 <a href="mailto:ficoreafrica@gmail.com" class="text-white"><i class="fas fa-envelope"></i> {{ trans('core_contact_us') | default('Contact Us') }}</a>
                 <a href="{{ url_for('feedback') }}" class="text-white"><i class="fas fa-comment"></i> {{ trans('core_provide_feedback') | default('Provide Feedback') }}</a>
+                <a href="{{ url_for('about') }}" class="text-white"><i class="fas fa-info-circle"></i> {{ trans('core_learn_more') | default('Learn More About Us') }}</a>
                 {% if current_user.is_authenticated %}
                 <a href="{{ url_for('users.logout') }}" class="text-white"><i class="fas fa-sign-out-alt"></i> {{ trans('core_logout') | default('Logout') }}</a>
                 {% else %}
