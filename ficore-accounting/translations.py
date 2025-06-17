@@ -10,6 +10,9 @@ TRANSLATIONS = {
         'core_please_complete_all_records': 'Please ensure all records are complete and accurate.',
         'go_to_invoices': 'Go to Invoices',
         'go_to_transactions': 'Go to Transactions',
+        'filter_by_date': 'Filter by Date',
+        'filter_by_category': 'Filter by Category',
+        'filter_by_description': 'Filter by Description',
         'add_transaction': 'Add Transaction',
         'go_to_dashboard': 'Go to Dashboard',
         # Module: core
@@ -405,6 +408,9 @@ TRANSLATIONS = {
         'create_invoice_desc': 'Ƙirƙiri da sarrafa takardun kudi na sana\'a ga abokan cinikin ku.',
         'add_transaction_desc': 'Yi rikodin duk kuɗin shiga da kuɗin fita don bin diddigin gudana na kuɗi.',
         'core_please_complete_all_records': 'Don Allah tabbatar da cewa duk bayanan sun cika kuma suna da inganci.',
+        'filter_by_date': 'Tace ta Kwanan Wata',
+        'filter_by_category': 'Tace ta Rukuni',
+        'filter_by_description': 'Tace ta Bayani',
 
         # Financial
         'create_invoice': 'Ƙirƙiri Daftari',
