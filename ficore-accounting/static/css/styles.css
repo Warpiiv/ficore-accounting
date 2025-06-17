@@ -37,11 +37,11 @@
     --alert-text: #EDE9FE;
     --text-color: #E0E0E0;
     --navbar-bg: #1F2937; /* Dark navbar */
-    --card-border: #4B5563;
+    --card-border: #AECBF2;
     --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     --form-bg: #374151;
-    --table-border: #4B5563;
-    --table-header-bg: #4B5563;
+    --table-border: #AECBF2;
+    --table-header-bg: #AECBF2;
     --table-text: #E0E0E0;
     --amount-highlight: #3B82F6;
     --error-highlight: #F28C38;
