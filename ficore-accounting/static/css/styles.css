@@ -2,7 +2,7 @@
     /* --- Light Mode Colors (Refined for Warmth & Clarity) --- */
     --background-main: #F2EFEA; /* Softer, warmer off-white */
     --card-bg: #ffffff;
-    --button-primary-bg: #0808d1;
+    --button-primary-bg: #B88A44;
     --button-primary-hover: #E06A35;
     --button-secondary-bg: #ffffff;
     --button-secondary-border: #3A86FF;
@@ -318,7 +318,9 @@ main {
     width: 100%;
     box-sizing: border-box;
     border: 1px solid var(--alert-info-border);
-    animation: fadeInOut 6s ease-in-out infinite;
+    animation: fadeIn 0.5s ease-out forwards; /* New: simpler fadeIn */
+    opacity: 0; /* Start hidden */
+    transform: translateY(-10px); /* Start slightly up */ 
 }
 
 @keyframes fadeInOut {
