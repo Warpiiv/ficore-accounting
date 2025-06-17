@@ -39,11 +39,7 @@
                     <textarea name="description" id="description" class="form-control" required>{{ form.description.data or '' }}</textarea>
                     <div class="invalid-feedback">{{ form.description.errors[0] if form.description.errors else trans('required_field') | default('This field is required') }}</div>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="tags" class="form-label">{{ trans('tags') | default('Tags') }}</label>
-                    <input type="text" name="tags" id="tags" class="form-control" value="{{ form.tags.data or '' }}" placeholder="{{ trans('tags_placeholder') | default('Enter tags, separated by commas') }}">
-                    <div class="invalid-feedback">{{ form.tags.errors[0] if form.tags.errors }}</div>
-                </div>
+                {# Removed Tags form group #}
                 <div class="form-group mb-3 form-check">
                     <input type="checkbox" name="is_recurring" id="is_recurring" class="form-check-input" {% if form.is_recurring.data %}checked{% endif %}>
                     <label for="is_recurring" class="form-check-label">{{ trans('recurring') | default('Recurring Transaction') }}</label>
