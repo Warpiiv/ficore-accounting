@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
     <div class="form-container">
-        <h1 class="text-center mb-4">{{ trans('core_login') | default('Login') }}</h1>
+        <h1 class="text-center mb-4 text-color">{{ trans('core_login') | default('Login') }}</h1>
         <form class="validate-form" method="POST" action="{{ url_for('users.login') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
@@ -17,12 +17,12 @@
                 <div class="invalid-feedback">{{ form.password.errors[0] if form.password.errors else trans('required_field') | default('This field is required') }}</div>
             </div>
             <div class="text-center">
-                <button type="submit" class="btn btn-login">{{ trans('core_login') | default('Login') }}</button>
+                <button type="submit" class="btn btn-primary">{{ trans('core_login') | default('Login') }}</button>
             </div>
             <div class="text-center mt-3">
-                <a href="{{ url_for('users.forgot_password') }}" class="btn-link">{{ trans('forgot_password') | default('Forgot Password?') }}</a>
+                <a href="{{ url_for('users.forgot_password') }}" class="btn-link text-color">{{ trans('forgot_password') | default('Forgot Password?') }}</a>
                 <br>
-                <a href="{{ url_for('users.signup') }}" class="btn-link">{{ trans('create_account') | default('Create an Account') }}</a>
+                <a href="{{ url_for('users.signup') }}" class="btn-link text-color">{{ trans('create_account') | default('Create an Account') }}</a>
             </div>
         </form>
     </div>
