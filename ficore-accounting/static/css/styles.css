@@ -1,6 +1,6 @@
 :root {
     /* --- Light Mode Colors (Refined for Warmth & Clarity) --- */
-    --background-main: #FDFCFA; /* Softer, warmer off-white */
+    --background-main: #F2EFEA; /* Softer, warmer off-white */
     --card-bg: #ffffff;
     --button-primary-bg: #0808d1;
     --button-primary-hover: #E06A35;
@@ -222,7 +222,7 @@ main {
 /* --- Buttons --- */
 .btn-primary {
     background: var(--button-primary-bg);
-    color: white;
+    color: #B88A44;
     border: none;
     padding: var(--button-padding-y) var(--button-padding-x);
     border-radius: 10px;
@@ -311,7 +311,7 @@ main {
 /* --- Header Message --- */
 .header-message {
     background: var(--alert-info-bg);
-    color: var(--alert-info-text);
+    color: #0F3D57;
     text-align: center;
     padding: 0.5rem;
     font-size: 0.85rem;
@@ -445,7 +445,7 @@ main {
     padding: var(--spacing-sm) var(--spacing-md);
     border-bottom: 1px solid var(--card-border);
     font-weight: 700;
-    color: var(--text-color);
+    color: #0F3D57;
 }
 
 .card-body {
