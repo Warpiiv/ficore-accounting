@@ -7,6 +7,7 @@
     --button-secondary-bg: #ffffff;
     --button-secondary-border: #3A86FF;
     --button-secondary-hover: #e8f0ff; /* Light blue on hover */
+    --footer-link-color: #4a5568; /* Darker grey for better contrast in light mode */
 
     /* Semantic Alert Colors - Light Mode */
     --alert-info-bg: #e6f7ff;
@@ -51,6 +52,7 @@
     --button-secondary-bg: #1e293b;
     --button-secondary-border: #63B3ED;
     --button-secondary-hover: #334155;
+    --footer-link-color: #cbd5e0; /* Lighter grey for better contrast in dark mode */
 
     /* Semantic Alert Colors - Dark Mode */
     --alert-info-bg: #0c2040;
@@ -186,6 +188,9 @@ h1, h2, h3 {
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(242, 140, 56, 0.2);
     transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); /* Springy transform transition */
+    display: block; /* Make the button a block-level element */
+    margin: 0 auto; /* Center it horizontally */
+    width: fit-content; /* Ensure the button only takes up the necessary width */
 }
 
 .btn-primary:hover {
@@ -204,6 +209,9 @@ h1, h2, h3 {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.25s ease-in-out; /* Smoother transition */
+    display: block; /* Make the button a block-level element */
+    margin: 0 auto; /* Center it horizontally */
+    width: fit-content; /* Ensure the button only takes up the necessary width */
 }
 
 .dark-mode .btn-secondary {
@@ -294,6 +302,7 @@ h1, h2, h3 {
     overflow: hidden;
     animation: cardAppear 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
     transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-align: left; /* Default alignment for card content */
 }
 
 .card:hover {
@@ -335,7 +344,7 @@ h1, h2, h3 {
 }
 
 .card-item {
-    display: flex;
+    display: collage;
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 0;
@@ -351,11 +360,13 @@ h1, h2, h3 {
     font-weight: 600;
     color: var(--accent-blue);
     margin-bottom: 0.5rem;
+    text-align: center; /* Center the card title */
 }
 
 .card-text {
     color: var(--text-color);
     font-size: 0.9rem;
+    text-align: center; /* Center the card text */
 }
 
 .amount-highlight {
@@ -405,6 +416,14 @@ h1, h2, h3 {
     background-color: var(--card-bg);
     color: var(--text-color);
     transition: all 0.2s ease-in-out; /* Smoother transition */
+}
+
+.form-control::placeholder, .form-select::placeholder {
+    color: rgba(0, 0, 0, 0.5); /* Default placeholder for light mode */
+}
+
+.dark-mode .form-control::placeholder, .dark-mode .form-select::placeholder {
+    color: rgba(241, 245, 249, 0.5); /* Lighter placeholder in dark mode */
 }
 
 .form-control:focus, .form-select:focus {
@@ -531,11 +550,16 @@ h1, h2, h3 {
 }
 
 .footer a {
-    color: var(--text-color);
+    color: var(--footer-link-color); /* Use the new variable for contrast */
+    text-decoration: none; /* Remove underline by default */
+    font-weight: 500; /* Make them slightly bolder */
+    margin: 0 0.5rem; /* Add some horizontal spacing between links */
+    display: inline-block; /* Allows margins and padding better */
 }
 
 .footer a:hover {
-    color: var(--accent-blue);
+    color: var(--accent-blue); /* Keep accent blue on hover for consistency */
+    text-decoration: underline; /* Add underline on hover for clear interaction */
 }
 
 /* --- Media Queries --- */
@@ -590,6 +614,12 @@ h1, h2, h3 {
 
     .footer {
         padding: 1.5rem;
+    }
+
+    .footer .container {
+        flex-direction: row; /* Arrange links in a row */
+        justify-content: center; /* Center the links horizontally */
+        flex-wrap: wrap; /* Allow links to wrap to the next line if there are too many */
     }
 }
 
