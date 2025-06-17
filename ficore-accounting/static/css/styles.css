@@ -3,8 +3,8 @@
     /* Light Mode Colors */
     --background-gradient: #F5F5F5;
     --text-color: #333333;
-    --navbar-gradient: linear-gradient(90deg, #4B0082, #1E3A8A);
-    --header-message-gradient: linear-gradient(90deg, #4B0082, #D4A055);
+    --navbar-bg: #ffffff; /* Changed to plain white */
+    --header-message-bg: #e7f3fe; /* Changed to soft blue for alerts */
     --consent-banner-bg: #EDE7F6;
     --consent-banner-text: #333333;
     --accent-indigo: #4B0082;
@@ -30,8 +30,8 @@
 .dark-mode {
     --background-gradient: linear-gradient(135deg, #212121, #424242);
     --text-color: #E0E0E0;
-    --navbar-gradient: linear-gradient(90deg, #7B1FA2, #1E3A8A);
-    --header-message-gradient: linear-gradient(90deg, #7B1FA2, #F57F17);
+    --navbar-bg: #424242; /* Dark mode plain color */
+    --header-message-bg: #424242; /* Dark mode alert bg */
     --consent-banner-bg: #424242;
     --consent-banner-text: #E0E0E0;
     --accent-indigo: #7B1FA2;
@@ -70,21 +70,21 @@ body {
     scroll-behavior: smooth;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure body takes full viewport height */
+    min-height: 100vh;
 }
 
 .wrapper {
-    flex: 1; /* Grow to fill available space, pushing footer down */
+    flex: 1;
     display: flex;
     flex-direction: column;
-    position: relative; /* Provide positioning context for absolute alert */
+    position: relative;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1rem;
-    flex-grow: 1; /* Allow container to grow with content */
+    flex-grow: 1;
 }
 
 /* Alert Container */
@@ -95,29 +95,27 @@ body {
 
 /* Navbar */
 .navbar {
-    background: var(--navbar-gradient);
+    background-color: var(--navbar-bg);
+    color: #333333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
-    position: fixed;    /* Change from sticky */
+    position: fixed;
     top: 0;
-    z-index: 1000; 
+    z-index: 1000;
     transition: top 0.3s ease-in-out;
 }
 
-.navbar-brand {
-    color: #FFFFFF;
-    font-weight: bold;
-    font-size: 1rem;
+.navbar a, .navbar-brand, .nav-link {
+    color: #333333;
 }
 
-.nav-link {
-    color: #FFFFFF;
-    font-weight: 500;
-    font-size: 0.9rem;
+.navbar a:hover {
+    color: #007bff;
 }
 
 /* Buttons */
@@ -137,8 +135,8 @@ body {
 
 /* Header Message */
 .header-message {
-    background: var(--header-message-gradient);
-    color: white;
+    background: var(--header-message-bg);
+    color: #084298;
     text-align: center;
     padding: 0.75rem;
     font-size: 0.85rem;
@@ -148,6 +146,8 @@ body {
 
 /* Alerts */
 .alert {
+    background-color: var(--header-message-bg);
+    color: #084298;
     margin: 0;
     padding: 0.75rem;
     position: absolute;
@@ -159,10 +159,25 @@ body {
 .card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 1rem;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
     margin: 1rem 0 0.5rem;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.card h3, .card p, .card span {
+    margin-bottom: 0.25rem;
+}
+
+.card-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.card-item p {
+    line-height: 1.5;
 }
 
 .card-title {
@@ -295,17 +310,17 @@ body {
     color: white;
     text-align: center;
     background: var(--button-gradient);
-    text-decoration: none; /* Remove underline on entire tile (anchor) */
+    text-decoration: none;
 }
 
 .tile h2 {
     font-size: 1.25rem;
     font-weight: 600;
-    text-decoration: underline; /* Keep underline on title */
+    text-decoration: underline;
 }
 
 .tile p {
-    text-decoration: none !important; /* Ensure no underline on subtitle */
+    text-decoration: none !important;
     font-size: 0.95rem;
     color: #e0e0e0;
     line-height: 1.4;
