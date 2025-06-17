@@ -3,54 +3,52 @@
     /* Light Mode Colors */
     --background-gradient: #F5F5F5;
     --text-color: #333333;
-    --navbar-bg: #ffffff; /* Changed to plain white */
-    --header-message-bg: #e7f3fe; /* Changed to soft blue for alerts */
+    --navbar-bg: #044BD9; /* Primary color for navbar */
+    --header-message-bg: #F24F13; /* Attention color for alerts */
     --consent-banner-bg: #EDE7F6;
     --consent-banner-text: #333333;
-    --accent-indigo: #4B0082;
-    --accent-indigo-dark: #6A1B9A;
-    --accent-gold: #1E3A8A;
-    --accent-gold-dark: #D4A055;
-    --button-gradient: linear-gradient(135deg, #1E3A8A, #4B0082);
-    --button-gradient-hover: linear-gradient(135deg, #D4A055, #6A1B9A);
-    --button-nav-gradient: linear-gradient(90deg, #4B0082, #1E3A8A);
-    --button-nav-gradient-hover: linear-gradient(90deg, #6A1B9A, #D4A055);
-    --card-bg: #FFFFFF;
-    --card-border: #4B0082;
-    --card-text: #6c757d;
+    --accent-primary: #044BD9; /* Primary color (60%) */
+    --accent-attention: #F24F13; /* Attention color (10%) */
+    --accent-engage: #F2A30F; /* Engage color (30%) */
+    --button-gradient: linear-gradient(135deg, #044BD9, #F24F13);
+    --button-gradient-hover: linear-gradient(135deg, #F2A30F, #044BD9);
+    --button-nav-gradient: linear-gradient(90deg, #044BD9, #F24F13);
+    --button-nav-gradient-hover: linear-gradient(90deg, #F2A30F, #044BD9);
+    --card-bg: #F2A30F; /* Engage color for cards */
+    --card-border: #044BD9; /* Primary color for card borders */
+    --card-text: #333333;
     --form-bg: #F5F5F5;
     --table-border: #e0e0e0;
     --table-header-bg: #EDE7F6;
     --table-text: #333333;
-    --amount-highlight: #1E3A8A;
-    --error-highlight: #D32F2F;
+    --amount-highlight: #F24F13; /* Attention color for highlights */
+    --error-highlight: #F24F13; /* Attention color for errors */
 }
 
 /* Dark Mode Overrides */
 .dark-mode {
     --background-gradient: linear-gradient(135deg, #212121, #424242);
     --text-color: #E0E0E0;
-    --navbar-bg: #424242; /* Dark mode plain color */
-    --header-message-bg: #424242; /* Dark mode alert bg */
+    --navbar-bg: #0338A6; /* Darker primary for dark mode */
+    --header-message-bg: #C73E0F; /* Darker attention for dark mode */
     --consent-banner-bg: #424242;
     --consent-banner-text: #E0E0E0;
-    --accent-indigo: #7B1FA2;
-    --accent-indigo-dark: #4A148C;
-    --accent-gold: #1E3A8A;
-    --accent-gold-dark: #F57F17;
-    --button-gradient: linear-gradient(135deg, #1E3A8A, #7B1FA2);
-    --button-gradient-hover: linear-gradient(135deg, #F57F17, #4A148C);
-    --button-nav-gradient: linear-gradient(90deg, #7B1FA2, #1E3A8A);
-    --button-nav-gradient-hover: linear-gradient(90deg, #4A148C, #F57F17);
-    --card-bg: #424242;
-    --card-border: #7B1FA2;
-    --card-text: #B0BEC5;
+    --accent-primary: #0338A6;
+    --accent-attention: #C73E0F;
+    --accent-engage: #D1890D;
+    --button-gradient: linear-gradient(135deg, #0338A6, #C73E0F);
+    --button-gradient-hover: linear-gradient(135deg, #D1890D, #0338A6);
+    --button-nav-gradient: linear-gradient(90deg, #0338A6, #C73E0F);
+    --button-nav-gradient-hover: linear-gradient(90deg, #D1890D, #0338A6);
+    --card-bg: #D1890D; /* Darker engage for cards */
+    --card-border: #0338A6;
+    --card-text: #E0E0E0;
     --form-bg: #424242;
     --table-border: #616161;
     --table-header-bg: #424242;
     --table-text: #E0E0E0;
-    --amount-highlight: #1E3A8A;
-    --error-highlight: #D32F2F;
+    --amount-highlight: #C73E0F;
+    --error-highlight: #C73E0F;
 }
 
 /* Transitions for Smooth Changes */
@@ -96,7 +94,7 @@ body {
 /* Navbar */
 .navbar {
     background-color: var(--navbar-bg);
-    color: #333333;
+    color: #FFFFFF;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     padding: 1rem;
     display: flex;
@@ -111,11 +109,11 @@ body {
 }
 
 .navbar a, .navbar-brand, .nav-link {
-    color: #333333;
+    color: #FFFFFF;
 }
 
 .navbar a:hover {
-    color: #007bff;
+    color: #F2A30F; /* Engage color for hover */
 }
 
 /* Buttons */
@@ -136,7 +134,7 @@ body {
 /* Header Message */
 .header-message {
     background: var(--header-message-bg);
-    color: #084298;
+    color: #FFFFFF;
     text-align: center;
     padding: 0.75rem;
     font-size: 0.85rem;
@@ -147,7 +145,7 @@ body {
 /* Alerts */
 .alert {
     background-color: var(--header-message-bg);
-    color: #084298;
+    color: #FFFFFF;
     margin: 0;
     padding: 0.75rem;
     position: absolute;
@@ -231,8 +229,8 @@ body {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: var(--accent-indigo);
-    box-shadow: 0 0 5px rgba(75, 0, 130, 0.5);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 5px rgba(4, 75, 217, 0.5);
 }
 
 .form-control.is-invalid, .form-select.is-invalid {
@@ -335,19 +333,19 @@ body {
 }
 
 /* Tile Background Colors */
-.bg-blue-600 { background-color: #2563eb; }
+.bg-blue-600 { background-color: #044BD9; }
 .bg-green-600 { background-color: #16a34a; }
 .bg-purple-600 { background-color: #9333ea; }
-.bg-red-600 { background-color: #dc2626; }
+.bg-red-600 { background-color: #F24F13; }
 
-.hover\:bg-blue-700:hover { background-color: #1d4ed8; }
+.hover\:bg-blue-700:hover { background-color: #0338A6; }
 .hover\:bg-green-700:hover { background-color: #15803d; }
 .hover\:bg-purple-700:hover { background-color: #7e22ce; }
-.hover\:bg-red-700:hover { background-color: #b91c1c; }
+.hover\:bg-red-700:hover { background-color: #C73E0F; }
 
 /* Footer */
 .footer {
-    background: var(--navbar-gradient);
+    background: var(--navbar-bg);
     color: white;
     padding: 0.5rem 1rem;
     text-align: center;
