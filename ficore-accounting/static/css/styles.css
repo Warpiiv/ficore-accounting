@@ -1,42 +1,39 @@
-/* Define CSS Custom Properties for Colors */
 :root {
-    /* Light Mode Colors */
-    --background-main: #f9fbff; /* Light blue background */
-    --card-bg: #F5F5F5; /* Light grey for cards */
-    --button-primary-bg: #F28C38; /* Orange for primary CTAs */
-    --button-primary-hover: #D97706; /* Darker orange for hover */
-    --button-secondary-bg: transparent; /* Secondary buttons */
-    --button-secondary-border: #044BD9; /* Blue outline for secondary */
-    --button-secondary-hover: #f9fbff;; /* Light blue fill on hover */
-    --alert-bg: #EDE9FE; /* Light purple for alerts */
-    --alert-border: #7C3AED; /* Purple border for alerts */
-    --alert-text: #4C1D95; /* Dark purple text for alerts */
+    --background-main: #f9fbff;
+    --card-bg: #F5F5F5;
+    --button-primary-bg: #F28C38;
+    --button-primary-hover: #D97706;
+    --button-secondary-bg: transparent;
+    --button-secondary-border: #044BD9;
+    --button-secondary-hover: #f9fbff;
+    --alert-bg: #EDE9FE;
+    --alert-border: #7C3AED;
+    --alert-text: #4C1D95;
     --text-color: #E4F7E8;
-    --navbar-bg: #ffffff; /* Plain white for navbar */
-    --card-border: #f9fbff; /* Subtle grey for card borders */
-    --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-    --form-bg: #F5F5F5; /* Light grey for forms */
+    --navbar-bg: #ffffff;
+    --card-border: #ccc;
+    --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    --form-bg: #F5F5F5;
     --table-border: #e0e0e0;
-    --table-header-bg: #E6FAF8
+    --table-header-bg: #E6FAF8;
     --table-text: #E4F7E8;
-    --amount-highlight: #044BD9; /* Blue for highlights */
-    --error-highlight: #F28C38; /* Orange for errors */
+    --amount-highlight: #044BD9;
+    --error-highlight: #F28C38;
 }
 
-/* Dark Mode Overrides */
 .dark-mode {
-    --background-main: #1E3A8A; /* Darker blue for dark mode */
-    --card-bg: #374151; /* Dark grey for cards */
+    --background-main: #1E3A8A;
+    --card-bg: #374151;
     --button-primary-bg: #F28C38;
     --button-primary-hover: #D97706;
     --button-secondary-bg: transparent;
     --button-secondary-border: #3B82F6;
     --button-secondary-hover: #1E3A8A;
-    --alert-bg: #5B21B6; /* Darker purple for alerts */
+    --alert-bg: #5B21B6;
     --alert-border: #A78BFA;
     --alert-text: #EDE9FE;
     --text-color: #E0E0E0;
-    --navbar-bg: #1F2937; /* Dark navbar */
+    --navbar-bg: #1F2937;
     --card-border: #AECBF2;
     --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     --form-bg: #374151;
@@ -47,12 +44,10 @@
     --error-highlight: #F28C38;
 }
 
-/* Transitions for Smooth Changes */
 body, .navbar, .header-message, .consent-banner, .btn, .card, .form-container, .tile {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Base Styles */
 body {
     font-family: 'Poppins', 'Arial', sans-serif;
     background: var(--background-main);
@@ -81,13 +76,11 @@ body {
     flex-grow: 1;
 }
 
-/* Alert Container */
 .alert-container {
     position: relative;
     width: 100%;
 }
 
-/* Navbar */
 .navbar {
     background-color: var(--navbar-bg);
     color: #E4F7E8;
@@ -112,7 +105,6 @@ body {
     color: #007bff;
 }
 
-/* Buttons */
 .btn-primary {
     background: var(--button-primary-bg);
     color: white;
@@ -141,7 +133,6 @@ body {
     background: var(--button-secondary-hover);
 }
 
-/* Header Message */
 .header-message {
     background: var(--alert-bg);
     color: var(--alert-text);
@@ -153,7 +144,6 @@ body {
     border: 1px solid var(--alert-border);
 }
 
-/* Alerts */
 .alert {
     background-color: var(--alert-bg);
     color: var(--alert-text);
@@ -165,14 +155,25 @@ body {
     width: 100%;
 }
 
-/* Cards */
 .card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 0.5rem;
-    padding: 1.25rem;
-    margin: 1rem 0 0.5rem;
-    box-shadow: var(--card-shadow);
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background-color: #e0e0e0;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 1rem;
+    color: #333;
 }
 
 .card h3, .card p, .card span {
@@ -212,7 +213,6 @@ body {
     font-size: 0.8rem;
 }
 
-/* Forms */
 .form-container {
     background: var(--form-bg);
     padding: 2rem;
@@ -261,7 +261,6 @@ body {
     display: block;
 }
 
-/* Tables */
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -284,7 +283,6 @@ body {
     color: var(--table-text);
 }
 
-/* List Group */
 .list-group-item {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -299,7 +297,6 @@ body {
     align-items: center;
 }
 
-/* Grid Layout */
 .grid {
     display: grid;
     gap: 1.5rem;
@@ -313,7 +310,6 @@ body {
     grid-template-columns: repeat(2, 1fr);
 }
 
-/* Tiles */
 .tile {
     padding: 1.5rem;
     border-radius: 0.75rem;
@@ -344,7 +340,6 @@ body {
     background: var(--button-primary-hover);
 }
 
-/* Tile Background Colors */
 .bg-blue-600 { background-color: #044BD9; }
 .bg-green-600 { background-color: #16a34a; }
 .bg-purple-600 { background-color: #7C3AED; }
@@ -355,7 +350,6 @@ body {
 .hover\:bg-purple-700:hover { background-color: #6D28D9; }
 .hover\:bg-red-700:hover { background-color: #D97706; }
 
-/* Footer */
 .footer {
     background: var(--navbar-bg);
     color: var(--text-color);
@@ -375,7 +369,6 @@ body {
     line-height: 1.3;
 }
 
-/* Media Queries */
 @media (min-width: 768px) {
     .container {
         padding: 2rem;
