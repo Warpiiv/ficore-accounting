@@ -171,7 +171,7 @@ h1, h2, h3 {
 
 /* Add padding-top to the main content area to prevent overlap with fixed navbar */
 main {
-    padding-top: calc(var(--navbar-height) + var(--spacing-md)); /* 52px + 1.5rem */
+    padding-top: calc(var(--navbar-height) + var(--spacing-lg)); /* 52px + 2rem for consistent desktop spacing */
     flex: 1;
 }
 
@@ -185,6 +185,7 @@ main {
     max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-sm);
+    margin-top: var(--spacing-md); /* Add top margin to push content down */
 }
 
 /* --- Alert Container --- */
@@ -685,7 +686,7 @@ a:hover {
 }
 
 .card-title {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: #60a5fa;
     margin-bottom: 0.5rem;
@@ -1029,9 +1030,6 @@ a:hover {
     }
     .app-navbar .app-nav-item:not(:last-child) {
         margin-right: var(--spacing-sm);
-    }
-    main {
-        padding-top: calc(var(--navbar-height) + var(--spacing-lg)); /* 52px + 2rem */
     }
 }
 
