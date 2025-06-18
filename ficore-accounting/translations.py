@@ -9,6 +9,18 @@ TRANSLATIONS = {
         'add_transaction_desc': 'Add new transactions like income and expenses to track your cash flow.',
         'core_please_complete_all_records': 'Please ensure all records are complete and accurate.',
         'go_to_invoices': 'Go to Invoices',
+        'core_toggle_menu': 'Toggle Menu',
+        'core_invoices': 'Invoices',
+        'core_cancel': 'Cancel',
+        
+        # Module: invoice
+        'invoice_details': 'Invoice Details',
+        'are_you_sure_delete_invoice': 'Are you sure you want to delete this invoice?',
+        
+        # Module: transaction
+        'track_transaction': 'Track Transaction',
+        'transaction_details': 'Transaction Details',
+        'are_you_sure_delete_transaction': 'Are you sure you want to delete this transaction?',
         'go_to_transactions': 'Go to Transactions',
         'filter_by_date': 'Filter by Date',
         'filter_by_category': 'Filter by Category',
