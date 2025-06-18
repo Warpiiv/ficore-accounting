@@ -10,22 +10,18 @@
                 {{ trans('dashboard_summary') | default('View your recent invoices, transactions, and profile information below.') }}
             </p>
             <div class="row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 col-sm-12 mb-3">
                     <div class="card h-100">
                         <div class="card-body">
                             <h3 class="card-title">{{ trans('recent_invoices') | default('Recent Invoices') }}</h3>
                             <ul class="list-group">
-                                <!-- Placeholder data -->
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    {{ trans('invoice') | default('Invoice') }} #001
-                                    <span class="amount-highlight">{{ 1500 | format_currency }}</span>
-                                    <span>{{ '2025-06-14' | format_datetime }}</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    {{ trans('invoice') | default('Invoice') }} #002
-                                    <span class="amount-highlight">{{ 2000 | format_currency }}</span>
-                                    <span>{{ '2025-06-13' | format_datetime }}</span>
-                                </li>
+                                {% for invoice in recent_invoices|default([{'id': '001', 'amount': 1500, 'date': '2025-06-14'}, {'id': '002', 'amount': 2000, 'date': '2025-06-13'}]) %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span class="text-truncate invoice-id">{{ trans('invoice') | default('Invoice') }} #{{ invoice.id }}</span>
+                                        <span class="amount-highlight">{{ invoice.amount | format_currency }}</span>
+                                        <span>{{ invoice.date | format_datetime }}</span>
+                                    </li>
+                                {% endfor %}
                             </ul>
                             <a href="{{ url_for('invoices.invoice_dashboard') }}" class="btn btn-primary mt-3">
                                 {{ trans('view_all_invoices') | default('View All Invoices') }}
@@ -33,22 +29,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 col-sm-12 mb-3">
                     <div class="card h-100">
                         <div class="card-body">
                             <h3 class="card-title">{{ trans('recent_transactions') | default('Recent Transactions') }}</h3>
                             <ul class="list-group">
-                                <!-- Placeholder data -->
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    {{ trans('transaction') | default('Transaction') }} #T001
-                                    <span class="amount-highlight">{{ 500 | format_currency }}</span>
-                                    <span>{{ '2025-06-14' | format_datetime }}</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    {{ trans('transaction') | default('Transaction') }} #T002
-                                    <span class="amount-highlight">{{ 750 | format_currency }}</span>
-                                    <span>{{ '2025-06-13' | format_datetime }}</span>
-                                </li>
+                                {% for transaction in recent_transactions|default([{'id': 'T001', 'amount': 500, 'date': '2025-06-14'}, {'id': 'T002', 'amount': 750, 'date': '2025-06-13'}]) %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span class="text-truncate transaction-id">{{ trans('transaction') | default('Transaction') }} #{{ transaction.id }}</span>
+                                        <span class="amount-highlight">{{ transaction.amount | format_currency }}</span>
+                                        <span>{{ transaction.date | format_datetime }}</span>
+                                    </li>
+                                {% endfor %}
                             </ul>
                             <a href="{{ url_for('transactions.transaction_history') }}" class="btn btn-primary mt-3">
                                 {{ trans('view_all_transactions') | default('View All Transactions') }}
