@@ -214,6 +214,7 @@ main {
     top: 0;
     z-index: 1000;
     transition: all 0.3s ease;
+    border-bottom: 1px solid #ccc; /* A light grey color */
 }
 
 .app-navbar.scrolled { /* Changed from .navbar.scrolled */
@@ -258,9 +259,79 @@ main {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-/* Styles for the app toggler (hamburger icon) */
-.app-toggler { /* Added for distinct styling */
-    /* You had inline style for navbar-toggler-icon, this can be its container */
+.dark-mode .app-navbar {
+    /* Ensure the border color also adjusts for dark mode */
+    border-bottom: 1px solid #444; /* A slightly darker grey for dark mode */
+}
+
+---
+.app-toggler {
+    display: flex; /* Allows for centering the icon if it's a child element */
+    align-items: center; /* Vertically centers the icon */
+    justify-content: center; /* Horizontally centers the icon */
+    padding: var(--spacing-xs); /* Small padding around the toggler for easier clicking */
+    background: none; /* No background by default */
+    border: none; /* No border by default */
+    cursor: pointer; /* Indicates it's clickable */
+    font-size: 1.5rem; /* Adjust icon size if using an SVG or font icon directly */
+    color: var(--navbar-text-color); /* Color of the hamburger icon */
+    transition: color 0.2s ease, background-color 0.2s ease; /* Smooth transitions for hover */
+    border-radius: 5px; /* Slightly rounded corners for a softer look */
+}
+
+.app-toggler:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover in light mode */
+}
+
+.dark-mode .app-toggler:hover {
+    background-color: rgba(0, 0, 0, 0.2); /* Subtle background on hover in dark mode */
+}
+
+.app-toggler:focus-visible {
+    outline: 2px solid var(--accent-blue); /* Clear outline for accessibility */
+    outline-offset: 2px;
+}
+
+.app-toggler .navbar-toggler-icon { /* Assuming this is the element that draws the lines */
+    display: block;
+    position: relative;
+    width: 24px; /* Width of the hamburger icon */
+    height: 2px; /* Height of each line */
+    background: var(--navbar-text-color); /* Color of the lines */
+    border-radius: 2px;
+    transition: background-color 0.2s ease; /* Smooth transition for color changes */
+}
+
+.app-toggler .navbar-toggler-icon::before,
+.app-toggler .navbar-toggler-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--navbar-text-color);
+    border-radius: 2px;
+    transition: transform 0.3s ease; /* Smooth transition for animation */
+}
+
+.app-toggler .navbar-toggler-icon::before {
+    top: -7px; /* Position the top line */
+}
+
+.app-toggler .navbar-toggler-icon::after {
+    top: 7px; /* Position the bottom line */
+}
+
+/* Styles for when the toggler is "active" or "open" */
+.app-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    background: transparent; /* Hide the middle line */
+}
+
+.app-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+    transform: translateY(7px) rotate(45deg); /* Rotate and move top line */
+}
+
+.app-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+    transform: translateY(-7px) rotate(-45deg); /* Rotate and move bottom line */
 }
 
 /* --- Logo Styling --- */
