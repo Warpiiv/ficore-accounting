@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container my-5">
     {# Added text-color class for consistency #}
-    <h1 class="text-center mb-4 text-color">{{ transaction_id | default(trans('track_transaction') | default('Add Transaction')) if transaction_id else trans('track_transaction') | default('Add Transaction') }}</h1>
+    <h1 class="text-center mb-4 text-color">{{ transaction_id | default(trans('track_transaction') | default('View Transaction')) if transaction_id else trans('track_transaction') | default('View Transaction') }}</h1>
     {% if get_flashed_messages() %}
         <div class="alert alert-{{ 'danger' if 'danger' in get_flashed_messages() else 'success' }} alert-dismissible fade show" role="alert">
             {% for message in get_flashed_messages() %}
