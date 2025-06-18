@@ -1,123 +1,100 @@
+/* --- Root Variables (Light Mode) --- */
 :root {
-    /* --- Light Mode Colors (Refined for Warmth & Clarity) --- */
-    --background-main: #F2EFEA; /* Softer, warmer off-white */
+    --background-main: #F2EFEA;
     --card-bg: #ffffff;
-
-    /* Buttons */
-    --button-primary-bg: #B88A44; /* Specific brand color for primary button */
+    --button-primary-bg: #B88A44;
     --button-primary-hover: #E06A35;
     --button-secondary-bg-light-gradient: linear-gradient(to bottom, white, #f8faff);
     --button-secondary-border: #3A86FF;
-    --button-secondary-hover: #e8f0ff; /* Light blue on hover */
-
-    --footer-link-color: #4a5568; /* Darker grey for better contrast in light mode */
-
-    /* Semantic Alert Colors - Light Mode */
+    --button-secondary-hover: #e8f0ff;
+    --footer-link-color: #4a5568;
     --alert-info-bg: #e6f7ff;
     --alert-info-border: #91d5ff;
     --alert-info-text: #0050b3;
-
     --alert-success-bg: #f6ffed;
     --alert-success-border: #b7eb8f;
     --alert-success-text: #237804;
-
     --alert-warning-bg: #fffbe6;
     --alert-warning-border: #ffe58f;
     --alert-warning-text: #ad8b00;
-
     --alert-error-bg: #fff0f6;
     --alert-error-border: #ffadd2;
     --alert-error-text: #a8071a;
-
     --text-color: #1e293b;
-    --text-secondary: #4a5568; /* Added for less important text */
+    --text-secondary: #4a5568;
     --navbar-bg: #0F3D57;
-    --navbar-text-color: white; /* Text color for content *on* the navbar */
+    --navbar-text-color: white;
     --footer-bg: #0F3D57;
     --card-border: #e2e8f0;
-    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Softer shadow */
-    --card-shadow-hover: 0 16px 32px rgba(0, 30, 80, 0.15); /* Stronger shadow on hover */
+    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    --card-shadow-hover: 0 16px 32px rgba(0, 30, 80, 0.15);
     --form-bg: #ffffff;
     --table-border: #e2e8f0;
-    --table-header-bg: #0F3D57; /* Retaining light blue for header distinction */
-    --table-text: #1e293b; /* Explicitly for table cell text if different from main text-color */
+    --table-header-bg: #0F3D57;
+    --table-text: #1e293b;
     --amount-highlight: #3A86FF;
-    --error-highlight: #020259; /* Used for form invalid states primarily */
-    --accent-blue: #3A86FF; /* General accent/link blue */
-    --success-color: #10b981; /* For success text, distinct from alerts */
+    --error-highlight: #020259;
+    --accent-blue: #3A86FF;
+    --success-color: #10b981;
     --card-header-bg: #0F3D57;
-    --table-row-even-bg: #FDFEFC; /* Subtle zebra striping for tables */
-    --table-row-bg-overdue: #fefcbf; /* Light yellow for overdue */
-    --table-row-bg-pending: #fef9c3; /* Light yellow for pending */
-    --table-row-bg-settled: #d1fae5; /* Light green for settled */
-
-    /* Theme-specific for Icons/Charts */
+    --table-row-even-bg: #FDFEFC;
+    --table-row-bg-overdue: #fefcbf;
+    --table-row-bg-pending: #fef9c3;
+    --table-row-bg-settled: #d1fae5;
     --theme-icon-chart-color: #3C7A6E;
 }
 
+/* --- Dark Mode Variables --- */
 .dark-mode {
-    /* --- Dark Mode Colors (Refined for Contrast & Sophistication) --- */
     --background-main: #0f172a;
     --card-bg: #1e293b;
-
-    /* Buttons */
-    --button-primary-bg: #4C78C9; /* Adjusted for better readability in dark mode */
+    --button-primary-bg: #4C78C9;
     --button-primary-hover: #E06A35;
     --button-secondary-bg-dark-gradient: linear-gradient(to bottom, #1e293b, #1a202c);
     --button-secondary-border: #63B3ED;
     --button-secondary-hover: #334155;
-
-    --footer-link-color: #cbd5e0; /* Lighter grey for better contrast in dark mode */
-
-    /* Semantic Alert Colors - Dark Mode */
+    --footer-link-color: #cbd5e0;
     --alert-info-bg: #0c2040;
     --alert-info-border: #4d8ce8;
     --alert-info-text: #d4e8ff;
-
     --alert-success-bg: #0a2d1f;
     --alert-success-border: #4caf50;
     --alert-success-text: #a8e8b0;
-
     --alert-warning-bg: #3f2f0a;
     --alert-warning-border: #ffeb3b;
     --alert-warning-text: #ffe082;
-
     --alert-error-bg: #3c0c16;
     --alert-error-border: #ef5350;
     --alert-error-text: #ffcdd2;
-
     --text-color: #f1f5f9;
-    --text-secondary: #94a3b8; /* Added for less important text in dark mode */
+    --text-secondary: #94a3b8;
     --navbar-bg: #0f172a;
-    --navbar-text-color: #f1f5f9; /* Text color for content *on* the navbar in dark mode */
-    --footer-bg: #2a3447; /* Darker ash for footer */
-    --card-border: #475569; /* Slightly lighter for better contrast */
-    --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); /* Stronger shadow for depth */
-    --card-shadow-hover: 0 16px 32px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
+    --navbar-text-color: #f1f5f9;
+    --footer-bg: #2a3447;
+    --card-border: #475569;
+    --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    --card-shadow-hover: 0 16px 32px rgba(0, 0, 0, 0.4);
     --form-bg: #1e293b;
-    --table-border: #475569; /* Slightly lighter for better contrast */
-    --table-header-bg: #1e3a8a; /* Retaining dark blue for header distinction */
-    --table-text: #f1f5f9; /* Explicitly for table cell text if different from main text-color */
+    --table-border: #475569;
+    --table-header-bg: #1e3a8a;
+    --table-text: #f1f5f9;
     --amount-highlight: #93c5fd;
-    --error-highlight: var(--alert-error-text); /* Linked to alert text for consistency and readability */
-    --accent-blue: #93c5fd; /* General accent/link blue in dark mode */
-    --success-color: #34d399; /* For success text, distinct from alerts */
+    --error-highlight: var(--alert-error-text);
+    --accent-blue: #93c5fd;
+    --success-color: #34d399;
     --card-header-bg: #1e3a8a;
-    --table-row-even-bg: #1a2333; /* Subtle zebra striping for tables */
-    --table-row-bg-overdue: #3f2f0a; /* Dark yellow for overdue */
-    --table-row-bg-pending: #2d2a0e; /* Dark yellow for pending */
-    --table-row-bg-settled: #0a2d1f; /* Dark green for settled */
-
-    /* Theme-specific for Icons/Charts */
-    --theme-icon-chart-color: #3C7A6E; /* Keeping same as light for consistency, or set a dark mode specific one */
+    --table-row-even-bg: #1a2333;
+    --table-row-bg-overdue: #3f2f0a;
+    --table-row-bg-pending: #2d2a0e;
+    --table-row-bg-settled: #0a2d1f;
+    --theme-icon-chart-color: #3C7A6E;
 }
 
-/* --- Global Transitions & Accessibility (Reduced Motion) --- */
+/* --- Global Transitions & Accessibility --- */
 * {
-    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease-in-out; /* Added filter */
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease-in-out;
 }
 
-/* Disable animations and transitions for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
     * {
         transition: none !important;
@@ -149,9 +126,8 @@ h1, h2, h3 {
     color: var(--text-color);
 }
 
-/* Add padding-top to the main content area to prevent overlap with fixed navbar and header message */
 main {
-    padding-top: 130px; /* Adjusted to account for header-message (30px) + navbar (90px) */
+    padding-top: 130px !important; /* header-message (30px) + navbar (90px) + margin */
     flex: 1;
 }
 
@@ -165,13 +141,13 @@ main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 16px;
-    margin-top: 24px; /* Explicit top margin for content spacing */
+    margin-top: 24px;
 }
 
 /* --- Alert Container --- */
 .alert-container {
     position: fixed;
-    top: 120px; /* Adjusted to account for header-message (30px) + navbar (90px) */
+    top: 120px;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -184,149 +160,289 @@ main {
 
 /* --- App Navbar --- */
 .app-navbar {
-    background-color: var(--navbar-bg);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-    padding: 20px 30px; /* Explicit padding: 20px top/bottom, 30px left/right */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    box-sizing: border-box;
     position: fixed;
-    top: 30px; /* Adjusted to sit below header-message */
-    z-index: 1000;
-    transition: all 0.3s ease;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    height: 90px; /* Explicit total height */
-    overflow: hidden; /* Prevent menu items from overflowing */
-}
-
-.app-navbar.scrolled {
-    padding: 10px 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-/* Styles for main navigation links and brand */
-.app-navbar .app-nav-link,
-.app-navbar .app-navbar-brand {
-    color: var(--navbar-text-color);
-    line-height: 50px; /* Explicit line height matching logo height */
-    height: auto;
+    top: 30px;
+    left: 0;
+    width: 100vw;
+    height: 90px;
+    min-height: 90px;
+    max-height: 90px;
     display: flex;
     align-items: center;
+    padding: 0;
+    z-index: 1000;
+    box-sizing: border-box;
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-a {
-    text-decoration: none;
+.dark-mode .app-navbar {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-a:hover {
-    text-decoration: underline;
+.app-navbar .container-fluid {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 30px;
+    position: relative;
+}
+
+.app-navbar-brand {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 90px;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    display: flex;
+    align-items: center;
+    z-index: 1100;
+    color: var(--navbar-text-color);
+}
+
+.logo {
+    margin: 0 !important;
+    z-index: 1101;
+    background: transparent;
+    border-radius: 50%;
+    width: 60px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.app-navbar .d-flex.align-items-center.ms-auto,
+.navbar-nav,
+.app-nav-list {
+    height: 100%;
+    display: flex !important;
+    align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 .app-nav-link,
-.app-dropdown-item {
+.dropdown-toggle {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    color: var(--navbar-text-color);
     font-size: 0.85rem;
+    font-weight: 500;
     text-decoration: none;
-    color: var(--navbar-text-color); /* Ensure visibility in both modes */
-    font-weight: 500; /* Improved readability */
-    padding: 5px 15px; /* Adjust padding to fit within navbar */
 }
 
 .app-nav-link:hover,
-.app-dropdown-item:hover {
-    text-decoration: none;
-    background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect for visibility */
+.dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .dark-mode .app-nav-link:hover,
-.dark-mode .app-dropdown-item:hover {
-    background-color: rgba(0, 0, 0, 0.2); /* Adjusted for dark mode */
+.dark-mode .dropdown-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
-.btn-primary {
-    text-decoration: none; /* Fix CTA underlines */
+.app-nav-item,
+.dropdown {
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
-.content {
+/* --- Header Message --- */
+.header-message {
+    background: var(--navbar-bg) !important;
+    color: var(--navbar-text-color);
+    padding: 8px;
+    padding-left: 70px;
+    font-size: 0.85rem;
     width: 100%;
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    animation: fadeInThenOut 5s ease-in-out forwards;
+    opacity: 0;
+    transform: translateY(-100%);
+    position: fixed;
+    top: 0;
+    z-index: 1050;
 }
 
-.social-icons {
-    gap: 12px;
+.dark-mode .header-message {
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Hover state for main navigation links and brand */
-.app-navbar .app-nav-link:hover,
-.app-navbar .app-navbar-brand:hover {
+@keyframes fadeInThenOut {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+}
+
+/* --- Buttons --- */
+.btn-primary {
+    background: var(--button-primary-bg);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(242, 140, 56, 0.15);
+    transition: background-color 0.25s ease-in-out, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease-in-out;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background: var(--button-primary-hover);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(224, 106, 53, 0.25);
+    text-decoration: underline;
+}
+
+.btn-primary:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 3px;
+}
+
+.btn-primary:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.btn-secondary {
+    background: var(--button-secondary-bg-light-gradient);
+    color: var(--button-secondary-border);
+    border: 2px solid var(--button-secondary-border);
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease-in-out, transform 0.25s ease-in-out, border-color 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+
+.dark-mode .btn-secondary {
+    background: var(--button-secondary-bg-dark-gradient);
+    border-color: var(--button-secondary-border);
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background: var(--button-secondary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-secondary:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 3px;
+}
+
+.btn-secondary:disabled {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+    pointer-events: none;
+}
+
+.btn-block {
+    display: block;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.card .btn-primary,
+.card .btn-secondary {
+    display: block;
+    margin: 12px auto 8px;
+    width: fit-content;
+}
+
+/* --- Dropdown Menu --- */
+.app-dropdown-menu {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 0.5rem 0;
+}
+
+.dark-mode .app-dropdown-menu {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+}
+
+.app-dropdown-item {
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app-dropdown-item:hover,
+.app-dropdown-item:focus {
+    background-color: var(--button-secondary-hover);
     color: var(--accent-blue);
 }
 
-/* Flex container for the logo, language, mode, and toggler buttons */
-.app-navbar .d-flex.align-items-center.ms-auto {
-    gap: 24px; /* Increased gap for professional spacing */
-    align-items: center; /* Ensure vertical alignment */
-}
-
-/* Styles for the logo */
-.logo {
-    border-radius: 50%;
-    width: 60px; /* Explicit width */
-    height: 50px; /* Explicit height */
-    object-fit: cover;
-    margin: 0 0 0 10px; /* Push to left edge with minimal right margin */
-    order: -1; /* Move logo to the start of the flex order */
-    z-index: 1002; /* Ensure dominance over animations */
-    position: relative; /* Ensure proper layering */
-}
-
-/* Styles for the language toggle button */
-.language-toggle-btn {
-    order: 1; /* First in flex group after logo */
-    padding: 10px; /* Explicit padding */
+/* --- Language and Mode Toggle Buttons --- */
+.language-toggle-btn,
+.mode-toggle-btn {
     background: none;
     border: none;
     color: var(--navbar-text-color);
     font-size: 1rem;
     cursor: pointer;
+    padding: 10px;
     border-radius: 5px;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Styles for the mode toggle button */
 .mode-toggle-btn {
-    order: 2; /* Second in flex group */
-    background: none;
-    border: none;
-    color: var(--navbar-text-color);
     font-size: 1.2rem;
-    cursor: pointer;
-    padding: 10px; /* Explicit padding */
-    border-radius: 5px;
-    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.mode-toggle-btn:hover,
-.language-toggle-btn:hover {
+.language-toggle-btn:hover,
+.mode-toggle-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.dark-mode .mode-toggle-btn:hover,
-.dark-mode .language-toggle-btn:hover {
+.dark-mode .language-toggle-btn:hover,
+.dark-mode .mode-toggle-btn:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-/* Custom styles for the hamburger toggler */
+/* --- Hamburger Toggler --- */
 .app-toggler {
-    order: 3; /* Last in flex group */
-    padding: 10px; /* Explicit padding */
     background: none;
     border: none;
     cursor: pointer;
     color: var(--navbar-text-color);
-    transition: color 0.2s ease, background-color 0.2s ease;
+    padding: 10px;
     border-radius: 5px;
-    margin-left: auto; /* Force to right edge */
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .app-toggler:hover {
@@ -342,7 +458,6 @@ a:hover {
     outline-offset: 2px;
 }
 
-/* Specific styles for the Bootstrap navbar-toggler-icon to draw the lines */
 .app-toggler .navbar-toggler-icon {
     background-image: none;
     display: block;
@@ -373,7 +488,6 @@ a:hover {
     top: 7px;
 }
 
-/* Styles for when the toggler is "active" or "open" */
 .app-toggler[aria-expanded="true"] .navbar-toggler-icon {
     background: transparent;
 }
@@ -384,172 +498,6 @@ a:hover {
 
 .app-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
     transform: translateY(-7px) rotate(-45deg);
-}
-
-/* --- Dropdown Menu Specific Styles --- */
-.app-dropdown-menu {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    box-shadow: var(--card-shadow);
-    padding: 0.5rem 0;
-}
-
-.dark-mode .app-dropdown-menu {
-    background-color: var(--card-bg);
-    border-color: var(--card-border);
-}
-
-.app-dropdown-menu .app-dropdown-item {
-    color: var(--text-color);
-    padding: 0.5rem 1rem;
-    text-decoration: none;
-    display: block;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.app-dropdown-menu .app-dropdown-item:hover,
-.app-dropdown-menu .app-dropdown-item:focus {
-    background-color: var(--button-secondary-hover);
-    color: var(--accent-blue);
-}
-
-.dark-mode .app-dropdown-menu .app-dropdown-item:hover,
-.dark-mode .app-dropdown-menu .app-dropdown-item:focus {
-    background-color: var(--button-secondary-hover);
-    color: var(--accent-blue);
-}
-
-/* --- Buttons --- */
-.btn-primary {
-    background: var(--button-primary-bg);
-    color: white;
-    border: none;
-    padding: 12px 24px; /* Increased padding for better appearance */
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 6px 15px rgba(242, 140, 56, 0.15);
-    transition: background-color 0.25s ease-in-out, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease-in-out;
-    width: auto;
-    text-decoration: none;
-}
-
-.btn-primary:hover {
-    background: var(--button-primary-hover);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 20px rgba(224, 106, 53, 0.25);
-    text-decoration: underline;
-}
-
-.btn-primary:focus-visible {
-    outline: 2px solid var(--accent-blue);
-    outline-offset: 3px;
-}
-
-.btn-primary:disabled {
-    background: #cccccc;
-    cursor: not-allowed;
-    opacity: 0.7;
-    transform: none;
-    box-shadow: none;
-    pointer-events: none;
-}
-
-.btn-secondary {
-    background: var(--button-secondary-bg-light-gradient);
-    color: var(--button-secondary-border);
-    border: 2px solid var(--button-secondary-border);
-    padding: 12px 24px; /* Increased padding for better appearance */
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.25s ease-in-out, transform 0.25s ease-in-out, border-color 0.25s ease-in-out, color 0.25s ease-in-out;
-    width: auto;
-}
-
-.dark-mode .btn-secondary {
-    background: var(--button-secondary-bg-dark-gradient);
-    border-color: var(--button-secondary-border);
-    color: var(--text-color);
-}
-
-.btn-secondary:hover {
-    background: var(--button-secondary-hover);
-    transform: translateY(-2px);
-}
-
-.btn-secondary:focus-visible {
-    outline: 2px solid var(--accent-blue);
-    outline-offset: 3px;
-}
-
-.btn-secondary:disabled {
-    background: var(--card-bg);
-    border-color: var(--card-border);
-    color: var(--text-secondary);
-    cursor: not-allowed;
-    opacity: 0.7;
-    transform: none;
-    pointer-events: none;
-}
-
-/* Utility class to make a button a centered block element */
-.btn-block {
-    display: block;
-    margin: 0 auto;
-    width: fit-content;
-}
-
-/* Center buttons in cards with adjusted margin */
-.card .btn-primary, .card .btn-secondary {
-    display: block;
-    margin: 12px auto 8px; /* Adjusted to shift up slightly */
-    width: fit-content;
-}
-
-/* --- Header Message --- */
-.header-message {
-    background: var(--navbar-bg);
-    color: var(--navbar-text-color);
-    text-align: center;
-    padding: 8px;
-    font-size: 0.85rem;
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Match navbar border */
-    animation: fadeInThenOut 5s ease-in-out forwards;
-    opacity: 0;
-    transform: translateY(-100%); /* Move above navbar without overlapping */
-    position: fixed;
-    top: 0; /* Topmost part of the screen */
-    z-index: 1001; /* Above navbar but below logo */
-}
-
-.dark-mode .header-message {
-    background: var(--navbar-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Match dark mode navbar border */
-}
-
-@keyframes fadeInThenOut {
-    0% {
-        opacity: 0;
-        transform: translateY(-100%);
-    }
-    10% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    90% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-100%);
-    }
 }
 
 /* --- Alerts --- */
@@ -563,36 +511,32 @@ a:hover {
     word-break: break-word;
 }
 
-/* Default/Info Alert */
 .alert.info {
     background-color: var(--alert-info-bg);
     color: var(--alert-info-text);
     border: 1px solid var(--alert-info-border);
 }
 
-/* Success Alert */
 .alert.success {
     background-color: var(--alert-success-bg);
     color: var(--alert-success-text);
     border: 1px solid var(--alert-success-border);
 }
 
-/* Warning Alert */
 .alert.warning {
     background-color: var(--alert-warning-bg);
     color: var(--alert-warning-text);
     border: 1px solid var(--alert-warning-border);
 }
 
-/* Error Alert */
 .alert.error {
     background-color: var(--alert-error-bg);
     color: var(--alert-error-text);
     border: 1px solid var(--alert-error-border);
 }
 
-/* Close button for alerts */
-.alert .alert-close-btn, .alert .btn-close {
+.alert .alert-close-btn,
+.alert .btn-close {
     margin-left: auto;
     background: transparent;
     border: none;
@@ -605,29 +549,29 @@ a:hover {
     transition: background-color 0.2s ease;
 }
 
-.alert.success .alert-close-btn, .alert.success .btn-close {
+.alert.success .alert-close-btn,
+.alert.success .btn-close {
     color: var(--alert-success-text);
 }
 
-.alert.warning .alert-close-btn, .alert.warning .btn-close {
+.alert.warning .alert-close-btn,
+.alert.warning .btn-close {
     color: var(--alert-warning-text);
 }
 
-.alert.error .alert-close-btn, .alert.error .btn-close {
+.alert.error .alert-close-btn,
+.alert.error .btn-close {
     color: var(--alert-error-text);
 }
 
-.alert .alert-close-btn:hover, .alert .btn-close:hover {
+.alert .alert-close-btn:hover,
+.alert .btn-close:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.dark-mode .alert .alert-close-btn:hover, .dark-mode .alert .btn-close:hover {
+.dark-mode .alert .alert-close-btn:hover,
+.dark-mode .alert .btn-close:hover {
     background-color: rgba(255, 255, 255, 0.1);
-}
-
-.alert .alert-close-btn:focus-visible, .alert .btn-close:focus-visible {
-    outline: 2px solid var(--accent-blue);
-    outline-offset: 2px;
 }
 
 /* --- Cards --- */
@@ -673,7 +617,9 @@ a:hover {
     padding: 16px;
 }
 
-.card h3, .card p, .card span {
+.card h3,
+.card p,
+.card span {
     margin-bottom: 4px;
 }
 
@@ -684,13 +630,9 @@ a:hover {
     padding: 8px 0;
 }
 
-.card-item p {
-    line-height: 1.5;
-}
-
 .card-title {
     font-size: 1.3rem;
-    font-weight: 700; /* Bold font weight */
+    font-weight: 700;
     color: #60a5fa;
     margin-bottom: 8px;
     text-align: center;
@@ -756,7 +698,8 @@ a:hover {
     text-align: left;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
     width: 100%;
     padding: 12px;
     border: 2px solid var(--card-border);
@@ -767,27 +710,25 @@ a:hover {
     transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.form-control::placeholder, .form-select::placeholder {
+.form-control::placeholder,
+.form-select::placeholder {
     color: rgba(0, 0, 0, 0.5);
 }
 
-.dark-mode .form-control::placeholder, .dark-mode .form-select::placeholder {
+.dark-mode .form-control::placeholder,
+.dark-mode .form-select::placeholder {
     color: rgba(241, 245, 249, 0.5);
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
     border-color: var(--accent-blue);
     box-shadow: 0 0 0 4px rgba(58, 134, 255, 0.15);
     outline: none;
 }
 
-.form-control:focus-visible, .form-select:focus-visible {
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 0 4px rgba(58, 134, 255, 0.3);
-    outline: none;
-}
-
-.form-control.is-invalid, .form-select.is-invalid {
+.form-control.is-invalid,
+.form-select.is-invalid {
     border-color: var(--alert-error-border);
     background-image: none;
 }
@@ -805,7 +746,6 @@ a:hover {
     display: block;
 }
 
-/* Added specific styling for form-check-label */
 .form-check-label {
     color: var(--text-color);
 }
@@ -821,7 +761,8 @@ a:hover {
     box-shadow: var(--card-shadow);
 }
 
-.table th, .table td {
+.table th,
+.table td {
     padding: 16px;
     border: 1px solid var(--table-border);
     text-align: left;
@@ -837,14 +778,6 @@ a:hover {
     color: var(--navbar-text-color);
 }
 
-.table td {
-    /* color: var(--text-color); -- Inherited from table, or table-text var */
-}
-
-.table tr {
-    transition: background-color 0.2s ease;
-}
-
 .table tr:hover {
     background-color: rgba(58, 134, 255, 0.05);
 }
@@ -853,12 +786,10 @@ a:hover {
     background-color: rgba(99, 179, 237, 0.1);
 }
 
-/* Zebra striping */
 .table tbody tr:nth-child(even) {
     background-color: var(--table-row-even-bg);
 }
 
-/* Updated for direct class compatibility with invoices.html */
 .table tbody tr.row-overdue {
     background-color: var(--table-row-bg-overdue);
 }
@@ -871,7 +802,6 @@ a:hover {
     background-color: var(--table-row-bg-settled);
 }
 
-/* Re-enabled and updated for compatibility with transactions.html */
 .table tbody tr.table-success {
     background-color: var(--alert-success-bg);
     color: var(--alert-success-text);
@@ -880,11 +810,6 @@ a:hover {
 .table tbody tr.table-danger {
     background-color: var(--alert-error-bg);
     color: var(--alert-error-text);
-}
-
-/* Ensure text contrast in tables (redundant for td/th but good for p/li within them) */
-.table p, .table li {
-    color: var(--table-text);
 }
 
 /* --- List Group --- */
@@ -901,11 +826,6 @@ a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-/* Ensure text contrast in list items (redundant for li/p but good for children) */
-.list-group-item li, .list-group-item p {
-    /* color: var(--text-color); -- Inherited */
 }
 
 /* --- Grid Layout --- */
@@ -939,7 +859,6 @@ a:hover {
     line-height: 1.3;
 }
 
-/* General footer link styling */
 .footer a {
     color: var(--footer-link-color);
     text-decoration: none;
@@ -953,12 +872,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Specific styling for the "Learn More" link */
-.footer-learn-more-link {
-    /* If you want to give it any unique styling beyond the general .footer a, add it here */
-}
-
-/* --- Scrollbar Styling (for Webkit browsers) --- */
+/* --- Scrollbar Styling --- */
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -982,7 +896,7 @@ a:hover {
         padding: 16px 24px;
     }
     .app-navbar {
-        padding: 20px 30px;
+        padding: 0 30px;
     }
     .app-navbar-brand {
         font-size: 1.2rem;
@@ -1002,10 +916,12 @@ a:hover {
     .form-container {
         padding: 24px;
     }
-    .form-control, .form-select {
+    .form-control,
+    .form-select {
         font-size: 1rem;
     }
-    .table th, .table td {
+    .table th,
+    .table td {
         padding: 12px;
     }
     .list-group-item {
@@ -1013,9 +929,6 @@ a:hover {
     }
     .grid-form {
         grid-template-columns: repeat(2, 1fr);
-    }
-    .footer {
-        padding: 16px;
     }
     .footer .container {
         flex-direction: row;
@@ -1025,7 +938,7 @@ a:hover {
 }
 
 @media (min-width: 992px) {
-    .app-navbar .app-toggler {
+    .app-toggler {
         display: none;
     }
     .app-navbar .d-flex.align-items-center.ms-auto {
@@ -1034,15 +947,15 @@ a:hover {
     .app-navbar .navbar-collapse.collapse {
         display: flex !important;
         flex-grow: 1;
-        align-items: center; /* Align items vertically */
+        align-items: center;
     }
     .app-navbar .navbar-nav {
         flex-direction: row;
         align-items: center;
         margin-left: auto !important;
         gap: 24px;
-        position: relative; /* Ensure proper positioning */
-        top: 0; /* Shift up into navbar */
+        position: relative;
+        top: 0;
     }
     .app-navbar .app-nav-item .dropdown-menu {
         position: absolute;
@@ -1052,14 +965,14 @@ a:hover {
     }
 }
 
-@media (min-width: 1024px) {
+@media (min-widthac: 1024px) {
     .container {
         max-width: 1400px;
         padding: 24px 48px;
     }
     .app-navbar .container-fluid {
         max-width: 1400px;
-        padding: 20px 48px;
+        padding: 0 48px;
     }
     .footer .container {
         max-width: 1400px;
@@ -1082,42 +995,32 @@ a:hover {
 }
 
 @media (max-width: 991.98px) {
-    .app-navbar .container-fluid {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-    .app-navbar .navbar-collapse {
-        width: 100%;
-        margin-top: 12px;
+    .app-navbar .collapse.navbar-collapse {
         position: absolute;
-        top: 100%;
+        top: 90px;
         left: 0;
-        background-color: var(--navbar-bg);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        border-top: 1px solid rgba(255,255,255,0.1);
+        width: 100vw;
+        background: var(--navbar-bg);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
         padding: 16px 0;
-        overflow: hidden; /* Prevent overflow on mobile */
+        border-bottom: 1px solid var(--card-border);
     }
-    .app-navbar .navbar-nav {
+    .app-nav-list {
         flex-direction: column;
         align-items: flex-start;
         width: 100%;
-        padding: 0 16px;
+        padding: 0 24px;
     }
-    .app-navbar .app-nav-item {
+    .app-nav-item {
         width: 100%;
-        margin-right: 0;
-        margin-bottom: 4px;
     }
-    .app-navbar .app-nav-link {
+    .app-nav-link,
+    .dropdown-toggle {
         width: 100%;
-        padding: 12px 16px;
-        border-radius: 5px;
-        color: var(--navbar-text-color); /* Ensure visibility */
-        background-color: rgba(255, 255, 255, 0.05); /* Slight background for contrast */
-    }
-    .app-navbar .app-nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        justify-content: flex-start;
+        padding: 12px 0;
+        height: auto;
     }
     .app-dropdown-menu {
         width: 100%;
@@ -1126,15 +1029,6 @@ a:hover {
         border-radius: 0;
         background-color: rgba(255, 255, 255, 0.05);
         padding: 0;
-    }
-    .dark-mode .app-navbar .navbar-collapse {
-        background-color: var(--navbar-bg);
-    }
-    .dark-mode .app-navbar .app-nav-link {
-        background-color: rgba(0, 0, 0, 0.1); /* Adjusted for dark mode visibility */
-    }
-    .dark-mode .app-nav-link:hover {
-        background-color: rgba(0, 0, 0, 0.2);
     }
     .dark-mode .app-dropdown-menu {
         background-color: rgba(0, 0, 0, 0.1);
@@ -1157,7 +1051,8 @@ a:hover {
     .card-title {
         font-size: 1rem;
     }
-    .form-control, .form-select {
+    .form-control,
+    .form-select {
         font-size: 0.85rem;
     }
     .header-message {
@@ -1171,7 +1066,8 @@ a:hover {
         padding: 8px;
         margin: 0 0 8px;
     }
-    .btn-primary, .btn-secondary {
+    .btn-primary,
+    .btn-secondary {
         padding: 6px 12px;
         font-size: 0.85rem;
     }
