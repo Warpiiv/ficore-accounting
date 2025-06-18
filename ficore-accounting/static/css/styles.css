@@ -230,6 +230,7 @@ a:hover {
     text-decoration: none;
     color: var(--navbar-text-color); /* Ensure visibility in both modes */
     font-weight: 500; /* Improved readability */
+    padding: 5px 15px; /* Adjust padding to fit within navbar */
 }
 
 .app-nav-link:hover,
@@ -264,6 +265,7 @@ a:hover {
 /* Flex container for the logo, language, mode, and toggler buttons */
 .app-navbar .d-flex.align-items-center.ms-auto {
     gap: 24px; /* Increased gap for professional spacing */
+    align-items: center; /* Ensure vertical alignment */
 }
 
 /* Styles for the logo */
@@ -272,9 +274,10 @@ a:hover {
     width: 60px; /* Explicit width */
     height: 50px; /* Explicit height */
     object-fit: cover;
-    margin: 0 15px; /* Adjusted margin for balanced spacing */
-    order: 0; /* Ensure logo is first */
-    z-index: 1002; /* Ensure logo stays above header-message */
+    margin: 0 0 0 10px; /* Push to left edge with minimal right margin */
+    order: -1; /* Move logo to the start of the flex order */
+    z-index: 1002; /* Ensure dominance over animations */
+    position: relative; /* Ensure proper layering */
 }
 
 /* Styles for the language toggle button */
@@ -1031,12 +1034,15 @@ a:hover {
     .app-navbar .navbar-collapse.collapse {
         display: flex !important;
         flex-grow: 1;
+        align-items: center; /* Align items vertically */
     }
     .app-navbar .navbar-nav {
         flex-direction: row;
         align-items: center;
         margin-left: auto !important;
         gap: 24px;
+        position: relative; /* Ensure proper positioning */
+        top: 0; /* Shift up into navbar */
     }
     .app-navbar .app-nav-item .dropdown-menu {
         position: absolute;
