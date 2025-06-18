@@ -55,7 +55,7 @@
     --theme-icon-chart-color: #3C7A6E;
 
     /* Spacing variables */
-    --spacing-xs: 0.5rem;
+    --spacing-xs: 0.75rem;
     --spacing-sm: 1rem;
     --spacing-md: 1.5rem;
     --spacing-lg: 2rem;
@@ -66,8 +66,8 @@
     --button-font-size: 0.9rem;
 
     /* Navbar height variables */
-    --navbar-logo-height: 45px;
-    --navbar-padding-vertical: 0.8rem;
+    --navbar-logo-height: 50px;
+    --navbar-padding-vertical: 1rem;
     --navbar-height: calc(var(--navbar-padding-vertical) * 2 + var(--navbar-logo-height));
 
     /* Footer max-width */
@@ -204,7 +204,8 @@ main {
 .app-navbar { /* Changed from .navbar */
     background-color: var(--navbar-bg);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-    padding: var(--navbar-padding-vertical) 2rem; /* Using variable */
+    padding-top: var(--navbar-padding-vertical);
+    padding-bottom: var(--navbar-padding-vertical);
     display: flex;
     align-items: center;
     justify-content: space-between; /* Ensures space between logo and right-aligned group */
@@ -225,7 +226,8 @@ main {
 /* Styles for main navigation links and brand */
 .app-navbar .app-nav-link, /* Targets "Main Menu", "Account" */
 .app-navbar .app-navbar-brand { /* Targets the logo link */
-    color: var(--navbar-text-color); /* Ensures visibility on navbar */
+    color: var(--navbar-text-color);
+    height: var(--navbar-logo-height);/* Ensures visibility on navbar */
 }
 
 /* Hover state for main navigation links and brand */
