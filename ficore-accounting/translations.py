@@ -378,9 +378,9 @@ TRANSLATIONS = {
         'submit': 'Aika',
         'welcome': 'Barka da zuwa! Sarrafa kasuwancinku cikin sauƙi.',
         'home': 'Gida',
-        'invoices_desc': 'Duba bayanai domin bin diddigin lissafin kuɗi',
+        'invoices_desc': 'Duba bayanai domin bin diddigin lissafin kuɗi.',
         'transactions': 'Ma’amaloli',
-        'transactions_desc': 'Duba rikodin da matsayin na ma’amaloli',
+        'transactions_desc': 'Duba rikodin da kuma matsayin ma’amalolinku.',
         'feedback': 'Ba da Ra’ayi',
         'feedback_desc': 'Raba ra’ayoyinka game da app',
         # Dashboard
