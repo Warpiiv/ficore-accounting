@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, flash,
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, validators, BooleanField
 from flask_login import login_required, current_user
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 from utils import trans_function
 import logging
 import csv
@@ -65,6 +65,20 @@ def transaction_history():
         transactions = list(mongo.db.transactions.find(query).sort('created_at', -1).limit(50))
         for transaction in transactions:
             transaction['_id'] = str(transaction['_id'])
+            created_at = transaction.get('created_at')
+            updated_at = transaction.get('updated_at')
+            if isinstance(created_at, str):
+                try:
+                    transaction['created_at'] = datetime.strptime(created_at, '%Y-%m-%d')
+                except ValueError:
+                    transaction['created_at'] = None
+                    logger.warning(f"Invalid created_at string: {created_at}")
+            if isinstance(updated_at, str):
+                try:
+                    transaction['updated_at'] = datetime.strptime(updated_at, '%Y-%m-%d')
+                except ValueError:
+                    transaction['updated_at'] = None
+                    logger.warning(f"Invalid updated_at string: {updated_at}")
 
         total_income = sum(t['amount'] for t in transactions if t['type'] == 'income')
         total_expense = sum(t['amount'] for t in transactions if t['type'] == 'expense')
@@ -203,6 +217,12 @@ def export_transactions():
         writer.writerow(['Type', 'Category', 'Amount', 'Description', 'Is Recurring', 'Recurring Period', 'Created At'])
         for t in transactions:
             created_at = t.get('created_at')
+            if isinstance(created_at, str):
+                try:
+                    created_at = datetime.strptime(created_at, '%Y-%m-%d')
+                except ValueError:
+                    created_at = None
+                    logger.warning(f"Invalid created_at string in export: {t.get('created_at')}")
             writer.writerow([
                 t['type'].capitalize(),
                 t['category'].capitalize(),
@@ -210,7 +230,7 @@ def export_transactions():
                 t['description'],
                 t.get('is_recurring', False),
                 t.get('recurring_period', 'none').capitalize(),
-                created_at.strftime('%Y-%m-%d %H:%M:%S') if isinstance(created_at, datetime) else ''
+                created_at.strftime('%Y-%m-%d %H:%M:%S') if created_at else ''
             ])
         output.seek(0)
         return Response(
