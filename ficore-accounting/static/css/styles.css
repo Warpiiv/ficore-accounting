@@ -81,7 +81,7 @@
 
     /* Buttons */
     --button-primary-bg: #0808d1;
-    --button-primary-hover: #E06A35; /* Using the same hover as light mode for consistency if desired, or set a dark mode specific one */
+    --button-primary-hover: #E06A35;
     --button-secondary-bg-dark-gradient: linear-gradient(to bottom, #1e293b, #1a202c);
     --button-secondary-border: #63B3ED;
     --button-secondary-hover: #334155;
@@ -200,8 +200,8 @@ main {
     gap: var(--spacing-xs);
 }
 
-/* --- Navbar --- */
-.navbar {
+/* --- App Navbar --- */
+.app-navbar { /* Changed from .navbar */
     background-color: var(--navbar-bg);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
     padding: var(--navbar-padding-vertical) 2rem; /* Using variable */
@@ -216,17 +216,51 @@ main {
     transition: all 0.3s ease;
 }
 
-.navbar.scrolled {
+.app-navbar.scrolled { /* Changed from .navbar.scrolled */
     padding: 0.5rem 2rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.navbar a, .navbar-brand, .nav-link {
+/* Styles for main navigation links and brand */
+.app-navbar .app-nav-link, /* Targets "Main Menu", "Account" */
+.app-navbar .app-navbar-brand { /* Targets the logo link */
     color: var(--navbar-text-color); /* Ensures visibility on navbar */
 }
 
-.navbar a:hover {
+/* Hover state for main navigation links and brand */
+.app-navbar .app-nav-link:hover,
+.app-navbar .app-navbar-brand:hover {
     color: var(--accent-blue);
+}
+
+/* Styles for the language toggle button */
+.language-toggle-btn {
+    /* Add any specific styles for this button if needed, beyond .btn-primary */
+}
+
+/* Styles for the mode toggle button */
+.mode-toggle-btn {
+    background: none; /* Transparent background */
+    border: none;
+    color: var(--navbar-text-color); /* Ensure icon visibility */
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mode-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .mode-toggle-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Styles for the app toggler (hamburger icon) */
+.app-toggler { /* Added for distinct styling */
+    /* You had inline style for navbar-toggler-icon, this can be its container */
 }
 
 /* --- Logo Styling --- */
@@ -235,6 +269,40 @@ main {
     width: 60px;
     height: var(--navbar-logo-height); /* Using variable */
     object-fit: cover;
+}
+
+/* --- Dropdown Menu Specific Styles --- */
+.app-dropdown-menu { /* Changed from .dropdown-menu */
+    background-color: var(--card-bg); /* Ensure dropdown background is light (white in light mode) */
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 0.5rem 0; /* Bootstrap default padding */
+}
+
+.dark-mode .app-dropdown-menu {
+    background-color: var(--card-bg); /* Dark card background in dark mode */
+    border-color: var(--card-border);
+}
+
+.app-dropdown-menu .app-dropdown-item { /* Changed from .dropdown-item */
+    color: var(--text-color); /* Ensures text is visible on the dropdown background */
+    padding: 0.5rem 1rem; /* Adjust padding as needed */
+    text-decoration: none;
+    display: block; /* Make the whole area clickable */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app-dropdown-menu .app-dropdown-item:hover,
+.app-dropdown-menu .app-dropdown-item:focus {
+    background-color: var(--button-secondary-hover); /* Light blue hover background */
+    color: var(--accent-blue); /* Accent blue text on hover */
+}
+
+.dark-mode .app-dropdown-menu .app-dropdown-item:hover,
+.dark-mode .app-dropdown-menu .app-dropdown-item:focus {
+    background-color: var(--button-secondary-hover); /* Dark mode appropriate hover background */
+    color: var(--accent-blue); /* Dark mode appropriate accent color */
 }
 
 /* --- Buttons --- */
@@ -479,12 +547,10 @@ main {
 
 .card-body {
     padding: var(--spacing-sm);
-    /* color: var(--text-color); -- This is inherited from body, often not needed unless overriding */
 }
 
 .card h3, .card p, .card span {
     margin-bottom: 0.25rem;
-    /* color: var(--text-color); -- This is inherited from body, often not needed unless overriding */
 }
 
 .card-item {
@@ -496,7 +562,6 @@ main {
 
 .card-item p {
     line-height: 1.5;
-    /* color: var(--text-color); -- Inherited */
 }
 
 .card-title {
@@ -728,11 +793,11 @@ main {
     gap: 0.5rem;
     font-size: 0.85rem;
     line-height: 1.3;
-    /* color: var(--text-color); -- Inherited from footer, or use explicit footer text color var */
 }
 
+/* General footer link styling */
 .footer a {
-    color: var(--footer-link-color);
+    color: var(--footer-link-color); /* Uses the defined footer link color */
     text-decoration: none;
     font-weight: 500;
     margin: 0 0.5rem;
@@ -744,9 +809,17 @@ main {
     text-decoration: underline;
 }
 
-.footer a.text-white {
+/* Removed redundant/problematic .footer a.text-white rule */
+/* .footer a.text-white {
     color: var(--footer-link-color) !important;
+} */
+
+/* Specific styling for the "Learn More" link if needed (e.g., if it still blends) */
+.footer-learn-more-link {
+    /* If the default .footer a is still not visible, you can add more specific rules here.
+       However, based on your variable definitions, it should be okay now. */
 }
+
 
 /* --- Scrollbar Styling (for Webkit browsers) --- */
 ::-webkit-scrollbar {
@@ -768,19 +841,16 @@ main {
 
 /* --- Media Queries --- */
 @media (min-width: 768px) {
-    :root {
-        /* No change needed here, as navbar-height is already dynamic */
-    }
     .container {
         padding: var(--spacing-sm) var(--spacing-lg);
     }
-    .navbar {
+    .app-navbar { /* Changed from .navbar */
         padding: var(--navbar-padding-vertical) 3rem; /* Using variable */
     }
-    .navbar-brand {
+    .app-navbar-brand { /* Changed from .navbar-brand */
         font-size: 1.2rem;
     }
-    .nav-link {
+    .app-nav-link { /* Changed from .nav-link */
         font-size: 1rem;
     }
     .card {
@@ -822,10 +892,8 @@ main {
         max-width: 1400px;
         padding: var(--spacing-md) 3rem;
     }
-    .navbar {
-        padding: 0; /* Already 0, but good to keep if specific intent */
-    }
-    .navbar .container {
+    /* Note: .app-navbar padding is handled by the scrolled class if any, or default */
+    .app-navbar .container-fluid { /* Adjusted to target the inner container for large screens */
         max-width: 1400px;
         padding: var(--navbar-padding-vertical) 3rem; /* Using variable */
     }
@@ -847,10 +915,10 @@ main {
 }
 
 @media (max-width: 360px) {
-    .navbar-brand {
+    .app-navbar-brand { /* Changed from .navbar-brand */
         font-size: 0.8rem;
     }
-    .nav-link {
+    .app-nav-link { /* Changed from .nav-link */
         font-size: 0.8rem;
     }
     .card-title {
