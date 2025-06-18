@@ -292,20 +292,25 @@ main {
     align-items: center;
     justify-content: center;
     margin-left: 8px;
-    background: none;
+    background-color: #ffffff; /* Contrast color for visibility */
     border: none;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
     cursor: pointer;
     color: var(--navbar-text-color);
-    border-radius: 5px;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+.dark-mode .app-toggler {
+    background-color: #1e293b; /* Contrast color for dark mode */
+}
+
 .app-toggler:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #e8f0ff; /* Light hover effect */
 }
 
 .dark-mode .app-toggler:hover {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: #334155; /* Dark hover effect */
 }
 
 .app-toggler:focus-visible {
@@ -349,15 +354,18 @@ main {
 
 /* --- Dropdown Menu --- */
 .app-dropdown-menu {
-    background-color: var(--card-bg);
+    background-color: #ffffff; /* Light background for light mode */
+    color: #000000; /* Clear text color */
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
     border: 1px solid var(--card-border);
-    border-radius: 8px;
-    box-shadow: var(--card-shadow);
-    padding: 0.5rem 0;
 }
 
 .dark-mode .app-dropdown-menu {
-    background-color: var(--card-bg);
+    background-color: #1e293b; /* Dark background for dark mode */
+    color: #f1f5f9; /* Light text color for dark mode */
     border-color: var(--card-border);
 }
 
@@ -1009,11 +1017,11 @@ main {
         border: none;
         box-shadow: none;
         border-radius: 0;
-        background-color: rgba(255, 255, 255, 0.05);
-        padding: 0;
+        background-color: #ffffff; /* Consistent background for mobile */
+        padding: 0.5rem;
     }
     .dark-mode .app-dropdown-menu {
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: #1e293b; /* Consistent dark background for mobile */
     }
     .app-navbar .navbar-collapse.d-none.d-lg-block {
         display: none !important;
