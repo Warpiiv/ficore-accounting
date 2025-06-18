@@ -613,7 +613,7 @@ main {
 .form-label {
     font-weight: 500;
     margin-bottom: 0.25rem;
-    color: var(--text-color);
+    color: var(--text-color); /* Ensures visibility in both modes */
     display: block;
     text-align: left;
 }
@@ -666,6 +666,12 @@ main {
 .is-invalid ~ .invalid-feedback {
     display: block;
 }
+
+/* Added specific styling for form-check-label */
+.form-check-label {
+    color: var(--text-color); /* Ensure visibility in both modes */
+}
+
 
 /* --- Tables --- */
 .table {
