@@ -34,7 +34,6 @@ class InvoiceForm(FlaskForm):
 
 @invoices_bp.route('/invoice_dashboard', methods=['GET'])
 def invoice_dashboard():
-    # Initialize filter variables for robustness
     status_filter = ''
     customer_filter = ''
     start_date = ''
@@ -53,18 +52,25 @@ def invoice_dashboard():
         if customer_filter:
             query['customer_name'] = {'$regex': customer_filter, '$options': 'i'}
         if start_date and end_date:
-            query['created_at'] = {
-                '$gte': datetime.strptime(start_date, '%Y-%m-%d'),
-                '$lte': datetime.strptime(end_date, '%Y-%m-%d')
-            }
+            try:
+                query['created_at'] = {
+                    '$gte': datetime.strptime(start_date, '%Y-%m-%d'),
+                    '$lte': datetime.strptime(end_date, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+                }
+            except ValueError:
+                flash(trans_function('invalid_date_format', default='Invalid date format'), 'danger')
+                logger.warning(f"Invalid date range: {start_date} to {end_date}")
         
-        invoices = list(mongo.db.invoices.find(query).sort('created_at', -1))
+        logger.debug(f"Invoice query: {query}")
+        invoices = list(mongo.db.invoices.find(query).sort('created_at', -1).limit(50))
         for invoice in invoices:
             invoice['_id'] = str(invoice['_id'])
             due_date = invoice.get('due_date')
-            # Convert string date to datetime for comparison if stored as string
             if isinstance(due_date, str):
-                due_date = datetime.strptime(due_date, '%Y-%m-%d')
+                try:
+                    due_date = datetime.strptime(due_date, '%Y-%m-%d')
+                except ValueError:
+                    due_date = None
             invoice['is_overdue'] = invoice['status'] == 'pending' and due_date and due_date < datetime.utcnow()
         return render_template('invoices/view.html', invoices=invoices, 
                             status_filter=status_filter, customer_filter=customer_filter,
@@ -81,22 +87,19 @@ def create_invoice():
         try:
             user_id = current_user.id if current_user.is_authenticated else 'guest'
             mongo = current_app.extensions['pymongo']
-            # Generate invoice number atomically
             last_invoice = mongo.db.invoices.find_one(sort=[('invoice_number', -1)])
             if last_invoice and last_invoice.get('invoice_number'):
                 try:
                     last_num = int(last_invoice['invoice_number'])
                     invoice_number = str(last_num + 1).zfill(6)
                 except ValueError:
-                    # Handle cases where invoice_number isn't a number
                     count = mongo.db.invoices.count_documents({})
                     invoice_number = str(count + 1).zfill(6)
             else:
                 invoice_number = '000001'
 
-            # Convert date objects to strings for MongoDB compatibility
-            due_date = form.due_date.data.strftime('%Y-%m-%d') if form.due_date.data else None
-            settled_date = form.settled_date.data.strftime('%Y-%m-%d') if form.status.data == 'settled' and form.settled_date.data else None
+            due_date = form.due_date.data
+            settled_date = form.settled_date.data if form.status.data == 'settled' else None
 
             invoice = {
                 'user_id': user_id,
@@ -115,7 +118,6 @@ def create_invoice():
                 logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
                 return redirect(url_for('invoices.invoice_dashboard'))
             except pymongo.errors.DuplicateKeyError:
-                # Single retry in case of race condition
                 last_invoice = mongo.db.invoices.find_one(sort=[('invoice_number', -1)])
                 last_num = int(last_invoice['invoice_number']) if last_invoice and last_invoice.get('invoice_number') else 0
                 invoice['invoice_number'] = str(last_num + 1).zfill(6)
@@ -138,9 +140,18 @@ def update_invoice(invoice_id):
         flash(trans_function('invoice_not_found', default='Invoice not found'), 'danger')
         return redirect(url_for('invoices.invoice_dashboard'))
     
-    # Convert string dates back to date objects for form population
-    due_date = datetime.strptime(invoice['due_date'], '%Y-%m-%d').date() if invoice.get('due_date') else None
-    settled_date = datetime.strptime(invoice['settled_date'], '%Y-%m-%d').date() if invoice.get('settled_date') else None
+    due_date = invoice.get('due_date')
+    settled_date = invoice.get('settled_date')
+    if isinstance(due_date, str):
+        try:
+            due_date = datetime.strptime(due_date, '%Y-%m-%d').date()
+        except ValueError:
+            due_date = None
+    if isinstance(settled_date, str):
+        try:
+            settled_date = datetime.strptime(settled_date, '%Y-%m-%d').date()
+        except ValueError:
+            settled_date = None
 
     form = InvoiceForm(data={
         'customer_name': invoice['customer_name'],
@@ -153,9 +164,8 @@ def update_invoice(invoice_id):
     
     if form.validate_on_submit():
         try:
-            # Convert date objects to strings for MongoDB
-            due_date = form.due_date.data.strftime('%Y-%m-%d') if form.due_date.data else None
-            settled_date = form.settled_date.data.strftime('%Y-%m-%d') if form.status.data == 'settled' and form.settled_date.data else None
+            due_date = form.due_date.data
+            settled_date = form.settled_date.data if form.status.data == 'settled' else None
 
             mongo.db.invoices.update_one(
                 {'_id': ObjectId(invoice_id), 'user_id': user_id},
@@ -207,15 +217,18 @@ def export_invoices_csv():
         writer = csv.writer(output)
         writer.writerow(['Invoice Number', 'Customer Name', 'Description', 'Amount', 'Status', 'Created At', 'Due Date', 'Settled Date'])
         for invoice in invoices:
+            created_at = invoice.get('created_at')
+            due_date = invoice.get('due_date')
+            settled_date = invoice.get('settled_date')
             writer.writerow([
                 invoice.get('invoice_number', ''),
                 invoice.get('customer_name', ''),
                 invoice.get('description', ''),
                 invoice.get('amount', 0),
                 invoice.get('status', ''),
-                invoice.get('created_at', '').strftime('%Y-%m-%d') if invoice.get('created_at') else '',
-                invoice.get('due_date', ''),
-                invoice.get('settled_date', '')
+                created_at.strftime('%Y-%m-%d') if isinstance(created_at, datetime) else '',
+                due_date.strftime('%Y-%m-%d') if isinstance(due_date, datetime) else due_date or '',
+                settled_date.strftime('%Y-%m-%d') if isinstance(settled_date, datetime) else settled_date or ''
             ])
         output.seek(0)
         return send_file(
