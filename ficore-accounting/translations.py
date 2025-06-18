@@ -18,9 +18,9 @@ TRANSLATIONS = {
         # Module: core
         'core_invoice': 'Create Invoice',
         'core_signup': 'Signup',
-        'core_transactions': 'Transactions',
+        'add_transactions': 'Transactions',
         'view_invoices': 'View Invoices',
-        'track_transaction': 'View Transactions',
+        'view_transaction': 'View Transactions',
         'created_at': 'Created At',
         'pending': 'Pending',
         'settled': 'Settled',
@@ -216,9 +216,9 @@ TRANSLATIONS = {
         # Module: core
         'core_invoice': 'Ƙirƙiri Daftari',
         'core_signup': 'Yi Rajista',
-        'core_transactions': 'Ma’amaloli',
+        'add_transactions': 'Ma’amaloli',
         'view_invoices': 'Takardun Jira',
-        'track_transaction': 'Lissafin Ma’amala',
+        'view_transaction': 'Lissafin Ma’amala',
         'created_at': 'An Ƙirƙira Shi a',
         'pending': 'Mai Jiran Gado',
         'settled': 'An Sasanta',
