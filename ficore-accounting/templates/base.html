@@ -42,24 +42,31 @@
                 <a class="app-navbar-brand" href="{{ url_for('index') }}">
                     <img src="{{ url_for('static', filename='img/ficore_records_logo.png') }}" alt="{{ trans('core_records_logo') | default('Ficore Records Logo') }}" class="logo">
                 </a>
-                {# Added 'app-navbar-btn' and 'language-toggle-btn' for distinct styling #}
-                <a href="{{ url_for('set_language', lang='ha' if session.lang == 'en' else 'en') }}"
-                   class="btn btn-primary app-navbar-btn language-toggle-btn ms-1 me-1"
-                   title="{{ trans('core_change_language') | default('Change Language') }}"
-                   aria-label="{{ trans('core_switch_to') | default('Switch to') }} {{ 'Hausa' if session.lang == 'en' else 'English' }}"
-                   role="button">
-                    <i class="fas fa-globe me-1" aria-hidden="true"></i>
-                    {{ 'Hausa' if session.lang == 'en' else 'English' }}
-                </a>
-                {# Added 'mode-toggle-btn' for distinct styling #}
-                <button id="modeToggle" class="mode-toggle-btn ms-1 me-1" aria-label="{{ trans('core_toggle_dark_mode') | default('Toggle Dark Mode') }}">
-                    <i class="fas fa-moon" aria-hidden="true"></i>
-                </button>
-                {# Added 'app-toggler' for distinct styling #}
-                <button class="navbar-toggler app-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ trans('core_toggle_navigation') | default('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon" style="font-size: 1.2rem; width: 2rem; height: 2rem; background-color: white; color: #003366; border-radius: 5px;"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
+
+                {# NEW: Wrapper for right-aligned items to manage spacing and order #}
+                <div class="d-flex align-items-center ms-auto"> {# ms-auto pushes this group to the right #}
+                    {# Added 'app-navbar-btn' and 'language-toggle-btn' for distinct styling #}
+                    <a href="{{ url_for('set_language', lang='ha' if session.lang == 'en' else 'en') }}"
+                       class="btn btn-primary app-navbar-btn language-toggle-btn"
+                       title="{{ trans('core_change_language') | default('Change Language') }}"
+                       aria-label="{{ trans('core_switch_to') | default('Switch to') }} {{ 'Hausa' if session.lang == 'en' else 'English' }}"
+                       role="button">
+                        <i class="fas fa-globe me-1" aria-hidden="true"></i>
+                        {{ 'Hausa' if session.lang == 'en' else 'English' }}
+                    </a>
+                    {# Added 'mode-toggle-btn' for distinct styling #}
+                    <button id="modeToggle" class="mode-toggle-btn" aria-label="{{ trans('core_toggle_dark_mode') | default('Toggle Dark Mode') }}">
+                        <i class="fas fa-moon" aria-hidden="true"></i>
+                    </button>
+                    {# Added 'app-toggler' for distinct styling - INLINE STYLE REMOVED #}
+                    <button class="navbar-toggler app-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ trans('core_toggle_navigation') | default('Toggle navigation') }}">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+
+                {# Main navigation links - Added d-lg-block and d-none for responsive visibility #}
+                {# This div will be shown as flex (or block) on lg screens and hidden on smaller screens by default #}
+                <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
                     {# Added 'app-nav-list' #}
                     <ul class="navbar-nav ms-auto app-nav-list">
                         {# Added 'app-nav-item' and 'app-nav-link' #}
@@ -253,7 +260,7 @@
                 [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
                 // Scroll-aware navbar - updated selector
-                const navbar = document.querySelector('.app-navbar'); 
+                const navbar = document.querySelector('.app-navbar');
                 if (navbar) { // Added null check
                     window.addEventListener('scroll', () => {
                         if (window.scrollY > 0) {
