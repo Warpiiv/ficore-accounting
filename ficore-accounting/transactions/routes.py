@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, validators, BooleanField
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
-from utils import trans_function, is_valid_email
+from utils import trans_function
 import logging
 import csv
 from io import StringIO
@@ -28,9 +28,6 @@ class TransactionForm(FlaskForm):
         validators.DataRequired(message='Description is required'),
         validators.Length(max=500, message='Description cannot exceed 500 characters')
     ])
-    tags = StringField('Tags', [
-        validators.Length(max=200, message='Tags cannot exceed 200 characters')
-    ])
     is_recurring = BooleanField('Recurring Transaction')
     recurring_period = SelectField('Recurring Period', choices=[
         ('none', 'None'), ('weekly', 'Weekly'), ('monthly', 'Monthly'), ('yearly', 'Yearly')
@@ -38,18 +35,15 @@ class TransactionForm(FlaskForm):
 
 @transactions_bp.route('/transaction_history', methods=['GET'])
 def transaction_history():
-    # Fix for UnboundLocalError - Initialize filter variables
     date_filter = ''
     category_filter = ''
     description_filter = ''
-    tags_filter = ''
     try:
         user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
         date_filter = request.args.get('date', '')
         category_filter = request.args.get('category', '')
         description_filter = request.args.get('description', '')
-        tags_filter = request.args.get('tags', '')
 
         query = {'user_id': user_id}
         if date_filter:
@@ -60,15 +54,15 @@ def transaction_history():
                     '$lt': date + timedelta(days=1)
                 }
             except ValueError:
-                flash(trans_function('invalid_date_format'), 'danger')
+                flash(trans_function('invalid_date_format', default='Invalid date format'), 'danger')
+                logger.warning(f"Invalid date filter: {date_filter}")
         if category_filter:
             query['category'] = category_filter
         if description_filter:
             query['description'] = {'$regex': description_filter, '$options': 'i'}
-        if tags_filter:
-            query['tags'] = {'$regex': tags_filter, '$options': 'i'}
 
-        transactions = list(mongo.db.transactions.find(query).sort('created_at', -1))
+        logger.debug(f"Transaction query: {query}")
+        transactions = list(mongo.db.transactions.find(query).sort('created_at', -1).limit(50))
         for transaction in transactions:
             transaction['_id'] = str(transaction['_id'])
 
@@ -92,12 +86,11 @@ def transaction_history():
                              filter_values={
                                  'date': date_filter,
                                  'category': category_filter,
-                                 'description': description_filter,
-                                 'tags': tags_filter
+                                 'description': description_filter
                              })
     except Exception as e:
         logger.error(f"Error fetching transactions: {str(e)}")
-        flash(trans_function('core_something_went_wrong'), 'danger')
+        flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
         return render_template('transactions/history.html',
                              transactions=[],
                              total_income=0,
@@ -108,8 +101,7 @@ def transaction_history():
                              filter_values={
                                  'date': date_filter,
                                  'category': category_filter,
-                                 'description': description_filter,
-                                 'tags': tags_filter
+                                 'description': description_filter
                              }), 500
 
 @transactions_bp.route('/add', methods=['GET', 'POST'])
@@ -125,19 +117,18 @@ def add_transaction():
                 'category': form.category.data,
                 'amount': float(form.amount.data),
                 'description': form.description.data.strip(),
-                'tags': [tag.strip() for tag in form.tags.data.split(',') if tag.strip()] if form.tags.data else [],
                 'is_recurring': form.is_recurring.data,
                 'recurring_period': form.recurring_period.data if form.is_recurring.data else 'none',
                 'created_at': datetime.utcnow(),
                 'updated_at': datetime.utcnow()
             }
             result = mongo.db.transactions.insert_one(transaction)
-            flash(trans_function('transaction_added'), 'success')
+            flash(trans_function('transaction_added', default='Transaction added successfully'), 'success')
             logger.info(f"Transaction added by user {user_id}: {result.inserted_id}")
             return redirect(url_for('transactions.transaction_history'))
         except Exception as e:
             logger.error(f"Error adding transaction: {str(e)}")
-            flash(trans_function('core_something_went_wrong'), 'danger')
+            flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
             return render_template('transactions/add.html', form=form), 500
     return render_template('transactions/add.html', form=form)
 
@@ -147,7 +138,7 @@ def update_transaction(transaction_id):
     mongo = current_app.extensions['pymongo']
     transaction = mongo.db.transactions.find_one({'_id': ObjectId(transaction_id), 'user_id': user_id})
     if not transaction:
-        flash(trans_function('transaction_not_found'), 'danger')
+        flash(trans_function('transaction_not_found', default='Transaction not found'), 'danger')
         return redirect(url_for('transactions.transaction_history'))
     
     form = TransactionForm(data={
@@ -155,7 +146,6 @@ def update_transaction(transaction_id):
         'category': transaction['category'],
         'amount': transaction['amount'],
         'description': transaction['description'],
-        'tags': ','.join(transaction.get('tags', [])),
         'is_recurring': transaction.get('is_recurring', False),
         'recurring_period': transaction.get('recurring_period', 'none')
     })
@@ -170,19 +160,18 @@ def update_transaction(transaction_id):
                         'category': form.category.data,
                         'amount': float(form.amount.data),
                         'description': form.description.data.strip(),
-                        'tags': [tag.strip() for tag in form.tags.data.split(',') if tag.strip()] if form.tags.data else [],
                         'is_recurring': form.is_recurring.data,
                         'recurring_period': form.recurring_period.data if form.is_recurring.data else 'none',
                         'updated_at': datetime.utcnow()
                     }
                 }
             )
-            flash(trans_function('transaction_updated'), 'success')
+            flash(trans_function('transaction_updated', default='Transaction updated successfully'), 'success')
             logger.info(f"Transaction updated by user {user_id}: {transaction_id}")
             return redirect(url_for('transactions.transaction_history'))
         except Exception as e:
             logger.error(f"Error updating transaction: {str(e)}")
-            flash(trans_function('core_something_went_wrong'), 'danger')
+            flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
             return render_template('transactions/add.html', form=form, transaction_id=transaction_id), 500
     return render_template('transactions/add.html', form=form, transaction_id=transaction_id)
 
@@ -193,14 +182,14 @@ def delete_transaction(transaction_id):
         mongo = current_app.extensions['pymongo']
         result = mongo.db.transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': user_id})
         if result.deleted_count == 0:
-            flash(trans_function('transaction_not_found'), 'danger')
+            flash(trans_function('transaction_not_found', default='Transaction not found'), 'danger')
         else:
-            flash(trans_function('transaction_deleted'), 'success')
+            flash(trans_function('transaction_deleted', default='Transaction deleted successfully'), 'success')
             logger.info(f"Transaction deleted by user {user_id}: {transaction_id}")
         return redirect(url_for('transactions.transaction_history'))
     except Exception as e:
         logger.error(f"Error deleting transaction: {str(e)}")
-        flash(trans_function('core_something_went_wrong'), 'danger')
+        flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
         return redirect(url_for('transactions.transaction_history')), 500
 
 @transactions_bp.route('/export', methods=['GET'])
@@ -211,17 +200,17 @@ def export_transactions():
         transactions = list(mongo.db.transactions.find({'user_id': user_id}))
         output = StringIO()
         writer = csv.writer(output)
-        writer.writerow(['Type', 'Category', 'Amount', 'Description', 'Tags', 'Is Recurring', 'Recurring Period', 'Created At'])
+        writer.writerow(['Type', 'Category', 'Amount', 'Description', 'Is Recurring', 'Recurring Period', 'Created At'])
         for t in transactions:
+            created_at = t.get('created_at')
             writer.writerow([
                 t['type'].capitalize(),
                 t['category'].capitalize(),
                 t['amount'],
                 t['description'],
-                ','.join(t.get('tags', [])),
                 t.get('is_recurring', False),
                 t.get('recurring_period', 'none').capitalize(),
-                t['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+                created_at.strftime('%Y-%m-%d %H:%M:%S') if isinstance(created_at, datetime) else ''
             ])
         output.seek(0)
         return Response(
@@ -231,5 +220,5 @@ def export_transactions():
         )
     except Exception as e:
         logger.error(f"Error exporting transactions: {str(e)}")
-        flash(trans_function('core_something_went_wrong'), 'danger')
+        flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
         return redirect(url_for('transactions.transaction_history')), 500
