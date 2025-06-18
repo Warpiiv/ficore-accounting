@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container my-5">
     {# Added text-color class for consistency #}
-    <h1 class="text-center mb-4 text-color">{{ transaction_id | default(trans('track_transaction') | default('View Transactions')) if transaction_id else trans('track_transaction') | default('View Transactions') }}</h1>
+    <h1 class="text-center mb-4 text-color">{{ transaction_id | default(trans('view_transaction') | default('View Transactions')) if transaction_id else trans('view_transaction') | default('View Transactions') }}</h1>
     {% if get_flashed_messages() %}
         <div class="alert alert-{{ 'danger' if 'danger' in get_flashed_messages() else 'success' }} alert-dismissible fade show" role="alert">
             {% for message in get_flashed_messages() %}
@@ -36,11 +36,10 @@
     </div>
     <div class="card">
         <div class="card-body">
-            {# Removed Tailwind grid classes like 'row g-3' from here if they were causing issues,
-               but for now, assuming Bootstrap grid is fine #}
+            {# Form using Bootstrap's grid classes (row, col) #}
             <form class="row g-3" method="GET" action="{{ url_for('transactions.transaction_history') }}">
                 <div class="col-md-3 col-sm-12">
-                    {# Removed visually-hidden as it might be specific to Bootstrap's screen-reader-only #}
+                    {# Re-added visually-hidden as it's a standard Bootstrap accessibility class #}
                     <label for="filter_date" class="form-label visually-hidden">{{ trans('filter_by_date') | default('Filter by Date') }}</label>
                     <input type="date" name="date" id="filter_date" class="form-control" placeholder="{{ trans('filter_date') | default('Filter by Date') }}" value="{{ filter_values.date }}">
                 </div>
@@ -59,7 +58,7 @@
                     <label for="filter_description" class="form-label visually-hidden">{{ trans('filter_by_description') | default('Filter by Description') }}</label>
                     <input type="text" name="description" id="filter_description" class="form-control" placeholder="{{ trans('filter_description') | default('Filter by Description') }}" value="{{ filter_values.description }}">
                 </div>
-                {# Removed Tags filter input #}
+                {# Removed Tags filter input as per previous request to simplify #}
                 <div class="col-12 text-end">
                     <button type="submit" class="btn btn-primary me-2">{{ trans('filter') | default('Filter') }}</button>
                     <a href="{{ url_for('transactions.export_transactions') }}" class="btn btn-secondary">{{ trans('export_csv') | default('Export to CSV') }}</a>
@@ -92,13 +91,13 @@
                         <tbody>
                             {% for transaction in transactions %}
                                 <tr class="{{ 'table-success' if transaction.type == 'income' else 'table-danger' }}">
-                                    <td>{{ trans(transaction.type) | default(transaction.type | capitalize) }}</td>
-                                    <td>{{ trans(transaction.category) | default(transaction.category | capitalize) }}</td>
+                                    <td class="text-color">{{ trans(transaction.type) | default(transaction.type | capitalize) }}</td>
+                                    <td class="text-color">{{ trans(transaction.category) | default(transaction.category | capitalize) }}</td>
                                     <td class="amount-highlight">{{ transaction.amount | format_currency }}</td>
-                                    <td>{{ transaction.description }}</td>
+                                    <td class="text-color">{{ transaction.description }}</td>
                                     {# Removed Tags data cell #}
-                                    <td>{{ transaction.recurring_period | capitalize if transaction.is_recurring else '-' }}</td>
-                                    <td>{{ transaction.created_at | format_datetime }}</td>
+                                    <td class="text-color">{{ transaction.recurring_period | capitalize if transaction.is_recurring else '-' }}</td>
+                                    <td class="text-color">{{ transaction.created_at | format_datetime }}</td>
                                     <td>
                                         <a href="{{ url_for('transactions.update_transaction', transaction_id=transaction._id) }}" class="btn btn-sm btn-primary">
                                             {{ trans('edit') | default('Edit') }}
