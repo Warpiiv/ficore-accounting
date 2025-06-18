@@ -158,18 +158,44 @@ main {
     gap: 12px;
 }
 
-/* --- App Navbar --- */
+/* --- Header Message INSIDE Navbar --- */
+.header-message {
+    width: 100%;
+    text-align: center;
+    background: var(--navbar-bg) !important;
+    color: var(--navbar-text-color);
+    padding: 8px 0;
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+    border: none;
+    position: static;
+    top: unset;
+    left: unset;
+    z-index: 1050;
+    opacity: 0;
+    transform: translateY(-100%);
+    animation: fadeInThenOut 5s ease-in-out forwards;
+}
+
+@keyframes fadeInThenOut {
+    0%   { opacity: 0; transform: translateY(-100%);}
+    10%  { opacity: 1; transform: translateY(0);}
+    90%  { opacity: 1; transform: translateY(0);}
+    100% { opacity: 0; transform: translateY(-100%);}
+}
+
+/* --- Navbar Flex Structure --- */
 .app-navbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+    min-height: unset;
+    height: auto;
     position: fixed;
-    top: 30px;
+    top: 0;
     left: 0;
     width: 100vw;
-    height: 90px;
-    min-height: 90px;
-    max-height: 90px;
-    display: flex;
-    align-items: center;
-    padding: 0;
     z-index: 1000;
     box-sizing: border-box;
     background-color: var(--navbar-bg);
@@ -180,46 +206,116 @@ main {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.app-navbar .container-fluid {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 30px;
-    position: relative;
+.container-fluid.align-items-end {
+    display: flex !important;
+    flex-direction: row;
+    align-items: flex-end !important;
+    justify-content: space-between;
+    padding: 0 0 0 0 !important;
+    min-height: 90px;
+    height: 90px;
 }
 
-.app-navbar-brand {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 90px;
-    margin-left: 0 !important;
-    padding-left: 0 !important;
+/* --- Logo Column --- */
+.navbar-logo-col {
     display: flex;
-    align-items: center;
-    z-index: 1100;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: 100%;
+}
+
+/* --- Logo --- */
+.app-navbar-brand {
+    padding-left: 10px !important; /* Small left padding */
+    margin-bottom: 7px;            /* Slightly above togglers */
+    display: flex;
+    align-items: flex-start;
     color: var(--navbar-text-color);
 }
 
 .logo {
+    width: 64px;
+    height: 54px;
+    object-fit: cover;
     margin: 0 !important;
-    z-index: 1101;
     background: transparent;
     border-radius: 50%;
-    width: 60px;
-    height: 50px;
-    object-fit: cover;
 }
 
-.app-navbar .d-flex.align-items-center.ms-auto,
-.navbar-nav,
-.app-nav-list {
-    height: 100%;
-    display: flex !important;
+@media (max-width: 767.98px) {
+    .app-navbar-brand {
+        padding-left: 5px !important;
+        margin-bottom: 2px;
+    }
+    .logo {
+        width: 48px;
+        height: 40px;
+    }
+}
+
+/* --- Togglers --- */
+.gap-navbar-togglers {
+    gap: 10px;
+}
+
+.language-toggle-btn,
+.mode-toggle-btn {
+    font-size: 1.08rem;
+    padding: 10px 14px;
+    min-width: 40px;
+    min-height: 40px;
+    margin-right: 0;
+    background: none;
+    border: none;
+    color: var(--navbar-text-color);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.language-toggle-btn:hover,
+.mode-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .language-toggle-btn:hover,
+.dark-mode .mode-toggle-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.app-toggler {
+    height: 48px;
+    width: 48px;
+    font-size: 2rem;
+    display: flex;
     align-items: center;
-    margin: 0;
-    padding: 0;
+    justify-content: center;
+    margin-left: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--navbar-text-color);
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app-toggler:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .app-toggler:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.app-toggler:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.d-flex.align-items-end.ms-auto {
+    margin-left: auto !important;
+    align-items: flex-end !important;
 }
 
 .app-nav-link,
@@ -251,45 +347,32 @@ main {
     align-items: center;
 }
 
-/* --- Header Message --- */
-.header-message {
-    background: var(--navbar-bg) !important;
-    color: var(--navbar-text-color);
-    padding: 8px;
-    padding-left: 70px;
-    font-size: 0.85rem;
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    animation: fadeInThenOut 5s ease-in-out forwards;
-    opacity: 0;
-    transform: translateY(-100%);
-    position: fixed;
-    top: 0;
-    z-index: 1050;
+/* --- Dropdown Menu --- */
+.app-dropdown-menu {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 0.5rem 0;
 }
 
-.dark-mode .header-message {
-    border: 1px solid rgba(255, 255, 255, 0.1);
+.dark-mode .app-dropdown-menu {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
 }
 
-@keyframes fadeInThenOut {
-    0% {
-        opacity: 0;
-        transform: translateY(-100%);
-    }
-    10% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    90% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-100%);
-    }
+.app-dropdown-item {
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app-dropdown-item:hover,
+.app-dropdown-item:focus {
+    background-color: var(--button-secondary-hover);
+    color: var(--accent-blue);
 }
 
 /* --- Buttons --- */
@@ -377,127 +460,6 @@ main {
     display: block;
     margin: 12px auto 8px;
     width: fit-content;
-}
-
-/* --- Dropdown Menu --- */
-.app-dropdown-menu {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    box-shadow: var(--card-shadow);
-    padding: 0.5rem 0;
-}
-
-.dark-mode .app-dropdown-menu {
-    background-color: var(--card-bg);
-    border-color: var(--card-border);
-}
-
-.app-dropdown-item {
-    color: var(--text-color);
-    padding: 0.5rem 1rem;
-    text-decoration: none;
-    display: block;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.app-dropdown-item:hover,
-.app-dropdown-item:focus {
-    background-color: var(--button-secondary-hover);
-    color: var(--accent-blue);
-}
-
-/* --- Language and Mode Toggle Buttons --- */
-.language-toggle-btn,
-.mode-toggle-btn {
-    background: none;
-    border: none;
-    color: var(--navbar-text-color);
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.mode-toggle-btn {
-    font-size: 1.2rem;
-}
-
-.language-toggle-btn:hover,
-.mode-toggle-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.dark-mode .language-toggle-btn:hover,
-.dark-mode .mode-toggle-btn:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-/* --- Hamburger Toggler --- */
-.app-toggler {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--navbar-text-color);
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.app-toggler:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.dark-mode .app-toggler:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-.app-toggler:focus-visible {
-    outline: 2px solid var(--accent-blue);
-    outline-offset: 2px;
-}
-
-.app-toggler .navbar-toggler-icon {
-    background-image: none;
-    display: block;
-    position: relative;
-    width: 24px;
-    height: 2px;
-    background: var(--navbar-text-color);
-    border-radius: 2px;
-    transition: background-color 0.2s ease;
-}
-
-.app-toggler .navbar-toggler-icon::before,
-.app-toggler .navbar-toggler-icon::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: var(--navbar-text-color);
-    border-radius: 2px;
-    transition: transform 0.3s ease;
-}
-
-.app-toggler .navbar-toggler-icon::before {
-    top: -7px;
-}
-
-.app-toggler .navbar-toggler-icon::after {
-    top: 7px;
-}
-
-.app-toggler[aria-expanded="true"] .navbar-toggler-icon {
-    background: transparent;
-}
-
-.app-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
-    transform: translateY(7px) rotate(45deg);
-}
-
-.app-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
-    transform: translateY(-7px) rotate(-45deg);
 }
 
 /* --- Alerts --- */
@@ -899,7 +861,12 @@ main {
         padding: 0 30px;
     }
     .app-navbar-brand {
-        font-size: 1.2rem;
+        padding-left: 14px !important;
+        margin-bottom: 9px;
+    }
+    .logo {
+        width: 72px;
+        height: 60px;
     }
     .app-nav-link {
         font-size: 1rem;
@@ -935,13 +902,28 @@ main {
         justify-content: center;
         flex-wrap: wrap;
     }
+    .app-toggler {
+        height: 56px;
+        width: 56px;
+        font-size: 2.2rem;
+    }
+    .language-toggle-btn,
+    .mode-toggle-btn {
+        font-size: 1.15rem;
+        padding: 12px 18px;
+        min-width: 46px;
+        min-height: 46px;
+    }
+    .gap-navbar-togglers {
+        gap: 16px;
+    }
 }
 
 @media (min-width: 992px) {
     .app-toggler {
         display: none;
     }
-    .app-navbar .d-flex.align-items-center.ms-auto {
+    .app-navbar .d-flex.align-items-end.ms-auto {
         margin-right: 12px;
     }
     .app-navbar .navbar-collapse.collapse {
@@ -965,7 +947,7 @@ main {
     }
 }
 
-@media (min-widthac: 1024px) {
+@media (min-width: 1024px) {
     .container {
         max-width: 1400px;
         padding: 24px 48px;
