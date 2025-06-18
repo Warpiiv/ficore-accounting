@@ -235,6 +235,35 @@ main {
     display: flex;
     align-items: center;
 }
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+.app-nav-link,
+.app-dropdown-item {
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+.app-nav-link:hover,
+.app-dropdown-item:hover {
+    text-decoration: none;
+}
+.btn-primary {
+    text-decoration: none; /* Fix CTA underlines */
+}
+.content {
+    width: 100%;
+}
+.social-icons {
+    gap: var(--spacing-xs);
+}
+.header-message {
+    position: fixed;
+    top: 0;
+    z-index: 999;
+}
 
 /* Hover state for main navigation links and brand */
 .app-navbar .app-nav-link:hover,
