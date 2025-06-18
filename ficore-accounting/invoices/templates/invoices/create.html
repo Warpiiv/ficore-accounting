@@ -46,4 +46,9 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('is_recurring').addEventListener('change', function() {
+        document.getElementById('recurring_period_group').style.display = this.checked ? 'block' : 'none';
+    });
+</script>
 {% endblock %}
