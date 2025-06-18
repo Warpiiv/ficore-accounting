@@ -31,12 +31,17 @@
         {% endif %}
         {% endwith %}
 
-        <nav class="app-navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="app-navbar-brand" href="{{ url_for('index') }}">
-                    <img src="{{ url_for('static', filename='img/ficore_records_logo.png') }}" alt="{{ trans('core_records_logo') | default('Ficore Records Logo') }}" class="logo">
-                </a>
-                <div class="d-flex align-items-center ms-auto">
+        <nav class="app-navbar navbar-expand-lg flex-column align-items-stretch">
+            <div class="header-message">
+                {{ trans('core_welcome_to_records') | default('Welcome to Ficore Records!') }}
+            </div>
+            <div class="container-fluid align-items-end position-relative py-0">
+                <div class="navbar-logo-col d-flex flex-column align-items-start">
+                    <a class="app-navbar-brand" href="{{ url_for('index') }}">
+                        <img src="{{ url_for('static', filename='img/ficore_records_logo.png') }}" alt="{{ trans('core_records_logo') | default('Ficore Records Logo') }}" class="logo">
+                    </a>
+                </div>
+                <div class="d-flex align-items-end ms-auto gap-navbar-togglers">
                     <a href="{{ url_for('set_language', lang='ha' if session.lang == 'en' else 'en') }}"
                        class="btn btn-primary app-navbar-btn language-toggle-btn"
                        title="{{ trans('core_change_language') | default('Change Language') }}"
@@ -48,7 +53,7 @@
                     <button id="modeToggle" class="mode-toggle-btn" aria-label="{{ trans('core_toggle_dark_mode') | default('Toggle Dark Mode') }}">
                         <i class="fas fa-moon" aria-hidden="true"></i>
                     </button>
-                    <button class="navbar-toggler app-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ trans('core_toggle_navigation') | default('Toggle navigation') }}">
+                    <button class="navbar-toggler app-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ trans('core_toggle_menu') | default('Toggle navigation') }}">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                 </div>
@@ -83,10 +88,6 @@
                 </div>
             </div>
         </nav>
-
-        <div class="header-message">
-            {{ trans('core_welcome_to_records') | default('Welcome to Ficore Records!') }}
-        </div>
 
         <main>
             <div class="container">
