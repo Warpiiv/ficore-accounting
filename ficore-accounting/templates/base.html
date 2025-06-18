@@ -6,7 +6,7 @@
     <title>{{ trans('welcome') | default('Ficore Records') }} | {% block title %}{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZyT1zvFflh3FQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
@@ -17,93 +17,76 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <div class="wrapper" style="position: relative;">
+    <div class="wrapper">
         {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div class="alert-container">
-                {% for category, message in messages %}
-                  <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                    {{ trans(message) | default(message) }}
-                    <button type="button" class="alert-close-btn" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}">×</button>
-                  </div>
-                {% endfor %}
+        {% if messages %}
+        <div class="alert-container">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                {{ trans(message) | default(message) }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}"></button>
             </div>
-          {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
         {% endwith %}
 
-        <div class="header-message">
-            {{ trans('core_welcome_to_records') | default('Welcome to Ficore Records!') }}
-        </div>
-
-        {# Changed 'navbar' to 'app-navbar' for custom styling #}
-        <nav class="app-navbar navbar-expand-lg" style="z-index: 1000;">
+        <nav class="app-navbar navbar-expand-lg">
             <div class="container-fluid">
-                {# Changed 'navbar-brand' to 'app-navbar-brand' #}
                 <a class="app-navbar-brand" href="{{ url_for('index') }}">
                     <img src="{{ url_for('static', filename='img/ficore_records_logo.png') }}" alt="{{ trans('core_records_logo') | default('Ficore Records Logo') }}" class="logo">
                 </a>
-
-                {# NEW: Group for language and mode toggles, strategically ordered #}
-                <div class="d-flex align-items-center order-lg-last order-md-2 order-1"> {# order-lg-last ensures it goes to end on desktop, but earlier on mobile #}
-                    {# Added 'app-navbar-btn' and 'language-toggle-btn' for distinct styling #}
+                <div class="d-flex align-items-center ms-auto">
                     <a href="{{ url_for('set_language', lang='ha' if session.lang == 'en' else 'en') }}"
-                       class="btn btn-primary app-navbar-btn language-toggle-btn me-2 me-lg-0" {# Add margin-right on smaller screens #}
+                       class="btn btn-primary app-navbar-btn language-toggle-btn"
                        title="{{ trans('core_change_language') | default('Change Language') }}"
                        aria-label="{{ trans('core_switch_to') | default('Switch to') }} {{ 'Hausa' if session.lang == 'en' else 'English' }}"
                        role="button">
                         <i class="fas fa-globe me-1" aria-hidden="true"></i>
                         {{ 'Hausa' if session.lang == 'en' else 'English' }}
                     </a>
-                    {# Added 'mode-toggle-btn' for distinct styling #}
-                    <button id="modeToggle" class="mode-toggle-btn me-2 me-lg-0" aria-label="{{ trans('core_toggle_dark_mode') | default('Toggle Dark Mode') }}"> {# Add margin-right on smaller screens #}
+                    <button id="modeToggle" class="mode-toggle-btn" aria-label="{{ trans('core_toggle_dark_mode') | default('Toggle Dark Mode') }}">
                         <i class="fas fa-moon" aria-hidden="true"></i>
                     </button>
-                    {# The hamburger button, which will be explicitly aligned to the very right #}
                     <button class="navbar-toggler app-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="{{ trans('core_toggle_navigation') | default('Toggle navigation') }}">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                 </div>
-
-                {# Main navigation links #}
-                {# This div will be shown as flex (or block) on lg screens and hidden on smaller screens by default #}
-                <div class="collapse navbar-collapse" id="navbarNav"> {# Removed d-none d-lg-block #}
-                    {# Added 'app-nav-list' #}
+                <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
                     <ul class="navbar-nav ms-auto app-nav-list">
-                        {# Added 'app-nav-item' and 'app-nav-link' #}
                         <li class="nav-item app-nav-item dropdown">
-                            <a class="nav-link dropdown-toggle app-nav-link" href="#" id="mainMenuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.85rem;">
+                            <a class="nav-link dropdown-toggle app-nav-link" href="#" id="mainMenuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ trans('core_main_menu') | default('Main Menu') }}
                             </a>
-                            {# Added 'app-dropdown-menu' #}
                             <ul class="dropdown-menu app-dropdown-menu" aria-labelledby="mainMenuDropdown">
-                                {# Added 'app-dropdown-item' #}
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('index') }}" style="font-size: 0.85rem;">{{ trans('core_home') | default('Home') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('general_dashboard') }}" style="font-size: 0.85rem;">{{ trans('general_dashboard') | default('General Dashboard') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('admin_dashboard') }}" style="font-size: 0.85rem;">{{ trans('admin_dashboard') | default('Admin Dashboard') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('invoices.create_invoice') }}" style="font-size: 0.85rem;">{{ trans('create_invoice') | default('Create Invoice') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('invoices.invoice_dashboard') }}" style="font-size: 0.85rem;">{{ trans('view_invoices') | default('Invoices Dashboard') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('transactions.add_transaction') }}" style="font-size: 0.85rem;">{{ trans('add_transaction') | default('Add Transaction') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('transactions.transaction_history') }}" style="font-size: 0.85rem;">{{ trans('view_transactions') | default('Transactions History') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('index') }}">{{ trans('core_home') | default('Home') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('general_dashboard') }}">{{ trans('general_dashboard') | default('General Dashboard') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('admin_dashboard') }}">{{ trans('admin_dashboard') | default('Admin Dashboard') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('invoices.create_invoice') }}">{{ trans('create_invoice') | default('Create Invoice') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('invoices.invoice_dashboard') }}">{{ trans('view_invoices') | default('Invoices Dashboard') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('transactions.add_transaction') }}">{{ trans('add_transaction') | default('Add Transaction') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('transactions.transaction_history') }}">{{ trans('view_transactions') | default('Transactions History') }}</a></li>
                             </ul>
                         </li>
-                        {# Added 'app-nav-item' and 'app-nav-link' #}
                         <li class="nav-item app-nav-item dropdown">
-                            <a class="nav-link dropdown-toggle app-nav-link" href="#" id="toolsAuthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.85rem;">
+                            <a class="nav-link dropdown-toggle app-nav-link" href="#" id="toolsAuthDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ trans('core_account') | default('Account') }}
                             </a>
-                            {# Added 'app-dropdown-menu' #}
                             <ul class="dropdown-menu app-dropdown-menu" aria-labelledby="toolsAuthDropdown">
-                                {# Added 'app-dropdown-item' #}
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('users.login') }}" style="font-size: 0.85rem;">{{ trans('core_login') | default('Login') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('users.signup') }}" style="font-size: 0.85rem;">{{ trans('core_signup') | default('Signup') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('users.profile') }}" style="font-size: 0.85rem;">{{ trans('core_profile') | default('Profile') }}</a></li>
-                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('users.logout') }}" style="font-size: 0.85rem;">{{ trans('core_logout') | default('Logout') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('users.login') }}">{{ trans('core_login') | default('Login') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('users.signup') }}">{{ trans('core_signup') | default('Signup') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('users.profile') }}">{{ trans('core_profile') | default('Profile') }}</a></li>
+                                <li><a class="dropdown-item app-dropdown-item" href="{{ url_for('users.logout') }}">{{ trans('core_logout') | default('Logout') }}</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
+
+        <div class="header-message">
+            {{ trans('core_welcome_to_records') | default('Welcome to Ficore Records!') }}
+        </div>
 
         <main>
             <div class="container">
@@ -131,7 +114,6 @@
                 <div class="footer-buttons mt-2">
                     <a href="mailto:ficoreafrica@gmail.com"><i class="fas fa-envelope"></i> {{ trans('core_contact_us') | default('Contact Us') }}</a>
                     <a href="{{ url_for('feedback') }}"><i class="fas fa-comment"></i> {{ trans('core_provide_feedback') | default('Provide Feedback') }}</a>
-                    {# Added 'footer-learn-more-link' for distinct styling #}
                     <a href="{{ url_for('about') }}" class="footer-learn-more-link"><i class="fas fa-info-circle"></i> {{ trans('core_learn_more') | default('Learn More About Us') }}</a>
                     {% if current_user.is_authenticated %}
                     <a href="{{ url_for('users.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ trans('core_logout') | default('Logout') }}</a>
@@ -151,7 +133,6 @@
                 const body = document.body;
                 let darkMode = localStorage.getItem('darkMode') || 'false';
 
-                // Apply initial dark mode state
                 function applyDarkMode(isDark) {
                     const isDarkMode = isDark === 'true';
                     body.classList.toggle('dark-mode', isDarkMode);
@@ -161,14 +142,12 @@
                 }
                 applyDarkMode(darkMode);
 
-                // Toggle dark mode on click
                 modeToggle.addEventListener('click', function() {
                     const currentDarkMode = localStorage.getItem('darkMode') === 'true';
                     const newDarkMode = !currentDarkMode;
                     applyDarkMode(newDarkMode ? 'true' : 'false');
                 });
 
-                // Listen for system color scheme changes
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
                     if (localStorage.getItem('darkMode') === null) {
                         const isDarkMode = e.matches;
@@ -177,7 +156,6 @@
                     }
                 });
 
-                // Enhanced form validation
                 document.querySelectorAll('form.validate-form').forEach(form => {
                     form.addEventListener('submit', function(e) {
                         let valid = true;
@@ -187,14 +165,12 @@
                             const type = input.type;
                             const required = input.hasAttribute('required');
 
-                            // Check required fields
                             if (required && !value) {
                                 input.classList.add('is-invalid');
                                 valid = false;
                                 return;
                             }
 
-                            // Check number inputs
                             if (type === 'number' && value) {
                                 const min = input.getAttribute('min');
                                 const max = input.getAttribute('max_num');
@@ -206,7 +182,6 @@
                                 }
                             }
 
-                            // Check rating inputs
                             if (input.name === 'rating' && value) {
                                 const ratingValue = parseInt(value);
                                 if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 5) {
@@ -221,19 +196,17 @@
 
                         if (!valid) {
                             e.preventDefault();
-                            // Replaced alert with a more user-friendly message for validation
                             const alertContainer = document.querySelector('.alert-container');
                             if (alertContainer) {
                                 const validationAlert = document.createElement('div');
-                                validationAlert.className = 'alert alert-error alert-dismissible fade show';
+                                validationAlert.className = 'alert alert-danger alert-dismissible fade show';
                                 validationAlert.setAttribute('role', 'alert');
                                 validationAlert.innerHTML = `
                                     {{ trans('core_please_complete_all_records') | default('Please complete all records correctly') }}
-                                    <button type="button" class="alert-close-btn" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}">×</button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close') | default('Close') }}"></button>
                                 `;
                                 alertContainer.prepend(validationAlert);
-                                // Add event listener for the new alert's close button
-                                validationAlert.querySelector('.alert-close-btn').addEventListener('click', function() {
+                                validationAlert.querySelector('.btn-close').addEventListener('click', function() {
                                     setTimeout(() => {
                                         validationAlert.style.display = 'none';
                                         validationAlert.remove();
@@ -244,24 +217,21 @@
                     });
                 });
 
-                // Handle alert close to realign header/navbar
-                document.querySelectorAll('.alert .alert-close-btn').forEach(button => {
+                document.querySelectorAll('.alert .btn-close').forEach(button => {
                     button.addEventListener('click', function() {
                         setTimeout(() => {
-                            window.scrollTo(0, 0); // Ensure top alignment
+                            window.scrollTo(0, 0);
                             const alert = this.closest('.alert');
-                            if (alert) alert.style.display = 'none'; // Hide alert after close
-                        }, 150); // Match Bootstrap fade-out animation
+                            if (alert) alert.style.display = 'none';
+                        }, 150);
                     });
                 });
 
-                // Initialize all tooltips
                 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
                 [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-                // Scroll-aware navbar - updated selector
                 const navbar = document.querySelector('.app-navbar');
-                if (navbar) { // Added null check
+                if (navbar) {
                     window.addEventListener('scroll', () => {
                         if (window.scrollY > 0) {
                             navbar.classList.add('scrolled');
@@ -273,5 +243,6 @@
             });
         </script>
         {% block extra_scripts %}{% endblock %}
+    </div>
 </body>
 </html>
