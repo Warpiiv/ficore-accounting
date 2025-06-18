@@ -14,15 +14,19 @@
                     <div class="card h-100">
                         <div class="card-body">
                             <h3 class="card-title">{{ trans('recent_invoices') | default('Recent Invoices') }}</h3>
-                            <ul class="list-group">
-                                {% for invoice in recent_invoices|default([{'id': '001', 'amount': 1500, 'date': '2025-06-14'}, {'id': '002', 'amount': 2000, 'date': '2025-06-13'}]) %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <span class="text-truncate invoice-id">{{ trans('invoice') | default('Invoice') }} #{{ invoice.id }}</span>
-                                        <span class="amount-highlight">{{ invoice.amount | format_currency }}</span>
-                                        <span>{{ invoice.date | format_datetime }}</span>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                            {% if recent_invoices %}
+                                <ul class="list-group">
+                                    {% for invoice in recent_invoices %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span class="text-truncate invoice-id">{{ trans('invoice') | default('Invoice') }} #{{ invoice.invoice_number }}</span>
+                                            <span class="amount-highlight">{{ invoice.amount | format_currency }}</span>
+                                            <span>{{ invoice.created_at | format_datetime }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-center text-color">{{ trans('no_invoices') | default('No recent invoices found') }}</p>
+                            {% endif %}
                             <a href="{{ url_for('invoices.invoice_dashboard') }}" class="btn btn-primary mt-3">
                                 {{ trans('view_all_invoices') | default('View All Invoices') }}
                             </a>
@@ -33,15 +37,19 @@
                     <div class="card h-100">
                         <div class="card-body">
                             <h3 class="card-title">{{ trans('recent_transactions') | default('Recent Transactions') }}</h3>
-                            <ul class="list-group">
-                                {% for transaction in recent_transactions|default([{'id': 'T001', 'amount': 500, 'date': '2025-06-14'}, {'id': 'T002', 'amount': 750, 'date': '2025-06-13'}]) %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <span class="text-truncate transaction-id">{{ trans('transaction') | default('Transaction') }} #{{ transaction.id }}</span>
-                                        <span class="amount-highlight">{{ transaction.amount | format_currency }}</span>
-                                        <span>{{ transaction.date | format_datetime }}</span>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                            {% if recent_transactions %}
+                                <ul class="list-group">
+                                    {% for transaction in recent_transactions %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span class="text-truncate transaction-id">{{ trans('transaction') | default('Transaction') }} #{{ transaction._id }}</span>
+                                            <span class="amount-highlight">{{ transaction.amount | format_currency }}</span>
+                                            <span>{{ transaction.created_at | format_datetime }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-center text-color">{{ trans('no_transactions') | default('No recent transactions found') }}</p>
+                            {% endif %}
                             <a href="{{ url_for('transactions.transaction_history') }}" class="btn btn-primary mt-3">
                                 {{ trans('view_all_transactions') | default('View All Transactions') }}
                             </a>
