@@ -16,16 +16,13 @@ from flask_session import Session
 from pymongo import ASCENDING, DESCENDING, errors
 from pymongo.operations import UpdateOne
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize Flask app
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
 CSRFProtect(app)
 
-# Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')
 app.config['SESSION_TYPE'] = 'mongodb'
@@ -38,12 +35,10 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.jinja_env.undefined = jinja2.Undefined
 
-# Social media URLs
 FACEBOOK_URL = os.getenv('FACEBOOK_URL', 'https://www.facebook.com')
 TWITTER_URL = os.getenv('TWITTER_URL', 'https://www.twitter.com')
 LINKEDIN_URL = os.getenv('LINKEDIN_URL', 'https://www.linkedin.com')
 
-# Flask-Mail configuration
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'true').lower() == 'true'
@@ -51,27 +46,22 @@ app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'support@ficoreminirecords.com')
 
-# Initialize extensions after app creation
 mongo = PyMongo(app)
-# Fix for KeyError: 'pymongo' - Register mongo in app.extensions
 app.extensions = getattr(app, 'extensions', {})
 app.extensions['pymongo'] = mongo
-app.config['SESSION_MONGODB'] = mongo.cx  # Set MongoDB connection for Flask-Session
+app.config['SESSION_MONGODB'] = mongo.cx
 mail = Mail(app)
 sess = Session(app)
 
-# Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login'
 
-# User model for Flask-Login
 class User(UserMixin):
     def __init__(self, id, email):
         self.id = id
         self.email = email
 
-# User loader for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
     user_data = mongo.db.users.find_one({'_id': user_id})
@@ -79,7 +69,6 @@ def load_user(user_id):
         return User(user_id, user_data.get('email'))
     return None
 
-# Register blueprints
 from invoices.routes import invoices_bp
 from transactions.routes import transactions_bp
 from users.routes import users_bp
@@ -130,6 +119,8 @@ def format_date(value):
     try:
         if isinstance(value, datetime):
             return value.strftime('%Y-%m-%d')
+        elif isinstance(value, date):
+            return value.strftime('%Y-%m-%d')
         return str(value)
     except Exception as e:
         logger.warning(f"Error formatting date {value}: {str(e)}")
@@ -144,10 +135,10 @@ def set_language(lang):
     valid_langs = ['en', 'ha']
     if lang in valid_langs:
         session['lang'] = lang
-        flash(trans_function('language_updated'), 'success')
+        flash(trans_function('language_updated', default='Language updated'), 'success')
     else:
         session['lang'] = 'en'
-        flash(trans_function('invalid_language'), 'danger')
+        flash(trans_function('invalid_language', default='Invalid language'), 'danger')
     return redirect(request.referrer or url_for('index'))
 
 @app.route('/set_dark_mode', methods=['POST'])
@@ -156,18 +147,11 @@ def set_dark_mode():
     session['dark_mode'] = str(data.get('dark_mode', False)).lower()
     return Response(status=204)
 
-# Database setup
 def setup_database():
-    """
-    Sets up the MongoDB database for the minirecords application.
-    Creates necessary collections, indexes, and initializes a default admin user.
-    Returns True on success, False on failure.
-    """
     try:
         db = mongo.db
         collections = db.list_collection_names()
 
-        # Users collection
         if 'users' not in collections:
             db.create_collection('users')
             logger.info("Created users collection")
@@ -180,7 +164,7 @@ def setup_database():
             except errors.DuplicateKeyError as e:
                 logger.warning(f"Duplicate key error for email index, skipping: {str(e)}")
             except Exception as e:
-                logger.warning(f"Could not create email index: {str(e)}")
+                logger.error(f"Could not create email index: {str(e)}")
 
         if 'reset_token_1' not in users_indexes:
             try:
@@ -189,9 +173,8 @@ def setup_database():
             except errors.DuplicateKeyError as e:
                 logger.warning(f"Duplicate key error for reset_token index, skipping: {str(e)}")
             except Exception as e:
-                logger.warning(f"Could not create reset_token index: {str(e)}")
+                logger.error(f"Could not create reset_token index: {str(e)}")
 
-        # Create default admin user if not exists
         if not db.users.find_one({'_id': 'admin'}):
             try:
                 db.users.insert_one({
@@ -208,7 +191,6 @@ def setup_database():
             except Exception as e:
                 logger.error(f"Error creating admin user: {str(e)}")
 
-        # Invoices collection
         if 'invoices' not in collections:
             db.create_collection('invoices')
             logger.info("Created invoices collection")
@@ -216,11 +198,9 @@ def setup_database():
         invoices_indexes = db.invoices.index_information()
         if 'invoice_number_1' not in invoices_indexes:
             try:
-                # Clean up duplicate null invoice_number values
                 null_count = db.invoices.count_documents({'invoice_number': None})
                 if null_count > 0:
                     logger.info(f"Found {null_count} invoices with null invoice_number. Assigning unique values...")
-                    # Use bulk_write for efficiency
                     operations = [
                         UpdateOne(
                             {'_id': doc['_id']},
@@ -232,7 +212,6 @@ def setup_database():
                         db.invoices.bulk_write(operations, ordered=True)
                     logger.info("Updated null invoice_numbers with unique values")
 
-                # Create invoice indexes
                 db.invoices.create_index([('user_id', ASCENDING)])
                 db.invoices.create_index([('created_at', DESCENDING)])
                 db.invoices.create_index([('status', ASCENDING)])
@@ -242,9 +221,8 @@ def setup_database():
             except errors.DuplicateKeyError as e:
                 logger.warning(f"Duplicate key error for invoice indexes, skipping: {str(e)}")
             except Exception as e:
-                logger.warning(f"Could not create invoice indexes: {str(e)}")
+                logger.error(f"Could not create invoice indexes: {str(e)}")
 
-        # Transactions collection
         if 'transactions' not in collections:
             db.create_collection('transactions')
             logger.info("Created transactions collection")
@@ -256,14 +234,12 @@ def setup_database():
                 db.transactions.create_index([('created_at', DESCENDING)])
                 db.transactions.create_index([('category', ASCENDING)])
                 db.transactions.create_index([('description', ASCENDING)])
-                db.transactions.create_index([('tags', ASCENDING)])
                 logger.info("Created indexes on transactions")
             except errors.DuplicateKeyError as e:
                 logger.warning(f"Duplicate key error for transaction indexes, skipping: {str(e)}")
             except Exception as e:
-                logger.warning(f"Could not create transaction indexes: {str(e)}")
+                logger.error(f"Could not create transaction indexes: {str(e)}")
 
-        # Feedback collection
         if 'feedback' not in collections:
             db.create_collection('feedback')
             logger.info("Created feedback collection")
@@ -277,9 +253,8 @@ def setup_database():
             except errors.DuplicateKeyError as e:
                 logger.warning(f"Duplicate key error for feedback indexes, skipping: {str(e)}")
             except Exception as e:
-                logger.warning(f"Could not create feedback indexes: {str(e)}")
+                logger.error(f"Could not create feedback indexes: {str(e)}")
 
-        # Sessions collection
         if 'sessions' not in collections:
             db.create_collection('sessions')
             logger.info("Created sessions collection")
@@ -292,9 +267,8 @@ def setup_database():
             except errors.DuplicateKeyError as e:
                 logger.warning(f"Duplicate key error for sessions index, skipping: {str(e)}")
             except Exception as e:
-                logger.warning(f"Could not create sessions index: {str(e)}")
+                logger.error(f"Could not create sessions index: {str(e)}")
 
-        # Schema validation for feedback
         try:
             db.command({
                 'collMod': 'feedback',
@@ -321,7 +295,6 @@ def setup_database():
         logger.error(f"Error initializing database: {str(e)}")
         return False
 
-# Manual database setup route
 @app.route('/setup', methods=['GET'])
 def setup_database_route():
     setup_key = request.args.get('key')
@@ -329,17 +302,16 @@ def setup_database_route():
         return render_template('errors/403.html'), 403
     
     if os.getenv('FLASK_ENV', 'development') == 'production' and not os.getenv('ALLOW_DB_SETUP', 'false').lower() == 'true':
-        flash(trans_function('database_setup_production_disabled'), 'danger')
+        flash(trans_function('database_setup_production_disabled', default='Database setup disabled in production'), 'danger')
         return render_template('errors/403.html'), 403
 
     if setup_database():
-        flash(trans_function('database_setup_success'), 'success')
+        flash(trans_function('database_setup_success', default='Database setup successful'), 'success')
         return redirect(url_for('index'))
     else:
-        flash(trans_function('database_setup_error'), 'danger')
+        flash(trans_function('database_setup_error', default='Database setup failed'), 'danger')
         return render_template('errors/500.html'), 500
 
-# General routes
 @app.route('/')
 def index():
     return render_template('general/home.html')
@@ -359,10 +331,10 @@ def feedback():
             comment = request.form.get('comment', '').strip()
 
             if not tool_name or tool_name not in tool_options:
-                flash(trans_function('invalid_tool'), 'danger')
+                flash(trans_function('invalid_tool', default='Invalid tool selected'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
             if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
-                flash(trans_function('invalid_rating'), 'danger')
+                flash(trans_function('invalid_rating', default='Rating must be between 1 and 5'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
             feedback_entry = {
@@ -373,11 +345,11 @@ def feedback():
                 'timestamp': datetime.utcnow()
             }
             mongo.db.feedback.insert_one(feedback_entry)
-            flash(trans_function('feedback_success'), 'success')
+            flash(trans_function('feedback_success', default='Feedback submitted successfully'), 'success')
             return redirect(url_for('index'))
         except Exception as e:
             logger.error(f"Error processing feedback: {str(e)}")
-            flash(trans_function('feedback_error'), 'danger')
+            flash(trans_function('feedback_error', default='Error submitting feedback'), 'danger')
             return render_template('general/feedback.html', tool_options=tool_options), 500
 
     return render_template('general/feedback.html', tool_options=tool_options)
@@ -388,22 +360,36 @@ def admin_dashboard():
 
 @app.route('/dashboard/general')
 def general_dashboard():
-    return render_template('dashboard/general_dashboard.html')
+    try:
+        user_id = current_user.id if current_user.is_authenticated else 'guest'
+        recent_invoices = list(mongo.db.invoices.find({'user_id': user_id}).sort('created_at', -1).limit(5))
+        recent_transactions = list(mongo.db.transactions.find({'user_id': user_id}).sort('created_at', -1).limit(5))
+        for invoice in recent_invoices:
+            invoice['_id'] = str(invoice['_id'])
+        for transaction in recent_transactions:
+            transaction['_id'] = str(transaction['_id'])
+        return render_template('dashboard/general_dashboard.html',
+                             recent_invoices=recent_invoices,
+                             recent_transactions=recent_transactions)
+    except Exception as e:
+        logger.error(f"Error fetching dashboard data: {str(e)}")
+        flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
+        return render_template('dashboard/general_dashboard.html',
+                             recent_invoices=[],
+                             recent_transactions=[]), 500
 
-# Error handlers
 @app.errorhandler(403)
 def forbidden(e):
-    return render_template('errors/403.html', message=trans_function('forbidden')), 403
+    return render_template('errors/403.html', message=trans_function('forbidden', default='Forbidden')), 403
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('errors/404.html', message=trans_function('page_not_found')), 404
+    return render_template('errors/404.html', message=trans_function('page_not_found', default='Page not found')), 404
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('errors/500.html', message=trans_function('internal_server_error')), 500
+    return render_template('errors/500.html', message=trans_function('internal_server_error', default='Internal server error')), 500
 
-# Initialize database on startup
 with app.app_context():
     if os.getenv('FLASK_ENV', 'development') != 'production' or os.getenv('ALLOW_DB_SETUP', 'false').lower() == 'true':
         if not setup_database():
