@@ -42,7 +42,7 @@
     --table-header-bg: #0F3D57; /* Retaining light blue for header distinction */
     --table-text: #1e293b; /* Explicitly for table cell text if different from main text-color */
     --amount-highlight: #3A86FF;
-    --error-highlight: #0808d1; /* Used for form invalid states primarily */
+    --error-highlight: #044366; /* Used for form invalid states primarily */
     --accent-blue: #3A86FF; /* General accent/link blue */
     --success-color: #10b981; /* For success text, distinct from alerts */
     --card-header-bg: #0F3D57;
@@ -80,7 +80,7 @@
     --card-bg: #1e293b;
 
     /* Buttons */
-    --button-primary-bg: #0808d1;
+    --button-primary-bg: #044366;
     --button-primary-hover: #E06A35;
     --button-secondary-bg-dark-gradient: linear-gradient(to bottom, #1e293b, #1a202c);
     --button-secondary-border: #63B3ED;
@@ -118,7 +118,7 @@
     --table-header-bg: #1e3a8a; /* Retaining dark blue for header distinction */
     --table-text: #f1f5f9; /* Explicitly for table cell text if different from main text-color */
     --amount-highlight: #93c5fd;
-    --error-highlight: #0808d1; /* Keeping the same error highlight for consistency, or pick a dark-mode specific one */
+    --error-highlight: #044366; /* Keeping the same error highlight for consistency, or pick a dark-mode specific one */
     --accent-blue: #93c5fd; /* General accent/link blue in dark mode */
     --success-color: #34d399; /* For success text, distinct from alerts */
     --card-header-bg: #1e3a8a;
