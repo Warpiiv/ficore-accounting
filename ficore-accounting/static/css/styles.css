@@ -53,26 +53,6 @@
 
     /* Theme-specific for Icons/Charts */
     --theme-icon-chart-color: #3C7A6E;
-
-    /* Spacing variables */
-    --spacing-xxs: 0.25rem;
-    --spacing-xs: 0.75rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 1.5rem;
-    --spacing-lg: 2rem;
-
-    /* Button specific variables */
-    --button-padding-y: 0.65rem;
-    --button-padding-x: 1.25rem;
-    --button-font-size: 0.9rem;
-
-    /* Navbar height variables */
-    --navbar-logo-height: 50px;
-    --navbar-padding-vertical: 1rem;
-    --navbar-height: calc(var(--navbar-padding-vertical) * 2 + var(--navbar-logo-height));
-
-    /* Footer max-width */
-    --footer-max-width: 900px;
 }
 
 .dark-mode {
@@ -171,7 +151,7 @@ h1, h2, h3 {
 
 /* Add padding-top to the main content area to prevent overlap with fixed navbar */
 main {
-    padding-top: calc(var(--navbar-height) + var(--spacing-lg)); /* 52px + 2rem for consistent desktop spacing */
+    padding-top: 90px; /* Explicit height based on navbar total height (50px logo + 20px top + 20px bottom) */
     flex: 1;
 }
 
@@ -184,14 +164,14 @@ main {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: var(--spacing-sm);
-    margin-top: var(--spacing-md); /* Add top margin to push content down */
+    padding: 16px;
+    margin-top: 24px; /* Explicit top margin for content spacing */
 }
 
 /* --- Alert Container --- */
 .alert-container {
     position: fixed;
-    top: var(--navbar-height);
+    top: 90px;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -199,17 +179,14 @@ main {
     z-index: 1001;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: 12px;
 }
 
 /* --- App Navbar --- */
 .app-navbar {
     background-color: var(--navbar-bg);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-    padding-top: var(--navbar-padding-vertical);
-    padding-bottom: var(--navbar-padding-vertical);
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding: 20px 30px; /* Explicit padding: 20px top/bottom, 30px left/right */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -220,10 +197,11 @@ main {
     z-index: 1000;
     transition: all 0.3s ease;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    height: 90px; /* Explicit total height */
 }
 
 .app-navbar.scrolled {
-    padding: 0.5rem 2rem;
+    padding: 10px 30px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -231,7 +209,7 @@ main {
 .app-navbar .app-nav-link,
 .app-navbar .app-navbar-brand {
     color: var(--navbar-text-color);
-    line-height: var(--navbar-logo-height);
+    line-height: 50px; /* Explicit line height matching logo height */
     height: auto;
     display: flex;
     align-items: center;
@@ -265,7 +243,7 @@ a:hover {
 }
 
 .social-icons {
-    gap: var(--spacing-xs);
+    gap: 12px;
 }
 
 /* Hover state for main navigation links and brand */
@@ -276,12 +254,14 @@ a:hover {
 
 /* Flex container for the language, mode, and toggler buttons */
 .app-navbar .d-flex.align-items-center.ms-auto {
-    gap: var(--spacing-xs);
+    gap: 12px;
 }
 
 /* Styles for the language toggle button */
 .language-toggle-btn {
     order: 1; /* First in flex group */
+    padding: 10px; /* Explicit padding */
+    margin-right: 5px; /* Explicit margin to separate from next element */
 }
 
 /* Styles for the mode toggle button */
@@ -292,7 +272,7 @@ a:hover {
     color: var(--navbar-text-color);
     font-size: 1.2rem;
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 10px; /* Explicit padding */
     border-radius: 5px;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -312,14 +292,14 @@ a:hover {
 /* Custom styles for the hamburger toggler */
 .app-toggler {
     order: 3; /* Last in flex group */
-    padding: var(--spacing-xs);
+    padding: 10px; /* Explicit padding */
     background: none;
     border: none;
     cursor: pointer;
     color: var(--navbar-text-color);
     transition: color 0.2s ease, background-color 0.2s ease;
     border-radius: 5px;
-    margin-left: 0; /* Reset Bootstrap margin */
+    margin-left: 0; /* Reset margin to ensure right alignment */
 }
 
 .app-toggler:hover {
@@ -382,9 +362,10 @@ a:hover {
 /* --- Logo Styling --- */
 .logo {
     border-radius: 50%;
-    width: 60px;
-    height: var(--navbar-logo-height);
+    width: 60px; /* Explicit width */
+    height: 50px; /* Explicit height */
     object-fit: cover;
+    margin: 0 5px; /* Explicit margin on both sides */
 }
 
 /* --- Dropdown Menu Specific Styles --- */
@@ -426,9 +407,9 @@ a:hover {
     background: var(--button-primary-bg);
     color: white;
     border: none;
-    padding: var(--button-padding-y) var(--button-padding-x);
+    padding: 10px 20px; /* Explicit padding */
     border-radius: 10px;
-    font-size: var(--button-font-size);
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 6px 15px rgba(242, 140, 56, 0.15);
@@ -462,9 +443,9 @@ a:hover {
     background: var(--button-secondary-bg-light-gradient);
     color: var(--button-secondary-border);
     border: 2px solid var(--button-secondary-border);
-    padding: var(--button-padding-y) var(--button-padding-x);
+    padding: 10px 20px; /* Explicit padding */
     border-radius: 10px;
-    font-size: var(--button-font-size);
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.25s ease-in-out, transform 0.25s ease-in-out, border-color 0.25s ease-in-out, color 0.25s ease-in-out;
@@ -509,7 +490,7 @@ a:hover {
     display: block;
     margin: 0 auto;
     width: fit-content;
-    margin-top: var(--spacing-sm);
+    margin-top: 16px;
 }
 
 /* --- Header Message --- */
@@ -517,7 +498,7 @@ a:hover {
     background: var(--navbar-bg);
     color: var(--navbar-text-color);
     text-align: center;
-    padding: 0.5rem;
+    padding: 8px;
     font-size: 0.85rem;
     width: 100%;
     box-sizing: border-box;
@@ -526,7 +507,7 @@ a:hover {
     opacity: 0;
     transform: translateY(-10px);
     position: fixed;
-    top: var(--navbar-height);
+    top: 90px;
     z-index: 999;
 }
 
@@ -551,12 +532,12 @@ a:hover {
 
 /* --- Alerts --- */
 .alert {
-    padding: var(--spacing-sm);
+    padding: 16px;
     width: 100%;
     border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: 12px;
     word-break: break-word;
 }
 
@@ -597,7 +578,7 @@ a:hover {
     font-size: 1.2rem;
     line-height: 1;
     cursor: pointer;
-    padding: 0.2rem 0.4rem;
+    padding: 4px 8px;
     border-radius: 4px;
     transition: background-color 0.2s ease;
 }
@@ -632,8 +613,8 @@ a:hover {
     background-color: var(--card-bg);
     border-radius: 16px;
     border: 0;
-    padding: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
+    padding: 16px;
+    margin-bottom: 16px;
     box-shadow: var(--card-shadow);
     overflow: hidden;
     animation: cardAppear 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
@@ -660,25 +641,25 @@ a:hover {
 
 .card-header {
     background: var(--card-header-bg);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: 16px 24px;
     border-bottom: 1px solid var(--card-border);
     font-weight: 700;
     color: var(--navbar-text-color);
 }
 
 .card-body {
-    padding: var(--spacing-sm);
+    padding: 16px;
 }
 
 .card h3, .card p, .card span {
-    margin-bottom: 0.25rem;
+    margin-bottom: 4px;
 }
 
 .card-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0;
+    padding: 8px 0;
 }
 
 .card-item p {
@@ -686,13 +667,13 @@ a:hover {
 }
 
 .card-title {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    color: #60a5fa;
-    margin-bottom: 0.5rem;
+    color: #4ade80;
+    margin-bottom: 8px;
     text-align: center;
     text-decoration: none;
-    text-shadow: 0 0 3px rgba(96, 165, 250, 0.3);
+    text-shadow: 0 0 3px rgba(34, 197, 94, 0.8);
 }
 
 .card-text {
@@ -720,21 +701,21 @@ a:hover {
 /* --- Forms --- */
 .form-container {
     background: var(--form-bg);
-    padding: var(--spacing-lg);
+    padding: 24px;
     border-radius: 16px;
     text-align: center;
-    margin: var(--spacing-sm) auto;
+    margin: 16px auto;
     max-width: 400px;
     box-shadow: var(--card-shadow);
 }
 
 .form-group {
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 16px;
 }
 
 .form-label {
     font-weight: 500;
-    margin-bottom: 0.25rem;
+    margin-bottom: 4px;
     color: var(--text-color);
     display: block;
     text-align: left;
@@ -742,7 +723,7 @@ a:hover {
 
 .form-control, .form-select {
     width: 100%;
-    padding: 0.75rem;
+    padding: 12px;
     border: 2px solid var(--card-border);
     border-radius: 8px;
     font-size: 0.9rem;
@@ -780,7 +761,7 @@ a:hover {
     display: none;
     color: var(--error-highlight);
     font-size: 0.8rem;
-    margin-top: 0.25rem;
+    margin-top: 4px;
     font-weight: 500;
     text-align: left;
 }
@@ -799,14 +780,14 @@ a:hover {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 16px;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: var(--card-shadow);
 }
 
 .table th, .table td {
-    padding: var(--spacing-sm);
+    padding: 16px;
     border: 1px solid var(--table-border);
     text-align: left;
     color: var(--table-text);
@@ -875,8 +856,8 @@ a:hover {
 .list-group-item {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
+    padding: 8px;
+    margin-bottom: 8px;
     border-radius: 4px;
     color: var(--text-color);
 }
@@ -895,7 +876,7 @@ a:hover {
 /* --- Grid Layout --- */
 .grid {
     display: grid;
-    gap: var(--spacing-md);
+    gap: 24px;
 }
 
 .grid-cols-1 {
@@ -906,7 +887,7 @@ a:hover {
 .footer {
     background: var(--footer-bg);
     color: var(--navbar-text-color);
-    padding: var(--spacing-md);
+    padding: 16px;
     text-align: center;
     width: 100%;
     box-sizing: border-box;
@@ -914,11 +895,11 @@ a:hover {
 }
 
 .footer .container {
-    max-width: var(--footer-max-width);
+    max-width: 900px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 8px;
     font-size: 0.85rem;
     line-height: 1.3;
 }
@@ -928,7 +909,7 @@ a:hover {
     color: var(--footer-link-color);
     text-decoration: none;
     font-weight: 500;
-    margin: 0 0.5rem;
+    margin: 0 8px;
     display: inline-block;
 }
 
@@ -963,10 +944,10 @@ a:hover {
 /* --- Media Queries --- */
 @media (min-width: 768px) {
     .container {
-        padding: var(--spacing-sm) var(--spacing-lg);
+        padding: 16px 24px;
     }
     .app-navbar {
-        padding: var(--navbar-padding-vertical) 3rem;
+        padding: 20px 30px;
     }
     .app-navbar-brand {
         font-size: 1.2rem;
@@ -975,7 +956,7 @@ a:hover {
         font-size: 1rem;
     }
     .card {
-        padding: var(--spacing-md);
+        padding: 16px;
     }
     .card-title {
         font-size: 1.4rem;
@@ -984,22 +965,22 @@ a:hover {
         font-size: 1rem;
     }
     .form-container {
-        padding: var(--spacing-md);
+        padding: 24px;
     }
     .form-control, .form-select {
         font-size: 1rem;
     }
     .table th, .table td {
-        padding: 0.75rem;
+        padding: 12px;
     }
     .list-group-item {
-        padding: 0.75rem;
+        padding: 12px;
     }
     .grid-form {
         grid-template-columns: repeat(2, 1fr);
     }
     .footer {
-        padding: var(--spacing-md);
+        padding: 16px;
     }
     .footer .container {
         flex-direction: row;
@@ -1013,7 +994,7 @@ a:hover {
         display: none;
     }
     .app-navbar .d-flex.align-items-center.ms-auto {
-        margin-right: var(--spacing-sm);
+        margin-right: 12px;
     }
     .app-navbar .navbar-collapse.collapse {
         display: flex !important;
@@ -1023,38 +1004,38 @@ a:hover {
         flex-direction: row;
         align-items: center;
         margin-left: auto !important;
-        gap: var(--spacing-md);
+        gap: 24px;
     }
     .app-navbar .app-nav-item .dropdown-menu {
         position: absolute;
     }
     .app-navbar .app-nav-item:not(:last-child) {
-        margin-right: var(--spacing-sm);
+        margin-right: 12px;
     }
 }
 
 @media (min-width: 1024px) {
     .container {
         max-width: 1400px;
-        padding: var(--spacing-md) 3rem;
+        padding: 24px 48px;
     }
     .app-navbar .container-fluid {
         max-width: 1400px;
-        padding: var(--navbar-padding-vertical) 3rem;
+        padding: 20px 48px;
     }
     .footer .container {
         max-width: 1400px;
-        padding: var(--spacing-md) 3rem;
+        padding: 16px 48px;
     }
     .card {
-        padding: var(--spacing-lg);
+        padding: 24px;
     }
     .card-title {
         font-size: 1.5rem;
     }
     .grid {
         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 2.5rem;
+        gap: 40px;
         max-width: 1400px;
     }
     .grid-form {
@@ -1064,34 +1045,34 @@ a:hover {
 
 @media (max-width: 991.98px) {
     .app-navbar .container-fluid {
-        padding-left: var(--spacing-sm);
-        padding-right: var(--spacing-sm);
+        padding-left: 16px;
+        padding-right: 16px;
     }
     .app-navbar .navbar-collapse {
         width: 100%;
-        margin-top: var(--spacing-sm);
+        margin-top: 12px;
         position: absolute;
         top: 100%;
         left: 0;
         background-color: var(--navbar-bg);
         box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         border-top: 1px solid rgba(255,255,255,0.1);
-        padding: var(--spacing-sm) 0;
+        padding: 16px 0;
     }
     .app-navbar .navbar-nav {
         flex-direction: column;
         align-items: flex-start;
         width: 100%;
-        padding: 0 var(--spacing-sm);
+        padding: 0 16px;
     }
     .app-navbar .app-nav-item {
         width: 100%;
         margin-right: 0;
-        margin-bottom: 0.25rem;
+        margin-bottom: 4px;
     }
     .app-navbar .app-nav-link {
         width: 100%;
-        padding: 0.75rem var(--spacing-sm);
+        padding: 12px 16px;
         border-radius: 5px;
     }
     .app-navbar .app-nav-link:hover {
@@ -1137,21 +1118,21 @@ a:hover {
     }
     .header-message {
         font-size: 0.75rem;
-        padding: 0.5rem;
+        padding: 8px;
     }
     .footer {
-        padding: 0.75rem;
+        padding: 12px;
     }
     .card {
-        padding: 0.5rem;
-        margin: 0 0 0.5rem;
+        padding: 8px;
+        margin: 0 0 8px;
     }
     .btn-primary, .btn-secondary {
-        padding: 0.4rem 0.8rem;
+        padding: 6px 12px;
         font-size: 0.85rem;
     }
     .logo {
         width: 48px;
-        height: 36px;
+        height: 40px;
     }
 }
