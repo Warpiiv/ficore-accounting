@@ -2,7 +2,7 @@
 :root {
     --background-main: #F2EFEA;
     --card-bg: #ffffff;
-    --button-primary-bg:#b88a44;
+    --button-primary-bg: #b88a44;
     --button-primary-hover: #917243;
     --button-secondary-bg-light-gradient: linear-gradient(to bottom, white, #f8faff);
     --button-secondary-border: #3A86FF;
@@ -1102,5 +1102,90 @@ main {
     }
     .gap-navbar-togglers {
         gap: 8px;
+    }
+}
+
+/* --- Invoices Table Responsive --- */
+@media (max-width: 767px) {
+    .table-responsive {
+        overflow-x: hidden;
+    }
+    .table tr {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 10px 0;
+    }
+    .table td {
+        flex: 1 1 50%;
+        border: none;
+        color: var(--table-text);
+    }
+    .table td:nth-child(1) { /* Invoice Number */
+        flex: 1 1 100%;
+        font-weight: 600;
+    }
+    .table td:nth-child(4) { /* Amount */
+        flex: 1 1 50%;
+    }
+    .table td:nth-child(5) { /* Status */
+        flex: 1 1 50%;
+    }
+    .table td:nth-child(9) { /* Actions */
+        flex: 1 1 100%;
+        text-align: right;
+    }
+    .invoice-customer-name {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .invoice-description {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+/* --- Transactions Table Responsive --- */
+@media (max-width: 767px) {
+    .table td:nth-child(1) { /* Type */
+        flex: 1 1 50%;
+        font-weight: 600;
+    }
+    .table td:nth-child(3) { /* Amount */
+        flex: 1 1 50%;
+    }
+    .table td:nth-child(4) { /* Description */
+        flex: 1 1 50%;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .table td:nth-child(6) { /* Created At */
+        flex: 1 1 50%;
+    }
+    .table td:nth-child(7) { /* Actions */
+        flex: 1 1 100%;
+        text-align: right;
+    }
+}
+
+/* --- Dashboard Lists Responsive --- */
+@media (max-width: 767px) {
+    .list-group-item {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+    }
+    .invoice-id, .transaction-id {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
