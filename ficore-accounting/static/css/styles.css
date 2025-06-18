@@ -171,7 +171,7 @@ h1, h2, h3 {
 
 /* Add padding-top to the main content area to prevent overlap with fixed navbar */
 main {
-    padding-top: var(--navbar-height);
+    padding-top: calc(var(--navbar-height) + var(--spacing-md)); /* 52px + 1.5rem */
     flex: 1;
 }
 
@@ -202,67 +202,69 @@ main {
 }
 
 /* --- App Navbar --- */
-.app-navbar { /* Changed from .navbar */
+.app-navbar {
     background-color: var(--navbar-bg);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
     padding-top: var(--navbar-padding-vertical);
     padding-bottom: var(--navbar-padding-vertical);
-    padding-left: 2rem; /* Restore horizontal padding */
+    padding-left: 2rem;
     padding-right: 2rem;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Ensures space between logo and right-aligned group */
+    justify-content: space-between;
     width: 100%;
     box-sizing: border-box;
     position: fixed;
     top: 0;
     z-index: 1000;
     transition: all 0.3s ease;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Softer border for light mode */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.app-navbar.scrolled { /* Changed from .navbar.scrolled */
+.app-navbar.scrolled {
     padding: 0.5rem 2rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Styles for main navigation links and brand */
-.app-navbar .app-nav-link, /* Targets "Main Menu", "Account" */
-.app-navbar .app-navbar-brand { /* Targets the logo link */
+.app-navbar .app-nav-link,
+.app-navbar .app-navbar-brand {
     color: var(--navbar-text-color);
     line-height: var(--navbar-logo-height);
     height: auto;
     display: flex;
     align-items: center;
 }
+
 a {
     text-decoration: none;
 }
+
 a:hover {
     text-decoration: underline;
 }
+
 .app-nav-link,
 .app-dropdown-item {
     font-size: 0.85rem;
     text-decoration: none;
 }
+
 .app-nav-link:hover,
 .app-dropdown-item:hover {
     text-decoration: none;
 }
+
 .btn-primary {
     text-decoration: none; /* Fix CTA underlines */
 }
+
 .content {
     width: 100%;
 }
+
 .social-icons {
     gap: var(--spacing-xs);
-}
-.header-message {
-    position: fixed;
-    top: 0;
-    z-index: 999;
 }
 
 /* Hover state for main navigation links and brand */
@@ -273,20 +275,20 @@ a:hover {
 
 /* Flex container for the language, mode, and toggler buttons */
 .app-navbar .d-flex.align-items-center.ms-auto {
-    gap: var(--spacing-xs); /* Adds consistent spacing between the buttons */
+    gap: var(--spacing-xs);
 }
 
 /* Styles for the language toggle button */
 .language-toggle-btn {
-    /* No specific styles needed here, as Bootstrap's .btn-primary already applies */
-    /* If you need to override Bootstrap's margin, do it within the .d-flex parent's gap */
+    order: 1; /* First in flex group */
 }
 
 /* Styles for the mode toggle button */
 .mode-toggle-btn {
-    background: none; /* Transparent background */
+    order: 2; /* Second in flex group */
+    background: none;
     border: none;
-    color: var(--navbar-text-color); /* Ensure icon visibility */
+    color: var(--navbar-text-color);
     font-size: 1.2rem;
     cursor: pointer;
     padding: 0.5rem;
@@ -303,45 +305,45 @@ a:hover {
 }
 
 .dark-mode .app-navbar {
-    /* Ensure the border color also adjusts for dark mode */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Softer border for dark mode */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Custom styles for the hamburger toggler */
 .app-toggler {
-    /* Bootstrap's default .navbar-toggler already applies display: flex, etc. */
-    padding: var(--spacing-xs); /* Small padding around the toggler for easier clicking */
-    background: none; /* No background by default */
-    border: none; /* No border by default */
-    cursor: pointer; /* Indicates it's clickable */
-    color: var(--navbar-text-color); /* Color of the hamburger icon for consistency */
-    transition: color 0.2s ease, background-color 0.2s ease; /* Smooth transitions for hover */
-    border-radius: 5px; /* Slightly rounded corners for a softer look */
+    order: 3; /* Last in flex group */
+    padding: var(--spacing-xs);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--navbar-text-color);
+    transition: color 0.2s ease, background-color 0.2s ease;
+    border-radius: 5px;
+    margin-left: 0; /* Reset Bootstrap margin */
 }
 
 .app-toggler:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover in light mode */
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .dark-mode .app-toggler:hover {
-    background-color: rgba(0, 0, 0, 0.2); /* Subtle background on hover in dark mode */
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .app-toggler:focus-visible {
-    outline: 2px solid var(--accent-blue); /* Clear outline for accessibility */
+    outline: 2px solid var(--accent-blue);
     outline-offset: 2px;
 }
 
 /* Specific styles for the Bootstrap navbar-toggler-icon to draw the lines */
 .app-toggler .navbar-toggler-icon {
-    background-image: none; /* Remove Bootstrap's default SVG background */
+    background-image: none;
     display: block;
     position: relative;
-    width: 24px; /* Width of the hamburger icon */
-    height: 2px; /* Height of each line */
-    background: var(--navbar-text-color); /* Color of the lines */
+    width: 24px;
+    height: 2px;
+    background: var(--navbar-text-color);
     border-radius: 2px;
-    transition: background-color 0.2s ease; /* Smooth transition for color changes */
+    transition: background-color 0.2s ease;
 }
 
 .app-toggler .navbar-toggler-icon::before,
@@ -352,75 +354,75 @@ a:hover {
     height: 100%;
     background: var(--navbar-text-color);
     border-radius: 2px;
-    transition: transform 0.3s ease; /* Smooth transition for animation */
+    transition: transform 0.3s ease;
 }
 
 .app-toggler .navbar-toggler-icon::before {
-    top: -7px; /* Position the top line */
+    top: -7px;
 }
 
 .app-toggler .navbar-toggler-icon::after {
-    top: 7px; /* Position the bottom line */
+    top: 7px;
 }
 
 /* Styles for when the toggler is "active" or "open" */
 .app-toggler[aria-expanded="true"] .navbar-toggler-icon {
-    background: transparent; /* Hide the middle line */
+    background: transparent;
 }
 
 .app-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
-    transform: translateY(7px) rotate(45deg); /* Rotate and move top line */
+    transform: translateY(7px) rotate(45deg);
 }
 
 .app-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
-    transform: translateY(-7px) rotate(-45deg); /* Rotate and move bottom line */
+    transform: translateY(-7px) rotate(-45deg);
 }
 
 /* --- Logo Styling --- */
 .logo {
     border-radius: 50%;
     width: 60px;
-    height: var(--navbar-logo-height); /* Using variable */
+    height: var(--navbar-logo-height);
     object-fit: cover;
 }
 
 /* --- Dropdown Menu Specific Styles --- */
-.app-dropdown-menu { /* Changed from .dropdown-menu */
-    background-color: var(--card-bg); /* Ensure dropdown background is light (white in light mode) */
+.app-dropdown-menu {
+    background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 8px;
     box-shadow: var(--card-shadow);
-    padding: 0.5rem 0; /* Bootstrap default padding */
+    padding: 0.5rem 0;
 }
 
 .dark-mode .app-dropdown-menu {
-    background-color: var(--card-bg); /* Dark card background in dark mode */
+    background-color: var(--card-bg);
     border-color: var(--card-border);
 }
 
-.app-dropdown-menu .app-dropdown-item { /* Changed from .dropdown-item */
-    color: var(--text-color); /* Ensures text is visible on the dropdown background */
-    padding: 0.5rem 1rem; /* Adjust padding as needed */
+.app-dropdown-menu .app-dropdown-item {
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
     text-decoration: none;
-    display: block; /* Make the whole area clickable */
+    display: block;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .app-dropdown-menu .app-dropdown-item:hover,
 .app-dropdown-menu .app-dropdown-item:focus {
-    background-color: var(--button-secondary-hover); /* Light blue hover background */
-    color: var(--accent-blue); /* Accent blue text on hover */
+    background-color: var(--button-secondary-hover);
+    color: var(--accent-blue);
 }
 
 .dark-mode .app-dropdown-menu .app-dropdown-item:hover,
 .dark-mode .app-dropdown-menu .app-dropdown-item:focus {
-    background-color: var(--button-secondary-hover); /* Dark mode appropriate hover background */
-    color: var(--accent-blue); /* Dark mode appropriate accent color */
+    background-color: var(--button-secondary-hover);
+    color: var(--accent-blue);
 }
 
 /* --- Buttons --- */
 .btn-primary {
-    background: var(--button-primary-bg); /* Using variable */
+    background: var(--button-primary-bg);
     color: white;
     border: none;
     padding: var(--button-padding-y) var(--button-padding-x);
@@ -428,17 +430,17 @@ a:hover {
     font-size: var(--button-font-size);
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 6px 15px rgba(242, 140, 56, 0.15); /* Softer shadow */
+    box-shadow: 0 6px 15px rgba(242, 140, 56, 0.15);
     transition: background-color 0.25s ease-in-out, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease-in-out;
     width: auto;
-    text-decoration: none; /* Remove underline */
+    text-decoration: none;
 }
 
 .btn-primary:hover {
     background: var(--button-primary-hover);
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 20px rgba(224, 106, 53, 0.25); /* Softer hover shadow */
-    text-decoration: underline; /* Optional: Underline on hover */
+    box-shadow: 0 10px 20px rgba(224, 106, 53, 0.25);
+    text-decoration: underline;
 }
 
 .btn-primary:focus-visible {
@@ -456,7 +458,7 @@ a:hover {
 }
 
 .btn-secondary {
-    background: var(--button-secondary-bg-light-gradient); /* Using variable */
+    background: var(--button-secondary-bg-light-gradient);
     color: var(--button-secondary-border);
     border: 2px solid var(--button-secondary-border);
     padding: var(--button-padding-y) var(--button-padding-x);
@@ -469,7 +471,7 @@ a:hover {
 }
 
 .dark-mode .btn-secondary {
-    background: var(--button-secondary-bg-dark-gradient); /* Using variable */
+    background: var(--button-secondary-bg-dark-gradient);
     border-color: var(--button-secondary-border);
     color: var(--text-color);
 }
@@ -511,38 +513,40 @@ a:hover {
 
 /* --- Header Message --- */
 .header-message {
-    background: var(--navbar-bg); /* Using navbar-bg as it's the header color */
-    color: var(--navbar-text-color); /* Ensuring text visibility */
+    background: var(--navbar-bg);
+    color: var(--navbar-text-color);
     text-align: center;
     padding: 0.5rem;
     font-size: 0.85rem;
     width: 100%;
     box-sizing: border-box;
     border: 1px solid var(--alert-info-border);
-    animation: fadeInThenOut 5s ease-in-out forwards; /* Changed animation name and properties */
-    opacity: 0; /* Start hidden */
-    transform: translateY(-10px); /* Start slightly up */
+    animation: fadeInThenOut 5s ease-in-out forwards;
+    opacity: 0;
+    transform: translateY(-10px);
+    position: fixed;
+    top: var(--navbar-height);
+    z-index: 999;
 }
 
-@keyframes fadeInThenOut { /* Renamed for clarity and to reflect behavior */
+@keyframes fadeInThenOut {
     0% {
         opacity: 0;
         transform: translateY(-10px);
     }
-    10% { /* Fade in quickly */
+    10% {
         opacity: 1;
         transform: translateY(0);
     }
-    90% { /* Stay visible for most of the duration */
+    90% {
         opacity: 1;
         transform: translateY(0);
     }
-    100% { /* Fade out at the end */
+    100% {
         opacity: 0;
         transform: translateY(-10px);
     }
 }
-
 
 /* --- Alerts --- */
 .alert {
@@ -632,14 +636,14 @@ a:hover {
     box-shadow: var(--card-shadow);
     overflow: hidden;
     animation: cardAppear 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease-in-out, filter 0.3s ease-in-out; /* Added filter to transition */
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease-in-out, filter 0.3s ease-in-out;
     text-align: left;
 }
 
 .card:hover {
     transform: translateY(-8px) scale(1.01);
     box-shadow: var(--card-shadow-hover);
-    filter: brightness(1.1); /* Added brightness on hover */
+    filter: brightness(1.1);
 }
 
 @keyframes cardAppear {
@@ -654,11 +658,11 @@ a:hover {
 }
 
 .card-header {
-    background: var(--card-header-bg); /* Using variable */
+    background: var(--card-header-bg);
     padding: var(--spacing-sm) var(--spacing-md);
     border-bottom: 1px solid var(--card-border);
     font-weight: 700;
-    color: var(--navbar-text-color); /* Set color to be visible on dark header */
+    color: var(--navbar-text-color);
 }
 
 .card-body {
@@ -683,11 +687,11 @@ a:hover {
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #4ade80; /* Soft green */
+    color: #fbbf24;
     margin-bottom: 0.5rem;
     text-align: center;
     text-decoration: none;
-    text-shadow: 0 0 3px rgba(34, 197, 94, 0.8); /* Subtle glow */
+    text-shadow: 0 0 4px rgba(251, 191, 36, 0.4);
 }
 
 .card-text {
@@ -703,7 +707,7 @@ a:hover {
 }
 
 .text-danger {
-    color: var(--error-highlight); /* Now uses the improved error highlight var */
+    color: var(--error-highlight);
     font-size: 0.8rem;
 }
 
@@ -730,7 +734,7 @@ a:hover {
 .form-label {
     font-weight: 500;
     margin-bottom: 0.25rem;
-    color: var(--text-color); /* Ensures visibility in both modes */
+    color: var(--text-color);
     display: block;
     text-align: left;
 }
@@ -747,11 +751,11 @@ a:hover {
 }
 
 .form-control::placeholder, .form-select::placeholder {
-    color: rgba(0, 0, 0, 0.5); /* Good for light mode */
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .dark-mode .form-control::placeholder, .dark-mode .form-select::placeholder {
-    color: rgba(241, 245, 249, 0.5); /* Good for dark mode */
+    color: rgba(241, 245, 249, 0.5);
 }
 
 .form-control:focus, .form-select:focus {
@@ -767,13 +771,13 @@ a:hover {
 }
 
 .form-control.is-invalid, .form-select.is-invalid {
-    border-color: var(--alert-error-border); /* Linked to alert border for consistency */
+    border-color: var(--alert-error-border);
     background-image: none;
 }
 
 .invalid-feedback {
     display: none;
-    color: var(--error-highlight); /* Now uses the improved error highlight var */
+    color: var(--error-highlight);
     font-size: 0.8rem;
     margin-top: 0.25rem;
     font-weight: 500;
@@ -786,9 +790,8 @@ a:hover {
 
 /* Added specific styling for form-check-label */
 .form-check-label {
-    color: var(--text-color); /* Ensure visibility in both modes */
+    color: var(--text-color);
 }
-
 
 /* --- Tables --- */
 .table {
@@ -805,16 +808,16 @@ a:hover {
     padding: var(--spacing-sm);
     border: 1px solid var(--table-border);
     text-align: left;
-    color: var(--table-text); /* Explicitly set table text color */
+    color: var(--table-text);
 }
 
 .table th {
-    background-color: var(--table-header-bg); /* Using variable */
+    background-color: var(--table-header-bg);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 0.85rem;
-    color: var(--navbar-text-color); /* Set color to be visible on dark header */
+    color: var(--navbar-text-color);
 }
 
 .table td {
@@ -853,13 +856,13 @@ a:hover {
 
 /* Re-enabled and updated for compatibility with transactions.html */
 .table tbody tr.table-success {
-    background-color: var(--alert-success-bg); /* Using alert success background */
-    color: var(--alert-success-text); /* Ensure text contrast */
+    background-color: var(--alert-success-bg);
+    color: var(--alert-success-text);
 }
 
 .table tbody tr.table-danger {
-    background-color: var(--alert-error-bg); /* Using alert error background */
-    color: var(--alert-error-text); /* Ensure text contrast */
+    background-color: var(--alert-error-bg);
+    color: var(--alert-error-text);
 }
 
 /* Ensure text contrast in tables (redundant for td/th but good for p/li within them) */
@@ -900,8 +903,8 @@ a:hover {
 
 /* --- Footer --- */
 .footer {
-    background: var(--footer-bg); /* Using variable */
-    color: var(--navbar-text-color); /* Ensuring text visibility */
+    background: var(--footer-bg);
+    color: var(--navbar-text-color);
     padding: var(--spacing-md);
     text-align: center;
     width: 100%;
@@ -910,7 +913,7 @@ a:hover {
 }
 
 .footer .container {
-    max-width: var(--footer-max-width); /* Using variable */
+    max-width: var(--footer-max-width);
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -921,7 +924,7 @@ a:hover {
 
 /* General footer link styling */
 .footer a {
-    color: var(--footer-link-color); /* Uses the defined footer link color */
+    color: var(--footer-link-color);
     text-decoration: none;
     font-weight: 500;
     margin: 0 0.5rem;
@@ -961,13 +964,13 @@ a:hover {
     .container {
         padding: var(--spacing-sm) var(--spacing-lg);
     }
-    .app-navbar { /* Changed from .navbar */
-        padding: var(--navbar-padding-vertical) 3rem; /* Using variable */
+    .app-navbar {
+        padding: var(--navbar-padding-vertical) 3rem;
     }
-    .app-navbar-brand { /* Changed from .navbar-brand */
+    .app-navbar-brand {
         font-size: 1.2rem;
     }
-    .app-nav-link { /* Changed from .nav-link */
+    .app-nav-link {
         font-size: 1rem;
     }
     .card {
@@ -991,9 +994,8 @@ a:hover {
     .list-group-item {
         padding: 0.75rem;
     }
-    /* Updated for CSS grid */
-    .grid-form { /* New class for the form grid */
-        grid-template-columns: repeat(2, 1fr); /* Example: 2 columns on medium screens */
+    .grid-form {
+        grid-template-columns: repeat(2, 1fr);
     }
     .footer {
         padding: var(--spacing-md);
@@ -1005,43 +1007,33 @@ a:hover {
     }
 }
 
-@media (min-width: 992px) { /* Adjust breakpoint for navbar collapse */
-    /* On larger screens, hide the app-toggler */
+@media (min-width: 992px) {
     .app-navbar .app-toggler {
         display: none;
     }
-
-    /* On larger screens, the d-flex container for toggles might need adjusting if it impacts the desktop menu spacing */
     .app-navbar .d-flex.align-items-center.ms-auto {
-        /* On desktop, if the nav links are also ms-auto, they might compete. */
-        /* It's common to have the logo on the left, and nav links + other utilities on the right */
-        /* If issues arise, we might need to separate them or adjust `justify-content` on `.container-fluid` */
-        /* For now, ensure language/mode toggles are visible and spaced well on desktop */
-        margin-right: var(--spacing-sm); /* Add some space if the nav links are directly next to it */
+        margin-right: var(--spacing-sm);
     }
-
-    /* Ensure the collapse div is visible and correctly laid out on desktop */
     .app-navbar .navbar-collapse.collapse {
-        display: flex !important; /* Override Bootstrap's default collapse hidden state */
-        flex-grow: 1; /* Allow it to grow and take available space */
+        display: flex !important;
+        flex-grow: 1;
     }
-
     .app-navbar .navbar-nav {
-        flex-direction: row; /* Ensure nav items are in a row */
+        flex-direction: row;
         align-items: center;
-        margin-left: auto !important; /* Push nav items to the right */
-        gap: var(--spacing-md); /* Spacing between top-level nav items */
+        margin-left: auto !important;
+        gap: var(--spacing-md);
     }
-
     .app-navbar .app-nav-item .dropdown-menu {
-        position: absolute; /* Ensure dropdown menu positions correctly */
+        position: absolute;
     }
-
     .app-navbar .app-nav-item:not(:last-child) {
-        margin-right: var(--spacing-sm); /* Add some margin between nav items for spacing */
+        margin-right: var(--spacing-sm);
+    }
+    main {
+        padding-top: calc(var(--navbar-height) + var(--spacing-lg)); /* 52px + 2rem */
     }
 }
-
 
 @media (min-width: 1024px) {
     .container {
@@ -1067,78 +1059,70 @@ a:hover {
         gap: 2.5rem;
         max-width: 1400px;
     }
-    .grid-form { /* New class for the form grid */
-        grid-template-columns: repeat(4, 1fr); /* Example: 4 columns on large screens */
+    .grid-form {
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
-@media (max-width: 991.98px) { /* Below lg breakpoint (mobile/tablet) */
+@media (max-width: 991.98px) {
+    .app-navbar .container-fluid {
+        padding-left: var(--spacing-sm);
+        padding-right: var(--spacing-sm);
+    }
     .app-navbar .navbar-collapse {
-        /* When collapsed, it should be a column */
-        width: 100%; /* Take full width */
-        margin-top: var(--spacing-sm); /* Space below toggles */
+        width: 100%;
+        margin-top: var(--spacing-sm);
         position: absolute;
-        top: 100%; /* Position below the main navbar content */
+        top: 100%;
         left: 0;
-        background-color: var(--navbar-bg); /* Match navbar background */
+        background-color: var(--navbar-bg);
         box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         border-top: 1px solid rgba(255,255,255,0.1);
-        padding: var(--spacing-sm) 0; /* Padding inside the collapsed menu */
+        padding: var(--spacing-sm) 0;
     }
-
     .app-navbar .navbar-nav {
-        flex-direction: column; /* Stack nav items vertically */
-        align-items: flex-start; /* Align items to the left */
+        flex-direction: column;
+        align-items: flex-start;
         width: 100%;
         padding: 0 var(--spacing-sm);
     }
-
     .app-navbar .app-nav-item {
-        width: 100%; /* Full width for clickable area */
-        margin-right: 0; /* Remove desktop margin */
-        margin-bottom: 0.25rem; /* Small vertical spacing */
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 0.25rem;
     }
-
     .app-navbar .app-nav-link {
         width: 100%;
-        padding: 0.75rem var(--spacing-sm); /* Larger clickable area */
+        padding: 0.75rem var(--spacing-sm);
         border-radius: 5px;
     }
-
     .app-navbar .app-nav-link:hover {
         background-color: rgba(255, 255, 255, 0.1);
     }
-
     .app-dropdown-menu {
-        width: 100%; /* Make dropdowns full width in collapsed menu */
-        border: none; /* Remove border in collapsed menu for cleaner look */
-        box-shadow: none; /* Remove shadow */
-        border-radius: 0; /* No border radius */
-        background-color: rgba(255, 255, 255, 0.05); /* Slightly different background for sub-items */
-        padding: 0; /* Remove default padding for sub-menu */
+        width: 100%;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 0;
     }
-
     .dark-mode .app-navbar .navbar-collapse {
         background-color: var(--navbar-bg);
     }
-
     .dark-mode .app-navbar .app-nav-link:hover {
         background-color: rgba(0, 0, 0, 0.2);
     }
-
     .dark-mode .app-dropdown-menu {
         background-color: rgba(0, 0, 0, 0.1);
     }
-
-    /* Important: Ensure the d-lg-block class on #navbarNav is correctly overridden */
     .app-navbar .navbar-collapse.d-none.d-lg-block {
-        display: none !important; /* Force hide on small screens initially */
+        display: none !important;
     }
     .app-navbar .navbar-collapse.collapse.show {
-        display: block !important; /* Override when shown by Bootstrap's JS */
+        display: block !important;
     }
 }
-
 
 @media (max-width: 360px) {
     .app-navbar-brand {
