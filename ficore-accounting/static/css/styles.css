@@ -14,11 +14,11 @@
 
     /* Semantic Alert Colors - Light Mode */
     --alert-info-bg: #e6f7ff;
-    --alert-info-border: #91d5ff;
+    --alert-info-border:#6ee7b7;
     --alert-info-text: #0050b3;
 
-    --alert-success-bg: #f6ffed;
-    --alert-success-border: #b7eb8f;
+    --alert-success-bg:#059669;
+    --alert-success-border:#6ee7b7;
     --alert-success-text: #237804;
 
     --alert-warning-bg: #fffbe6;
@@ -151,7 +151,7 @@ h1, h2, h3 {
 
 /* Add padding-top to the main content area to prevent overlap with fixed navbar and header message */
 main {
-    padding-top: 130px; /* Adjusted for navbar (90px) + header-message (40px) */
+    padding-top: 130px; /* Adjusted to account for header-message (30px) + navbar (90px) */
     flex: 1;
 }
 
@@ -171,7 +171,7 @@ main {
 /* --- Alert Container --- */
 .alert-container {
     position: fixed;
-    top: 40px; /* Adjusted to account for header-message at top */
+    top: 120px; /* Adjusted to account for header-message (30px) + navbar (90px) */
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -193,9 +193,9 @@ main {
     width: 100%;
     box-sizing: border-box;
     position: fixed;
-    top: 40px; /* Adjusted to account for header-message at top */
+    top: 30px; /* Adjusted to sit below header-message */
     z-index: 1000;
-    transition: all 0.3s ease;
+ હ,transition: all 0.3s ease;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     height: 90px; /* Explicit total height */
 }
@@ -252,17 +252,32 @@ a:hover {
     color: var(--accent-blue);
 }
 
-/* Flex container for the language, mode, and toggler buttons */
+/* Flex container for the logo, language, mode, and toggler buttons */
 .app-navbar .d-flex.align-items-center.ms-auto {
-    gap: 12px;
-    margin-left: auto; /* Ensures alignment to the right */
+    gap: 24px; /* Increased gap for professional spacing */
+}
+
+/* Styles for the logo */
+.logo {
+    border-radius: 50%;
+    width: 60px; /* Explicit width */
+    height: 50px; /* Explicit height */
+    object-fit: cover;
+    margin: 0 15px; /* Adjusted margin for balanced spacing */
+    order: 0; /* Ensure logo is first */
 }
 
 /* Styles for the language toggle button */
 .language-toggle-btn {
-    order: 1; /* First in flex group */
+    order: 1; /* First in flex group after logo */
     padding: 10px; /* Explicit padding */
-    margin-right: 5px; /* Explicit margin to separate from next element */
+    background: none;
+    border: none;
+    color: var(--navbar-text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Styles for the mode toggle button */
@@ -278,16 +293,14 @@ a:hover {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.mode-toggle-btn:hover {
+.mode-toggle-btn:hover,
+.language-toggle-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.dark-mode .mode-toggle-btn:hover {
+.dark-mode .mode-toggle-btn:hover,
+.dark-mode .language-toggle-btn:hover {
     background-color: rgba(0, 0, 0, 0.2);
-}
-
-.dark-mode .app-navbar {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Custom styles for the hamburger toggler */
@@ -300,7 +313,7 @@ a:hover {
     color: var(--navbar-text-color);
     transition: color 0.2s ease, background-color 0.2s ease;
     border-radius: 5px;
-    margin-left: auto; /* Forces hamburger to the right edge */
+    margin-left: auto; /* Force to right edge */
 }
 
 .app-toggler:hover {
@@ -360,15 +373,6 @@ a:hover {
     transform: translateY(-7px) rotate(-45deg);
 }
 
-/* --- Logo Styling --- */
-.logo {
-    border-radius: 50%;
-    width: 60px; /* Explicit width */
-    height: 50px; /* Explicit height */
-    object-fit: cover;
-    margin: 0 5px; /* Explicit margin on both sides */
-}
-
 /* --- Dropdown Menu Specific Styles --- */
 .app-dropdown-menu {
     background-color: var(--card-bg);
@@ -388,7 +392,9 @@ a:hover {
     padding: 0.5rem 1rem;
     text-decoration: none;
     display: block;
-    transition: background-color 0.2s ease, color 0.2 ව
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
 .app-dropdown-menu .app-dropdown-item:hover,
 .app-dropdown-menu .app-dropdown-item:focus {
     background-color: var(--button-secondary-hover);
@@ -420,7 +426,10 @@ a:hover {
 .btn-primary:hover {
     background: var(--button-primary-hover);
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 20px rgba(224, 106, 53事例
+    box-shadow: 0 10px 20px rgba(224, 106, 53, 0.25);
+    text-decoration: underline;
+}
+
 .btn-primary:focus-visible {
     outline: 2px solid var(--accent-blue);
     outline-offset: 3px;
@@ -504,7 +513,7 @@ a:hover {
     transform: translateY(-10px);
     position: fixed;
     top: 0; /* Moved to topmost part of the screen */
-    z-index: 1002; /* Higher than navbar to appear above it */
+    z-index: 1001; /* Above navbar */
 }
 
 @keyframes fadeInThenOut {
@@ -546,8 +555,6 @@ a:hover {
 
 /* Success Alert */
 .alert.success {
-    background-color: var
-
     background-color: var(--alert-success-bg);
     color: var(--alert-success-text);
     border: 1px solid var(--alert-success-border);
@@ -666,12 +673,25 @@ a:hover {
 
 .card-title {
     font-size: 1.3rem;
-    font-weight: 700; /* Made bold */
+    font-weight: 700; /* Bold font weight */
     color: #60a5fa;
     margin-bottom: 8px;
     text-align: center;
     text-decoration: none;
     text-shadow: 0 0 3px rgba(96, 165, 250, 0.3);
+    position: relative;
+    padding-bottom: 8px;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    height: 1px;
+    background-color: var(--card-border);
 }
 
 .card-text {
