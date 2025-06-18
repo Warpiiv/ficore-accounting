@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, current_user
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 import os
 import jinja2
 from flask_wtf import CSRFProtect
@@ -109,6 +109,11 @@ def format_datetime(value):
     try:
         if isinstance(value, datetime):
             return value.strftime('%B %d, %Y, %I:%M %p')
+        elif isinstance(value, date):
+            return value.strftime('%B %d, %Y')
+        elif isinstance(value, str):
+            parsed = datetime.strptime(value, '%Y-%m-%d')
+            return parsed.strftime('%B %d, %Y, %I:%M %p')
         return str(value)
     except Exception as e:
         logger.warning(f"Error formatting datetime {value}: {str(e)}")
@@ -121,6 +126,9 @@ def format_date(value):
             return value.strftime('%Y-%m-%d')
         elif isinstance(value, date):
             return value.strftime('%Y-%m-%d')
+        elif isinstance(value, str):
+            parsed = datetime.strptime(value, '%Y-%m-%d').date()
+            return parsed.strftime('%Y-%m-%d')
         return str(value)
     except Exception as e:
         logger.warning(f"Error formatting date {value}: {str(e)}")
@@ -366,8 +374,16 @@ def general_dashboard():
         recent_transactions = list(mongo.db.transactions.find({'user_id': user_id}).sort('created_at', -1).limit(5))
         for invoice in recent_invoices:
             invoice['_id'] = str(invoice['_id'])
+            if isinstance(invoice.get('created_at'), str):
+                invoice['created_at'] = datetime.strptime(invoice['created_at'], '%Y-%m-%d')
+            if isinstance(invoice.get('due_date'), str):
+                invoice['due_date'] = datetime.strptime(invoice['due_date'], '%Y-%m-%d')
+            if isinstance(invoice.get('settled_date'), str):
+                invoice['settled_date'] = datetime.strptime(invoice['settled_date'], '%Y-%m-%d')
         for transaction in recent_transactions:
             transaction['_id'] = str(transaction['_id'])
+            if isinstance(transaction.get('created_at'), str):
+                transaction['created_at'] = datetime.strptime(transaction['created_at'], '%Y-%m-%d')
         return render_template('dashboard/general_dashboard.html',
                              recent_invoices=recent_invoices,
                              recent_transactions=recent_transactions)
