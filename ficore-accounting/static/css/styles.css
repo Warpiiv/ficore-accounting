@@ -198,6 +198,7 @@ main {
     transition: all 0.3s ease;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     height: 90px; /* Explicit total height */
+    overflow: hidden; /* Prevent menu items from overflowing */
 }
 
 .app-navbar.scrolled {
@@ -273,6 +274,7 @@ a:hover {
     object-fit: cover;
     margin: 0 15px; /* Adjusted margin for balanced spacing */
     order: 0; /* Ensure logo is first */
+    z-index: 1002; /* Ensure logo stays above header-message */
 }
 
 /* Styles for the language toggle button */
@@ -517,10 +519,10 @@ a:hover {
     border: 1px solid rgba(0, 0, 0, 0.1); /* Match navbar border */
     animation: fadeInThenOut 5s ease-in-out forwards;
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-100%); /* Move above navbar without overlapping */
     position: fixed;
     top: 0; /* Topmost part of the screen */
-    z-index: 1001; /* Above navbar */
+    z-index: 1001; /* Above navbar but below logo */
 }
 
 .dark-mode .header-message {
@@ -531,7 +533,7 @@ a:hover {
 @keyframes fadeInThenOut {
     0% {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-100%);
     }
     10% {
         opacity: 1;
@@ -543,7 +545,7 @@ a:hover {
     }
     100% {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-100%);
     }
 }
 
@@ -1088,6 +1090,7 @@ a:hover {
         box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         border-top: 1px solid rgba(255,255,255,0.1);
         padding: 16px 0;
+        overflow: hidden; /* Prevent overflow on mobile */
     }
     .app-navbar .navbar-nav {
         flex-direction: column;
