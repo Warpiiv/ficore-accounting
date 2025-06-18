@@ -80,7 +80,7 @@
     --card-bg: #1e293b;
 
     /* Buttons */
-    --button-primary-bg: #020259;
+    --button-primary-bg: #4C78C9; /* Adjusted for better readability in dark mode */
     --button-primary-hover: #E06A35;
     --button-secondary-bg-dark-gradient: linear-gradient(to bottom, #1e293b, #1a202c);
     --button-secondary-border: #63B3ED;
@@ -110,15 +110,15 @@
     --navbar-bg: #0f172a;
     --navbar-text-color: #f1f5f9; /* Text color for content *on* the navbar in dark mode */
     --footer-bg: #2a3447; /* Darker ash for footer */
-    --card-border: #334155;
+    --card-border: #475569; /* Slightly lighter for better contrast */
     --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); /* Stronger shadow for depth */
     --card-shadow-hover: 0 16px 32px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
     --form-bg: #1e293b;
-    --table-border: #334155;
+    --table-border: #475569; /* Slightly lighter for better contrast */
     --table-header-bg: #1e3a8a; /* Retaining dark blue for header distinction */
     --table-text: #f1f5f9; /* Explicitly for table cell text if different from main text-color */
     --amount-highlight: #93c5fd;
-    --error-highlight: #020259; /* Keeping the same error highlight for consistency, or pick a dark-mode specific one */
+    --error-highlight: var(--alert-error-text); /* Linked to alert text for consistency and readability */
     --accent-blue: #93c5fd; /* General accent/link blue in dark mode */
     --success-color: #34d399; /* For success text, distinct from alerts */
     --card-header-bg: #1e3a8a;
@@ -133,7 +133,7 @@
 
 /* --- Global Transitions & Accessibility (Reduced Motion) --- */
 * {
-    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease-in-out; /* Added filter */
 }
 
 /* Disable animations and transitions for users who prefer reduced motion */
@@ -214,7 +214,7 @@ main {
     top: 0;
     z-index: 1000;
     transition: all 0.3s ease;
-    border-bottom: 1px solid #ccc; /* A light grey color */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Softer border for light mode */
 }
 
 .app-navbar.scrolled { /* Changed from .navbar.scrolled */
@@ -267,7 +267,7 @@ main {
 
 .dark-mode .app-navbar {
     /* Ensure the border color also adjusts for dark mode */
-    border-bottom: 1px solid #444; /* A slightly darker grey for dark mode */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Softer border for dark mode */
 }
 
 /* Custom styles for the hamburger toggler */
@@ -391,7 +391,7 @@ main {
     font-size: var(--button-font-size);
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(242, 140, 56, 0.2);
+    box-shadow: 0 6px 15px rgba(242, 140, 56, 0.15); /* Softer shadow */
     transition: background-color 0.25s ease-in-out, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease-in-out;
     width: auto;
 }
@@ -399,7 +399,7 @@ main {
 .btn-primary:hover {
     background: var(--button-primary-hover);
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 6px 12px rgba(224, 106, 53, 0.35);
+    box-shadow: 0 10px 20px rgba(224, 106, 53, 0.25); /* Softer hover shadow */
 }
 
 .btn-primary:focus-visible {
@@ -593,13 +593,14 @@ main {
     box-shadow: var(--card-shadow);
     overflow: hidden;
     animation: cardAppear 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease-in-out;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease-in-out, filter 0.3s ease-in-out; /* Added filter to transition */
     text-align: left;
 }
 
 .card:hover {
     transform: translateY(-8px) scale(1.01);
     box-shadow: var(--card-shadow-hover);
+    filter: brightness(1.1); /* Added brightness on hover */
 }
 
 @keyframes cardAppear {
@@ -662,7 +663,7 @@ main {
 }
 
 .text-danger {
-    color: var(--error-highlight);
+    color: var(--error-highlight); /* Now uses the improved error highlight var */
     font-size: 0.8rem;
 }
 
@@ -726,13 +727,13 @@ main {
 }
 
 .form-control.is-invalid, .form-select.is-invalid {
-    border-color: var(--error-highlight);
+    border-color: var(--alert-error-border); /* Linked to alert border for consistency */
     background-image: none;
 }
 
 .invalid-feedback {
     display: none;
-    color: var(--error-highlight);
+    color: var(--error-highlight); /* Now uses the improved error highlight var */
     font-size: 0.8rem;
     margin-top: 0.25rem;
     font-weight: 500;
