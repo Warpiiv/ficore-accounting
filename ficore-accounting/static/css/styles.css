@@ -14,11 +14,11 @@
 
     /* Semantic Alert Colors - Light Mode */
     --alert-info-bg: #e6f7ff;
-    --alert-info-border:#6ee7b7;
+    --alert-info-border: #91d5ff;
     --alert-info-text: #0050b3;
 
-    --alert-success-bg:#059669;
-    --alert-success-border:#6ee7b7;
+    --alert-success-bg: #f6ffed;
+    --alert-success-border: #b7eb8f;
     --alert-success-text: #237804;
 
     --alert-warning-bg: #fffbe6;
@@ -195,7 +195,7 @@ main {
     position: fixed;
     top: 30px; /* Adjusted to sit below header-message */
     z-index: 1000;
- હ,transition: all 0.3s ease;
+    transition: all 0.3s ease;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     height: 90px; /* Explicit total height */
 }
@@ -227,11 +227,19 @@ a:hover {
 .app-dropdown-item {
     font-size: 0.85rem;
     text-decoration: none;
+    color: var(--navbar-text-color); /* Ensure visibility in both modes */
+    font-weight: 500; /* Improved readability */
 }
 
 .app-nav-link:hover,
 .app-dropdown-item:hover {
     text-decoration: none;
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle hover effect for visibility */
+}
+
+.dark-mode .app-nav-link:hover,
+.dark-mode .app-dropdown-item:hover {
+    background-color: rgba(0, 0, 0, 0.2); /* Adjusted for dark mode */
 }
 
 .btn-primary {
@@ -412,7 +420,7 @@ a:hover {
     background: var(--button-primary-bg);
     color: white;
     border: none;
-    padding: 10px 20px; /* Explicit padding */
+    padding: 12px 24px; /* Increased padding for better appearance */
     border-radius: 10px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -448,7 +456,7 @@ a:hover {
     background: var(--button-secondary-bg-light-gradient);
     color: var(--button-secondary-border);
     border: 2px solid var(--button-secondary-border);
-    padding: 10px 20px; /* Explicit padding */
+    padding: 12px 24px; /* Increased padding for better appearance */
     border-radius: 10px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -490,12 +498,11 @@ a:hover {
     width: fit-content;
 }
 
-/* Center buttons in cards */
+/* Center buttons in cards with adjusted margin */
 .card .btn-primary, .card .btn-secondary {
     display: block;
-    margin: 0 auto;
+    margin: 12px auto 8px; /* Adjusted to shift up slightly */
     width: fit-content;
-    margin-top: 16px;
 }
 
 /* --- Header Message --- */
@@ -507,13 +514,18 @@ a:hover {
     font-size: 0.85rem;
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid var(--alert-info-border);
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Match navbar border */
     animation: fadeInThenOut 5s ease-in-out forwards;
     opacity: 0;
     transform: translateY(-10px);
     position: fixed;
-    top: 0; /* Moved to topmost part of the screen */
+    top: 0; /* Topmost part of the screen */
     z-index: 1001; /* Above navbar */
+}
+
+.dark-mode .header-message {
+    background: var(--navbar-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Match dark mode navbar border */
 }
 
 @keyframes fadeInThenOut {
@@ -1092,6 +1104,8 @@ a:hover {
         width: 100%;
         padding: 12px 16px;
         border-radius: 5px;
+        color: var(--navbar-text-color); /* Ensure visibility */
+        background-color: rgba(255, 255, 255, 0.05); /* Slight background for contrast */
     }
     .app-navbar .app-nav-link:hover {
         background-color: rgba(255, 255, 255, 0.1);
@@ -1107,7 +1121,10 @@ a:hover {
     .dark-mode .app-navbar .navbar-collapse {
         background-color: var(--navbar-bg);
     }
-    .dark-mode .app-navbar .app-nav-link:hover {
+    .dark-mode .app-navbar .app-nav-link {
+        background-color: rgba(0, 0, 0, 0.1); /* Adjusted for dark mode visibility */
+    }
+    .dark-mode .app-nav-link:hover {
         background-color: rgba(0, 0, 0, 0.2);
     }
     .dark-mode .app-dropdown-menu {
