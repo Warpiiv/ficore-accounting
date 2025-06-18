@@ -2,8 +2,8 @@
 :root {
     --background-main: #F2EFEA;
     --card-bg: #ffffff;
-    --button-primary-bg: #cc5018;
-    --button-primary-hover: #b88a44;
+    --button-primary-bg:#b88a44;
+    --button-primary-hover: #917243;
     --button-secondary-bg-light-gradient: linear-gradient(to bottom, white, #f8faff);
     --button-secondary-border: #3A86FF;
     --button-secondary-hover: #e8f0ff;
@@ -49,7 +49,7 @@
     --background-main: #0f172a;
     --card-bg: #1e293b;
     --button-primary-bg: #4C78C9;
-    --button-primary-hover: #b88a44;
+    --button-primary-hover: #917243;
     --button-secondary-bg-dark-gradient: linear-gradient(to bottom, #1e293b, #1a202c);
     --button-secondary-border: #63B3ED;
     --button-secondary-hover: #334155;
