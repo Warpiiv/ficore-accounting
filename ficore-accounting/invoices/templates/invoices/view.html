@@ -6,36 +6,30 @@
     <div class="card">
         <div class="card-body">
             <div class="mb-4">
-                {# Removed Tailwind grid classes like 'grid-cols-1 md:grid-cols-4 gap-4' and replaced with a custom 'grid-form' class #}
                 <form class="grid grid-form" method="GET" action="{{ url_for('invoices.invoice_dashboard') }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div>
-                        {# Removed Tailwind classes like 'block text-sm font-medium' #}
                         <label class="form-label text-color">{{ trans('status') | default('Status') }}</label>
-                        <select name="status" id="status_filter" class="form-control"> {# Added id for potential JS filtering #}
+                        <select name="status" id="status_filter" class="form-control">
                             <option value="">{{ trans('all') | default('All') }}</option>
                             <option value="pending" {{ 'selected' if status_filter == 'pending' else '' }}>{{ trans('pending') | default('Pending') }}</option>
                             <option value="settled" {{ 'selected' if status_filter == 'settled' else '' }}>{{ trans('settled') | default('Settled') }}</option>
                         </select>
                     </div>
                     <div>
-                        {# Removed Tailwind classes like 'block text-sm font-medium' #}
                         <label class="form-label text-color">{{ trans('customer_name') | default('Customer Name') }}</label>
                         <input type="text" name="customer" id="customer_filter" class="form-control" value="{{ customer_filter or '' }}">
                     </div>
                     <div>
-                        {# Removed Tailwind classes like 'block text-sm font-medium' #}
                         <label class="form-label text-color">{{ trans('start_date') | default('Start Date') }}</label>
                         <input type="date" name="start_date" id="start_date_filter" class="form-control" value="{{ start_date or '' }}">
                     </div>
                     <div>
-                        {# Removed Tailwind classes like 'block text-sm font-medium' #}
                         <label class="form-label text-color">{{ trans('end_date') | default('End Date') }}</label>
                         <input type="date" name="end_date" id="end_date_filter" class="form-control" value="{{ end_date or '' }}">
                     </div>
-                    {# Removed Tailwind 'flex items-end' and added a custom 'form-buttons-group' class #}
                     <div class="form-buttons-group">
-                        <button type="submit" class="btn btn-primary me-2">{{ trans('filter') | default('Filter') }}</button> {# Changed mr-2 to me-2 for consistency #}
+                        <button type="submit" class="btn btn-primary me-2">{{ trans('filter') | default('Filter') }}</button>
                         <a href="{{ url_for('invoices.export_invoices_csv') }}" class="btn btn-secondary">{{ trans('export_csv') | default('Export to CSV') }}</a>
                     </div>
                 </form>
@@ -47,42 +41,38 @@
             </div>
             {% if invoices %}
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>{{ trans('invoice_number') | default('Invoice Number') }}</th>
-                                <th>{{ trans('customer_name') | default('Customer Name') }}</th>
-                                <th>{{ trans('description') | default('Description') }}</th>
+                                <th class="d-none d-md-table-cell">{{ trans('invoice_number') | default('Invoice Number') }}</th>
+                                <th class="d-md-table-cell">{{ trans('customer_name') | default('Customer Name') }}</th>
+                                <th class="d-md-table-cell">{{ trans('description') | default('Description') }}</th>
                                 <th>{{ trans('amount') | default('Amount') }}</th>
                                 <th>{{ trans('status') | default('Status') }}</th>
-                                <th>{{ trans('created_at') | default('Created At') }}</th>
-                                <th>{{ trans('due_date') | default('Due Date') }}</th>
-                                <th>{{ trans('settled_date') | default('Settled Date') }}</th>
+                                <th class="d-none d-md-table-cell">{{ trans('created_at') | default('Created At') }}</th>
+                                <th class="d-none d-md-table-cell">{{ trans('due_date') | default('Due Date') }}</th>
+                                <th class="d-none d-md-table-cell">{{ trans('settled_date') | default('Settled Date') }}</th>
                                 <th>{{ trans('actions') | default('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for invoice in invoices %}
-                                <tr class="{{ 'row-overdue' if invoice.is_overdue else 'row-pending' if invoice.status == 'pending' else 'row-settled' }}">
-                                    <td class="text-color">{{ invoice.invoice_number }}</td>
-                                    <td class="text-color">{{ invoice.customer_name }}</td>
-                                    <td class="text-color">{{ invoice.description }}</td>
+                                <tr class="{{ 'row-overdue' if invoice.is_overdue else 'row-pending' if invoice.status == 'pending' else 'row-settled' }}" data-bs-toggle="modal" data-bs-target="#invoiceDetailsModal{{ invoice._id }}">
+                                    <td class="text-color d-none d-md-table-cell">{{ invoice.invoice_number }}</td>
+                                    <td class="text-color text-truncate invoice-customer-name">{{ invoice.customer_name }}</td>
+                                    <td class="text-color text-truncate invoice-description d-md-table-cell">{{ invoice.description }}</td>
                                     <td class="amount-highlight">{{ invoice.amount | format_currency }}</td>
                                     <td class="text-color">{{ trans(invoice.status) | default(invoice.status | capitalize) }}</td>
-                                    <td class="text-color">{{ invoice.created_at | format_datetime }}</td>
-                                    <td class="text-color">{{ invoice.due_date | format_date if invoice.due_date else '-' }}</td>
-                                    <td class="text-color">{{ invoice.settled_date | format_date if invoice.settled_date else '-' }}</td>
+                                    <td class="text-color d-none d-md-table-cell">{{ invoice.created_at | format_datetime }}</td>
+                                    <td class="text-color d-none d-md-table-cell">{{ invoice.due_date | format_date if invoice.due_date else '-' }}</td>
+                                    <td class="text-color d-none d-md-table-cell">{{ invoice.settled_date | format_date if invoice.settled_date else '-' }}</td>
                                     <td>
-                                        <a href="{{ url_for('invoices.update_invoice', invoice_id=invoice._id) }}" class="btn btn-sm btn-primary">
-                                            {{ trans('edit') | default('Edit') }}
+                                        <a href="{{ url_for('invoices.update_invoice', invoice_id=invoice._id) }}" class="btn btn-sm btn-primary p-1">
+                                            <i class="bi bi-pencil"></i>
                                         </a>
-                                        <form action="{{ url_for('invoices.delete_invoice', invoice_id=invoice._id) }}" method="POST" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            {# Replaced confirm() with a custom modal for deletion #}
-                                            <button type="button" class="btn btn-sm btn-danger delete-invoice-btn" data-invoice-id="{{ invoice._id }}">
-                                                {{ trans('delete') | default('Delete') }}
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn btn-sm btn-danger p-1 delete-invoice-btn" data-invoice-id="{{ invoice._id }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -96,30 +86,56 @@
     </div>
 </div>
 
-{# Modal for delete confirmation, added at the end of content block #}
-<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteConfirmationModalLabel">{{ trans('confirm_delete') | default('Confirm Delete') }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close') | default('Close') }}"></button>
-      </div>
-      <div class="modal-body">
-        {{ trans('are_you_sure_delete_invoice') | default('Are you sure you want to delete this invoice?') }}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_cancel') | default('Cancel') }}</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">{{ trans('delete') | default('Delete') }}</button>
-      </div>
+<!-- Details Modal for Each Invoice -->
+{% for invoice in invoices %}
+<div class="modal fade" id="invoiceDetailsModal{{ invoice._id }}" tabindex="-1" aria-labelledby="invoiceDetailsModalLabel{{ invoice._id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invoiceDetailsModalLabel{{ invoice._id }}">{{ trans('invoice_details') | default('Invoice Details') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close') | default('Close') }}"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>{{ trans('invoice_number') | default('Invoice Number') }}:</strong> {{ invoice.invoice_number }}</p>
+                <p><strong>{{ trans('customer_name') | default('Customer Name') }}:</strong> {{ invoice.customer_name }}</p>
+                <p><strong>{{ trans('description') | default('Description') }}:</strong> {{ invoice.description }}</p>
+                <p><strong>{{ trans('amount') | default('Amount') }}:</strong> {{ invoice.amount | format_currency }}</p>
+                <p><strong>{{ trans('status') | default('Status') }}:</strong> {{ trans(invoice.status) | default(invoice.status | capitalize) }}</p>
+                <p><strong>{{ trans('created_at') | default('Created At') }}:</strong> {{ invoice.created_at | format_datetime }}</p>
+                <p><strong>{{ trans('due_date') | default('Due Date') }}:</strong> {{ invoice.due_date | format_date if invoice.due_date else '-' }}</p>
+                <p><strong>{{ trans('settled_date') | default('Settled Date') }}:</strong> {{ invoice.settled_date | format_date if invoice.settled_date else '-' }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_close') | default('Close') }}</button>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
+{% endfor %}
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">{{ trans('confirm_delete') | default('Confirm Delete') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close') | default('Close') }}"></button>
+            </div>
+            <div class="modal-body">
+                {{ trans('are_you_sure_delete_invoice') | default('Are you sure you want to delete this invoice?') }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_cancel') | default('Cancel') }}</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">{{ trans('delete') | default('Delete') }}</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Handle invoice deletion with a custom modal instead of confirm()
         let invoiceToDeleteId = null;
         const deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
