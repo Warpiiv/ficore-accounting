@@ -68,10 +68,18 @@ def invoice_dashboard():
             due_date = invoice.get('due_date')
             if isinstance(due_date, str):
                 try:
-                    due_date = datetime.strptime(due_date, '%Y-%m-%d')
+                    due_date = datetime.strptime(due_date, '%Y-%m-%d').date()
                 except ValueError:
                     due_date = None
-            invoice['is_overdue'] = invoice['status'] == 'pending' and due_date and due_date < datetime.utcnow()
+            settled_date = invoice.get('settled_date')
+            if isinstance(settled_date, str):
+                try:
+                    settled_date = datetime.strptime(settled_date, '%Y-%m-%d').date()
+                except ValueError:
+                    settled_date = None
+            invoice['due_date'] = due_date
+            invoice['settled_date'] = settled_date
+            invoice['is_overdue'] = invoice['status'] == 'pending' and due_date and due_date < date.today()
         return render_template('invoices/view.html', invoices=invoices, 
                             status_filter=status_filter, customer_filter=customer_filter,
                             start_date=start_date, end_date=end_date)
@@ -220,15 +228,30 @@ def export_invoices_csv():
             created_at = invoice.get('created_at')
             due_date = invoice.get('due_date')
             settled_date = invoice.get('settled_date')
+            if isinstance(created_at, str):
+                try:
+                    created_at = datetime.strptime(created_at, '%Y-%m-%d')
+                except ValueError:
+                    created_at = None
+            if isinstance(due_date, str):
+                try:
+                    due_date = datetime.strptime(due_date, '%Y-%m-%d').date()
+                except ValueError:
+                    due_date = None
+            if isinstance(settled_date, str):
+                try:
+                    settled_date = datetime.strptime(settled_date, '%Y-%m-%d').date()
+                except ValueError:
+                    settled_date = None
             writer.writerow([
                 invoice.get('invoice_number', ''),
                 invoice.get('customer_name', ''),
                 invoice.get('description', ''),
                 invoice.get('amount', 0),
                 invoice.get('status', ''),
-                created_at.strftime('%Y-%m-%d') if isinstance(created_at, datetime) else '',
-                due_date.strftime('%Y-%m-%d') if isinstance(due_date, datetime) else due_date or '',
-                settled_date.strftime('%Y-%m-%d') if isinstance(settled_date, datetime) else settled_date or ''
+                created_at.strftime('%Y-%m-%d') if created_at else '',
+                due_date.strftime('%Y-%m-%d') if due_date else '',
+                settled_date.strftime('%Y-%m-%d') if settled_date else ''
             ])
         output.seek(0)
         return send_file(
