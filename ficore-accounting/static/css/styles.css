@@ -207,7 +207,7 @@ main {
     padding: var(--navbar-padding-vertical) 2rem; /* Using variable */
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; /* Ensures space between logo and right-aligned group */
     width: 100%;
     box-sizing: border-box;
     position: fixed;
@@ -234,9 +234,15 @@ main {
     color: var(--accent-blue);
 }
 
+/* Flex container for the language, mode, and toggler buttons */
+.app-navbar .d-flex.align-items-center.ms-auto {
+    gap: var(--spacing-xs); /* Adds consistent spacing between the buttons */
+}
+
 /* Styles for the language toggle button */
 .language-toggle-btn {
-    /* Add any specific styles for this button if needed, beyond .btn-primary */
+    /* No specific styles needed here, as Bootstrap's .btn-primary already applies */
+    /* If you need to override Bootstrap's margin, do it within the .d-flex parent's gap */
 }
 
 /* Styles for the mode toggle button */
@@ -264,17 +270,14 @@ main {
     border-bottom: 1px solid #444; /* A slightly darker grey for dark mode */
 }
 
----
+/* Custom styles for the hamburger toggler */
 .app-toggler {
-    display: flex; /* Allows for centering the icon if it's a child element */
-    align-items: center; /* Vertically centers the icon */
-    justify-content: center; /* Horizontally centers the icon */
+    /* Bootstrap's default .navbar-toggler already applies display: flex, etc. */
     padding: var(--spacing-xs); /* Small padding around the toggler for easier clicking */
     background: none; /* No background by default */
     border: none; /* No border by default */
     cursor: pointer; /* Indicates it's clickable */
-    font-size: 1.5rem; /* Adjust icon size if using an SVG or font icon directly */
-    color: var(--navbar-text-color); /* Color of the hamburger icon */
+    color: var(--navbar-text-color); /* Color of the hamburger icon for consistency */
     transition: color 0.2s ease, background-color 0.2s ease; /* Smooth transitions for hover */
     border-radius: 5px; /* Slightly rounded corners for a softer look */
 }
@@ -292,7 +295,9 @@ main {
     outline-offset: 2px;
 }
 
-.app-toggler .navbar-toggler-icon { /* Assuming this is the element that draws the lines */
+/* Specific styles for the Bootstrap navbar-toggler-icon to draw the lines */
+.app-toggler .navbar-toggler-icon {
+    background-image: none; /* Remove Bootstrap's default SVG background */
     display: block;
     position: relative;
     width: 24px; /* Width of the hamburger icon */
@@ -959,6 +964,44 @@ main {
     }
 }
 
+@media (min-width: 992px) { /* Adjust breakpoint for navbar collapse */
+    /* On larger screens, hide the app-toggler */
+    .app-navbar .app-toggler {
+        display: none;
+    }
+
+    /* On larger screens, the d-flex container for toggles might need adjusting if it impacts the desktop menu spacing */
+    .app-navbar .d-flex.align-items-center.ms-auto {
+        /* On desktop, if the nav links are also ms-auto, they might compete. */
+        /* It's common to have the logo on the left, and nav links + other utilities on the right */
+        /* If issues arise, we might need to separate them or adjust `justify-content` on `.container-fluid` */
+        /* For now, ensure language/mode toggles are visible and spaced well on desktop */
+        margin-right: var(--spacing-sm); /* Add some space if the nav links are directly next to it */
+    }
+
+    /* Ensure the collapse div is visible and correctly laid out on desktop */
+    .app-navbar .navbar-collapse.collapse {
+        display: flex !important; /* Override Bootstrap's default collapse hidden state */
+        flex-grow: 1; /* Allow it to grow and take available space */
+    }
+
+    .app-navbar .navbar-nav {
+        flex-direction: row; /* Ensure nav items are in a row */
+        align-items: center;
+        margin-left: auto !important; /* Push nav items to the right */
+        gap: var(--spacing-md); /* Spacing between top-level nav items */
+    }
+
+    .app-navbar .app-nav-item .dropdown-menu {
+        position: absolute; /* Ensure dropdown menu positions correctly */
+    }
+
+    .app-navbar .app-nav-item:not(:last-child) {
+        margin-right: var(--spacing-sm); /* Add some margin between nav items for spacing */
+    }
+}
+
+
 @media (min-width: 1024px) {
     .container {
         max-width: 1400px;
@@ -987,6 +1030,74 @@ main {
         grid-template-columns: repeat(4, 1fr); /* Example: 4 columns on large screens */
     }
 }
+
+@media (max-width: 991.98px) { /* Below lg breakpoint (mobile/tablet) */
+    .app-navbar .navbar-collapse {
+        /* When collapsed, it should be a column */
+        width: 100%; /* Take full width */
+        margin-top: var(--spacing-sm); /* Space below toggles */
+        position: absolute;
+        top: 100%; /* Position below the main navbar content */
+        left: 0;
+        background-color: var(--navbar-bg); /* Match navbar background */
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding: var(--spacing-sm) 0; /* Padding inside the collapsed menu */
+    }
+
+    .app-navbar .navbar-nav {
+        flex-direction: column; /* Stack nav items vertically */
+        align-items: flex-start; /* Align items to the left */
+        width: 100%;
+        padding: 0 var(--spacing-sm);
+    }
+
+    .app-navbar .app-nav-item {
+        width: 100%; /* Full width for clickable area */
+        margin-right: 0; /* Remove desktop margin */
+        margin-bottom: 0.25rem; /* Small vertical spacing */
+    }
+
+    .app-navbar .app-nav-link {
+        width: 100%;
+        padding: 0.75rem var(--spacing-sm); /* Larger clickable area */
+        border-radius: 5px;
+    }
+
+    .app-navbar .app-nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .app-dropdown-menu {
+        width: 100%; /* Make dropdowns full width in collapsed menu */
+        border: none; /* Remove border in collapsed menu for cleaner look */
+        box-shadow: none; /* Remove shadow */
+        border-radius: 0; /* No border radius */
+        background-color: rgba(255, 255, 255, 0.05); /* Slightly different background for sub-items */
+        padding: 0; /* Remove default padding for sub-menu */
+    }
+
+    .dark-mode .app-navbar .navbar-collapse {
+        background-color: var(--navbar-bg);
+    }
+
+    .dark-mode .app-navbar .app-nav-link:hover {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .dark-mode .app-dropdown-menu {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Important: Ensure the d-lg-block class on #navbarNav is correctly overridden */
+    .app-navbar .navbar-collapse.d-none.d-lg-block {
+        display: none !important; /* Force hide on small screens initially */
+    }
+    .app-navbar .navbar-collapse.collapse.show {
+        display: block !important; /* Override when shown by Bootstrap's JS */
+    }
+}
+
 
 @media (max-width: 360px) {
     .app-navbar-brand {
