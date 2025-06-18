@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}{{ trans('track_transaction') | default('Add Transaction') }}{% endblock %}
+{% block title %}{{ trans('add_transaction') | default('Add Transaction') }}{% endblock %}
 {% block content %}
 <div class="container my-5">
     <h1 class="text-center mb-4 text-color">{{ transaction_id | default(trans('add_transaction') | default('Add Transaction')) if transaction_id else trans('add_transaction') | default('Add Transaction') }}</h1>
