@@ -423,6 +423,18 @@ TRANSLATIONS = {
         'filter_by_date': 'Tace ta Kwanan Wata',
         'filter_by_category': 'Tace ta Rukuni',
         'filter_by_description': 'Tace ta Bayani',
+        'core_toggle_menu': 'Canja Menu',
+        'core_invoices': 'Takardun Kudi',
+        'core_cancel': 'Soke',
+        
+        # Module: invoice
+        'invoice_details': 'Bayanin Takardun Jira',
+        'are_you_sure_delete_invoice': 'Kana da tabbacin kana son share wannan Takardar?',
+        
+        # Module: transaction
+        'track_transaction': 'Bibiyar Ma\'amala',
+        'transaction_details': 'Bayanin Ma\'amala',
+        'are_you_sure_delete_transaction': 'Kana da tabbacin kana son share wannan ma\'amala?',
 
         # Financial
         'create_invoice': 'Ƙirƙiri Takardar Jira',
