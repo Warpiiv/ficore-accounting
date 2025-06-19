@@ -65,12 +65,8 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     try:
-        # Handle both ObjectId and string _id (for admin)
-        try:
-            query_id = ObjectId(user_id)
-        except:
-            query_id = user_id
-        user_data = mongo.db.users.find_one({'_id': query_id})
+        # Query directly with user_id as string, since _id is a string (username)
+        user_data = mongo.db.users.find_one({'_id': user_id})
         if user_data:
             return User(str(user_data['_id']), user_data.get('email'))
         return None
@@ -418,7 +414,7 @@ def general_dashboard():
             if isinstance(invoice.get('due_date'), str):
                 try:
                     invoice['due_date'] = datetime.strptime(invoice['due_date'], '%Y-%m-%d')
-                except ValueError):
+                except ValueError:
                     pass
             if isinstance(invoice.get('settled_date'), str):
                 try:
@@ -465,6 +461,6 @@ with app.app_context():
         logger.info("Database initialization skipped in production environment")
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000'))
+    port = int(os.getenv('PORT', 5000))
     logger.info(f"Starting Flask app on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False)
