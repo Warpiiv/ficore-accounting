@@ -13,7 +13,7 @@ import re
 
 logger = logging.getLogger(__name__)
 
-users_bp = Blueprint('users', __name__, template_folder='templates')
+users_bp = Blueprint('users', __name__, template_folder='templates/users')
 
 # Username validation regex: alphanumeric, underscores, 3-50 characters
 USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_]{3,50}$')
