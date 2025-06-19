@@ -348,7 +348,12 @@ def check_wizard_completion():
     if (current_user.is_authenticated and 
         request.endpoint not in ['users.setup_wizard', 'users.logout', 'users.login', 
                                'users.signup', 'users.forgot_password', 'users.reset_password']):
-        mongo = current_app.extensions['pymongo']
-        user = mongo.db.users.find_one({'_id': current_user.id})
-        if not user.get('setup_complete', False):
-            return redirect(url_for('users.setup_wizard'))
+        try:
+            mongo = current_app.extensions['pymongo']
+            user = mongo.db.users.find_one({'_id': current_user.id})
+            if not user.get('setup_complete', False):
+                return redirect(url_for('users.setup_wizard'))
+        except Exception as e:
+            logger.error(f"Error checking wizard completion: {str(e)}")
+            flash(trans_function('core_something_went_wrong'), 'danger')
+            return redirect(url_for('index')), 500
