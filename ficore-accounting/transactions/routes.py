@@ -11,7 +11,7 @@ from bson import ObjectId
 
 logger = logging.getLogger(__name__)
 
-transactions_bp = Blueprint('transactions', __name__, template_folder='templates')
+transactions_bp = Blueprint('transactions', __name__, template_folder='templates/transactions')
 
 class TransactionForm(FlaskForm):
     type = SelectField('Type', choices=[
