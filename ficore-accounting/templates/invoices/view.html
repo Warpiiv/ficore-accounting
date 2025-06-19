@@ -32,11 +32,11 @@
                     </div>
                     <div>
                         <label class="form-label text-color" for="start_date_filter">{{ trans('start_date', default='Start Date') }}</label>
-                        <input type="date" name="start_date" id="start_date_filter" class="form-control" value="{{ start_date or '' }}">
+                        <input type="date" name="start_date" id="start_date_filter" class="form-control" value="{{ start_date_filter or '' }}">
                     </div>
                     <div>
                         <label class="form-label text-color" for="end_date_filter">{{ trans('end_date', default='End Date') }}</label>
-                        <input type="date" name="end_date" id="end_date_filter" class="form-control" value="{{ end_date or '' }}">
+                        <input type="date" name="end_date" id="end_date_filter" class="form-control" value="{{ end_date_filter or '' }}">
                     </div>
                     <div class="form-buttons-group">
                         <button type="submit" class="btn btn-primary me-2">{{ trans('filter', default='Filter') }}</button>
