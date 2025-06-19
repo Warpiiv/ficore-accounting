@@ -62,6 +62,18 @@ class User(UserMixin):
         self.id = id
         self.email = email
 
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def is_authenticated(self):
+        return True
+
+    def get_id(self):
+        return self.id
+
 @login_manager.user_loader
 def load_user(user_id):
     try:
@@ -164,6 +176,10 @@ def setup_database():
         db = mongo.db
         collections = db.list_collection_names()
 
+        # Test MongoDB connection
+        db.command('ping')
+        logger.info("MongoDB connection successful")
+
         # Clean up shared 'guest' data
         try:
             db.invoices.delete_many({'user_id': 'guest'})
@@ -212,21 +228,24 @@ def setup_database():
         except Exception as e:
             logger.error(f"Error updating users with setup_complete field: {str(e)}")
 
-        if not db.users.find_one({'_id': 'admin'}):
+        # Create admin user from environment variables
+        admin_username = os.getenv('ADMIN_USERNAME', 'admin')
+        admin_email = os.getenv('ADMIN_EMAIL', 'admin@ficoreminirecords.com')
+        admin_password = os.getenv('ADMIN_PASSWORD', 'Admin123!')
+        if not db.users.find_one({'_id': admin_username}):
             try:
-                admin_password = os.getenv('ADMIN_PASSWORD', 'Admin123!')
                 db.users.insert_one({
-                    '_id': 'admin',
-                    'email': 'ficoreafrica@gmail.com',
+                    '_id': admin_username.lower(),
+                    'email': admin_email.lower(),
                     'password': generate_password_hash(admin_password),
                     'dark_mode': False,
                     'is_admin': True,
                     'setup_complete': False,
                     'created_at': datetime.utcnow()
                 })
-                logger.info(f"Default admin user created with password: {admin_password}")
+                logger.info(f"Default admin user created: username={admin_username}, email={admin_email}")
             except errors.DuplicateKeyError:
-                logger.info("Admin user already exists, skipping creation")
+                logger.info(f"Admin user {admin_username} already exists, skipping creation")
             except Exception as e:
                 logger.error(f"Error creating admin user: {str(e)}")
 
