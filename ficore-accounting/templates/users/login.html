@@ -4,6 +4,17 @@
 <div class="container">
     <div class="form-container">
         <h1 class="text-center mb-4 text-color">{{ trans('core_login') | default('Login') }}</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-{{ messages[0][1] }} alert-dismissible fade show" role="alert">
+                    {{ messages[0][0] }}
+                    {% if messages[0][1] == 'danger' %}
+                        <p>Please ensure your username and password are correct. If you just registered, use the exact username and email you provided.</p>
+                    {% endif %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+        {% endwith %}
         <form class="validate-form" method="POST" action="{{ url_for('users.login') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
@@ -19,6 +30,7 @@
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">{{ trans('core_login') | default('Login') }}</button>
             </div>
+            <div class8
             <div class="text-center mt-3">
                 <a href="{{ url_for('users.forgot_password') }}" class="btn-link text-color">{{ trans('forgot_password') | default('Forgot Password?') }}</a>
                 <br>
