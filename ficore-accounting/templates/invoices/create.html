@@ -1,54 +1,115 @@
 {% extends 'base.html' %}
-{% block title %}{{ trans('create_invoice') | default('Create Invoice') }}{% endblock %}
+{% block title %}
+    {{ trans('create_invoice', default='Create Invoice') if not invoice_id else trans('update_invoice', default='Update Invoice') }}
+{% endblock %}
 {% block content %}
+{% if not current_user.is_authenticated %}
+    <script>window.location.href = "{{ url_for('users.login') }}";</script>
+{% else %}
 <div class="container my-5">
-    <h1 class="text-center mb-4 text-color">{{ invoice_id | default(trans('create_invoice') | default('Create Invoice')) if invoice_id else trans('create_invoice') | default('Create Invoice') }}</h1>
+    <h1 class="text-center mb-4 text-color">
+        {{ trans('update_invoice', default='Update Invoice') if invoice_id else trans('create_invoice', default='Create Invoice') }}
+    </h1>
+    {% if current_user.is_admin %}
+    <div class="alert alert-info text-center">
+        {{ trans('admin_note', default='You are creating/updating this invoice as an admin. It will be assigned to your user ID unless specified otherwise.') }}
+    </div>
+    {% endif %}
     <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-body">
-            <form class="validate-form" method="POST" action="{{ url_for('invoices.update_invoice', invoice_id=invoice_id) if invoice_id else url_for('invoices.create_invoice') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <form class="validate-form" method="POST" action="{{ url_for('invoices.update', invoice_id=invoice_id) if invoice_id else url_for('invoices.create') }}" novalidate>
+                {{ form.csrf_token }}
                 <div class="form-group mb-3">
-                    <label for="customer_name" class="form-label">{{ trans('customer_name') | default('Customer Name') }}</label>
-                    <input type="text" name="customer_name" id="customer_name" class="form-control" value="{{ form.customer_name.data or '' }}" required>
-                    <div class="invalid-feedback">{{ form.customer_name.errors[0] if form.customer_name.errors else trans('required_field') | default('This field is required') }}</div>
+                    <label for="customer_name" class="form-label">{{ trans('customer_name', default='Customer Name') }}</label>
+                    <input type="text" name="customer_name" id="customer_name" class="form-control" value="{{ form.customer_name.data or '' }}" required aria-describedby="customer_name_error">
+                    {% if form.customer_name.errors %}
+                        <div id="customer_name_error" class="invalid-feedback d-block">
+                            {% for error in form.customer_name.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group mb-3">
-                    <label for="description" class="form-label">{{ trans('description') | default('Description') }}</label>
-                    <textarea name="description" id="description" class="form-control" required>{{ form.description.data or '' }}</textarea>
-                    <div class="invalid-feedback">{{ form.description.errors[0] if form.description.errors else trans('required_field') | default('This field is required') }}</div>
+                    <label for="description" class="form-label">{{ trans('description', default='Description') }}</label>
+                    <textarea name="description" id="description" class="form-control" required aria-describedby="description_error">{{ form.description.data or '' }}</textarea>
+                    {% if form.description.errors %}
+                        <div id="description_error" class="invalid-feedback d-block">
+                            {% for error in form.description.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group mb-3">
-                    <label for="amount" class="form-label">{{ trans('amount') | default('Amount (₦)') }}</label>
-                    <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0" required>
-                    <div class="invalid-feedback">{{ form.amount.errors[0] if form.amount.errors else trans('required_field') | default('This field is required') }}</div>
+                    <label for="amount" class="form-label">{{ trans('amount', default='Amount (₦)') }}</label>
+                    <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0" required aria-describedby="amount_error">
+                    {% if form.amount.errors %}
+                        <div id="amount_error" class="invalid-feedback d-block">
+                            {% for error in form.amount.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group mb-3">
-                    <label for="status" class="form-label">{{ trans('status') | default('Status') }}</label>
-                    <select name="status" id="status" class="form-control">
-                        <option value="pending" {{ 'selected' if form.status.data == 'pending' else '' }}>{{ trans('pending') | default('Pending') }}</option>
-                        <option value="settled" {{ 'selected' if form.status.data == 'settled' else '' }}>{{ trans('settled') | default('Settled') }}</option>
+                    <label for="status" class="form-label">{{ trans('status', default='Status') }}</label>
+                    <select name="status" id="status" class="form-control" aria-describedby="status_error">
+                        <option value="pending" {{ 'selected' if form.status.data == 'pending' else '' }}>{{ trans('pending', default='Pending') }}</option>
+                        <option value="settled" {{ 'selected' if form.status.data == 'settled' else '' }}>{{ trans('settled', default='Settled') }}</option>
                     </select>
+                    {% if form.status.errors %}
+                        <div id="status_error" class="invalid-feedback d-block">
+                            {% for error in form.status.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group mb-3">
-                    <label for="due_date" class="form-label">{{ trans('due_date') | default('Due Date') }}</label>
-                    <input type="date" name="due_date" id="due_date" class="form-control" value="{{ form.due_date.data | format_date if form.due_date.data else '' }}">
+                    <label for="due_date" class="form-label">{{ trans('due_date', default='Due Date') }}</label>
+                    <input type="date" name="due_date" id="due_date" class="form-control" value="{{ form.due_date.data | format_date if form.due_date.data else '' }}" placeholder="YYYY-MM-DD" aria-describedby="due_date_error">
+                    {% if form.due_date.errors %}
+                        <div id="due_date_error" class="invalid-feedback d-block">
+                            {% for error in form.due_date.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                {% if form.status.data == 'settled' %}
-                <div class="form-group mb-3">
-                    <label for="settled_date" class="form-label">{{ trans('settled_date') | default('Settled Date') }}</label>
-                    <input type="date" name="settled_date" id="settled_date" class="form-control" value="{{ form.settled_date.data | format_date if form.settled_date.data else '' }}">
+                <div class="form-group mb-3" id="settled_date_group" {% if form.status.data != 'settled' %}style="display: none;" aria-hidden="true"{% else %}aria-hidden="false"{% endif %}>
+                    <label for="settled_date" class="form-label">{{ trans('settled_date', default='Settled Date') }}</label>
+                    <input type="date" name="settled_date" id="settled_date" class="form-control" value="{{ form.settled_date.data | format_date if form.settled_date.data else '' }}" placeholder="YYYY-MM-DD" aria-describedby="settled_date_error">
+                    {% if form.settled_date.errors %}
+                        <div id="settled_date_error" class="invalid-feedback d-block">
+                            {% for error in form.settled_date.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">{{ trans('save') | default('Save') }}</button>
+                    <button type="submit" id="submit-btn" class="btn btn-primary">{{ trans('save', default='Submit') }}</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endif %}
+{% endblock %}
+{% block extra_scripts %}
 <script>
-    document.getElementById('is_recurring').addEventListener('change', function() {
-        document.getElementById('recurring_period_group').style.display = this.checked ? 'block' : 'none';
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusSelect = document.querySelector('#status');
+        const settledDateGroup = document.querySelector('#settled_date_group');
+        const submitBtn = document.querySelector('#submit-btn');
+
+        // Toggle settled_date visibility based on status
+        function toggleSettledDate() {
+            const isSettled = statusSelect.value === 'settled';
+            settledDateGroup.style.display = isSettled ? 'block' : 'none';
+            settledDateGroup.setAttribute('aria-hidden', !isSettled);
+        }
+
+        // Handle form submission
+        function handleSubmit(event) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ trans('saving', default='Saving...') }}';
+        }
+
+        statusSelect.addEventListener('change', toggleSettledDate);
+        document.querySelector('.validate-form').addEventListener('submit', handleSubmit);
+
+        // Initialize visibility on page load
+        toggleSettledDate();
     });
 </script>
 {% endblock %}
