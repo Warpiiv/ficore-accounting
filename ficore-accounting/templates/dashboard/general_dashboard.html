@@ -1,63 +1,84 @@
-{% extends 'base.html' %}
-{% block title %}{{ trans('general_dashboard') | default('General Dashboard') }}{% endblock %}
+{% extends "base.html" %}
 {% block content %}
-<div class="container my-5">
-    <h1 class="text-center mb-4">{{ trans('general_dashboard') | default('General Dashboard') }}</h1>
-    <div class="card">
-        <div class="card-body">
-            <h2 class="card-title">{{ trans('dashboard_welcome') | default('Welcome to Your Dashboard') }}</h2>
-            <p class="card-text">
-                {{ trans('dashboard_summary') | default('View your recent invoices, transactions, and profile information below.') }}
-            </p>
-            <div class="row">
-                <div class="col-md-6 col-sm-12 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h3 class="card-title">{{ trans('recent_invoices') | default('Recent Invoices') }}</h3>
-                            {% if recent_invoices %}
-                                <ul class="list-group">
-                                    {% for invoice in recent_invoices %}
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span class="text-truncate invoice-id">{{ trans('invoice') | default('Invoice') }} #{{ invoice.invoice_number }}</span>
-                                            <span class="amount-highlight">{{ invoice.amount | format_currency }}</span>
-                                            <span>{{ invoice.created_at | format_datetime }}</span>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p class="text-center text-color">{{ trans('no_invoices') | default('No recent invoices found') }}</p>
-                            {% endif %}
-                            <a href="{{ url_for('invoices.invoice_dashboard') }}" class="btn btn-primary mt-3">
-                                {{ trans('view_all_invoices') | default('View All Invoices') }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-sm-12 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h3 class="card-title">{{ trans('recent_transactions') | default('Recent Transactions') }}</h3>
-                            {% if recent_transactions %}
-                                <ul class="list-group">
-                                    {% for transaction in recent_transactions %}
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span class="text-truncate transaction-id">{{ trans('transaction') | default('Transaction') }} #{{ transaction._id }}</span>
-                                            <span class="amount-highlight">{{ transaction.amount | format_currency }}</span>
-                                            <span>{{ transaction.created_at | format_datetime }}</span>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p class="text-center text-color">{{ trans('no_transactions') | default('No recent transactions found') }}</p>
-                            {% endif %}
-                            <a href="{{ url_for('transactions.transaction_history') }}" class="btn btn-primary mt-3">
-                                {{ trans('view_all_transactions') | default('View All Transactions') }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container mt-5">
+    <h2>{{ trans('dashboard_title', default='Dashboard') }}</h2>
+    {% if current_user.is_authenticated %}
+        {% if current_user.is_admin %}
+            <p class="alert alert-info">{{ trans('admin_view_all_data', default='You are viewing all users\' data as an admin.') }}</p>
+        {% endif %}
+        
+        <h3>{{ trans('recent_invoices', default='Recent Invoices') }}</h3>
+        {% if recent_invoices %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{{ trans('invoice_number', default='Invoice Number') }}</th>
+                        <th>{{ trans('customer_name', default='Customer') }}</th>
+                        <th>{{ trans('amount', default='Amount') }}</th>
+                        <th>{{ trans('status', default='Status') }}</th>
+                        <th>{{ trans('actions', default='Actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in recent_invoices %}
+                        <tr>
+                            <td>{{ invoice.invoice_number }}</td>
+                            <td>{{ invoice.customer_name }}</td>
+                            <td>{{ invoice.amount | format_currency }}</td>
+                            <td>{{ invoice.status | capitalize }}</td>
+                            <td>
+                                {% if not current_user.is_admin or invoice.user_id == current_user.id %}
+                                    <a href="{{ url_for('invoices.update', invoice_id=invoice._id) }}" class="btn btn-sm btn-primary">{{ trans('edit', default='Edit') }}</a>
+                                    <form action="{{ url_for('invoices.delete', invoice_id=invoice._id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ trans('confirm_delete', default='Are you sure?') }}')">{{ trans('delete', default='Delete') }}</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{{ trans('no_invoices', default='No invoices found.') }}</p>
+        {% endif %}
+
+        <h3>{{ trans('recent_transactions', default='Recent Transactions') }}</h3>
+        {% if recent_transactions %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>{{ trans('type', default='Type') }}</th>
+                        <th>{{ trans('category', default='Category') }}</th>
+                        <th>{{ trans('amount', default='Amount') }}</th>
+                        <th>{{ trans('description', default='Description') }}</th>
+                        <th>{{ trans('actions', default='Actions') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in recent_transactions %}
+                        <tr>
+                            <td>{{ transaction.type | capitalize }}</td>
+                            <td>{{ transaction.category | capitalize }}</td>
+                            <td>{{ transaction.amount | format_currency }}</td>
+                            <td>{{ transaction.description }}</td>
+                            <td>
+                                {% if not current_user.is_admin or transaction.user_id == current_user.id %}
+                                    <a href="{{ url_for('transactions.update', transaction_id=transaction._id) }}" class="btn btn-sm btn-primary">{{ trans('edit', default='Edit') }}</a>
+                                    <form action="{{ url_for('transactions.delete', transaction_id=transaction._id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('{{ trans('confirm_delete', default='Are you sure?') }}')">{{ trans('delete', default='Delete') }}</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{{ trans('no_transactions', default='No transactions found.') }}</p>
+        {% endif %}
+    {% else %}
+        <p class="alert alert-warning">{{ trans('login_required', default='Please log in to view your dashboard.') }}</p>
+        <a href="{{ url_for('users.login') }}" class="btn btn-primary">{{ trans('login', default='Log In') }}</a>
+    {% endif %}
 </div>
 {% endblock %}
