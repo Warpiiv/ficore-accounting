@@ -23,7 +23,7 @@
                 <div class="text-center mt-3">
                     <a href="{{ url_for('forgot_password') }}">{{ trans('forgot_password') | default('Forgot Password?') }}</a>
                     <br>
-                    <a href="{{ url_for('signup') }}">{{ trans('create_account') | default('Create an Account') }}</a>
+                    <a href="{{ url_for('users.signup') }}">{{ trans('create_account') | default('Create an Account') }}</a>
                 </div>
             </form>
         </div>
