@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, Response, current_app
+from flask import Blueprint, request, render_template, redirect, url_for, flash, send_file, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, validators, BooleanField
 from flask_login import login_required, current_user
@@ -240,10 +240,11 @@ def export_transactions():
                 created_at.strftime('%Y-%m-%d %H:%M:%S') if created_at else ''
             ])
         output.seek(0)
-        return Response(
-            output.getvalue(),
+        return send_file(
+            output,
             mimetype='text/csv',
-            headers={'Content-Disposition': 'attachment;filename=transactions.csv'}
+            as_attachment=True,
+            download_name=f'transactions_{datetime.utcnow().strftime("%Y%m%d")}.csv'
         )
     except Exception as e:
         logger.error(f"Error exporting transactions: {str(e)}")
