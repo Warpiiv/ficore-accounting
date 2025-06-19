@@ -1,69 +1,130 @@
 {% extends 'base.html' %}
-{% block title %}{{ trans('add_transaction') | default('Add Transaction') }}{% endblock %}
+{% block title %}
+    {{ trans('add_transaction', default='Add Transaction') if not transaction_id else trans('update_transaction', default='Update Transaction') }}
+{% endblock %}
 {% block content %}
+{% if not current_user.is_authenticated %}
+    <script>window.location.href = "{{ url_for('users.login') }}";</script>
+{% else %}
 <div class="container my-5">
-    <h1 class="text-center mb-4 text-color">{{ transaction_id | default(trans('add_transaction') | default('Add Transaction')) if transaction_id else trans('add_transaction') | default('Add Transaction') }}</h1>
+    <h1 class="text-center mb-4 text-color">
+        {{ trans('update_transaction', default='Update Transaction') if transaction_id else trans('add_transaction', default='Add Transaction') }}
+    </h1>
+    {% if current_user.is_admin %}
+    <div class="alert alert-info text-center">
+        {{ trans('admin_note', default='You are creating/updating this transaction as an admin. It will be assigned to your user ID unless specified otherwise.') }}
+    </div>
+    {% endif %}
     <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-body">
-            <form class="validate-form" method="POST" action="{{ url_for('transactions.update_transaction', transaction_id=transaction_id) if transaction_id else url_for('transactions.add_transaction') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <form class="validate-form" method="POST" action="{{ url_for('transactions.update', transaction_id=transaction_id) if transaction_id else url_for('transactions.add') }}" novalidate>
+                {{ form.csrf_token }}
                 <div class="form-group mb-3">
-                    <label for="type" class="form-label">{{ trans('type') | default('Type') }}</label>
-                    <select name="type" id="type" class="form-select" required>
+                    <label for="type" class="form-label">{{ trans('type', default='Type') }}</label>
+                    <select name="type" id="type" class="form-select" required aria-describedby="type_error">
                         {% for value, label in form.type.choices %}
                             <option value="{{ value }}" {% if form.type.data == value %}selected{% endif %}>
-                                {{ trans(value) | default(label) }}
+                                {{ trans(value, default=label) }}
                             </option>
                         {% endfor %}
                     </select>
-                    <div class="invalid-feedback">{{ form.type.errors[0] if form.type.errors else trans('required_field') | default('This field is required') }}</div>
+                    {% if form.type.errors %}
+                        <div id="type_error" class="invalid-feedback d-block">
+                            {% for error in form.type.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group mb-3">
-                    <label for="category" class="form-label">{{ trans('category') | default('Category') }}</label>
-                    <select name="category" id="category" class="form-select" required>
+                    <label for="category" class="form-label">{{ trans('category', default='Category') }}</label>
+                    <select name="category" id="category" class="form-select" required aria-describedby="category_error">
                         {% for value, label in form.category.choices %}
                             <option value="{{ value }}" {% if form.category.data == value %}selected{% endif %}>
-                                {{ trans(value) | default(label) }}
+                                {{ trans(value, default=label) }}
                             </option>
                         {% endfor %}
                     </select>
-                    <div class="invalid-feedback">{{ form.category.errors[0] if form.category.errors else trans('required_field') | default('This field is required') }}</div>
+                    {% if form.category.errors %}
+                        <div id="category_error" class="invalid-feedback d-block">
+                            {% for error in form.category.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group mb-3">
-                    <label for="amount" class="form-label">{{ trans('amount') | default('Amount (₦)') }}</label>
-                    <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0.01" required>
-                    <div class="invalid-feedback">{{ form.amount.errors[0] if form.amount.errors else trans('invalid_amount') | default('Amount must be greater than zero') }}</div>
+                    <label for="amount" class="form-label">{{ trans('amount', default='Amount (₦)') }}</label>
+                    <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0.01" required aria-describedby="amount_error">
+                    {% if form.amount.errors %}
+                        <div id="amount_error" class="invalid-feedback d-block">
+                            {% for error in form.amount.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group mb-3">
-                    <label for="description" class="form-label">{{ trans('description') | default('Description') }}</label>
-                    <textarea name="description" id="description" class="form-control" required>{{ form.description.data or '' }}</textarea>
-                    <div class="invalid-feedback">{{ form.description.errors[0] if form.description.errors else trans('required_field') | default('This field is required') }}</div>
+                    <label for="description" class="form-label">{{ trans('description', default='Description') }}</label>
+                    <textarea name="description" id="description" class="form-control" required aria-describedby="description_error">{{ form.description.data or '' }}</textarea>
+                    {% if form.description.errors %}
+                        <div id="description_error" class="invalid-feedback d-block">
+                            {% for error in form.description.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                {# Removed Tags form group #}
                 <div class="form-group mb-3 form-check">
-                    <input type="checkbox" name="is_recurring" id="is_recurring" class="form-check-input" {% if form.is_recurring.data %}checked{% endif %}>
-                    <label for="is_recurring" class="form-check-label">{{ trans('recurring') | default('Recurring Transaction') }}</label>
+                    <input type="checkbox" name="is_recurring" id="is_recurring" class="form-check-input" {% if form.is_recurring.data %}checked{% endif %} aria-describedby="is_recurring_error">
+                    <label for="is_recurring" class="form-check-label">{{ trans('recurring', default='Recurring Transaction') }}</label>
+                    {% if form.is_recurring.errors %}
+                        <div id="is_recurring_error" class="invalid-feedback d-block">
+                            {% for error in form.is_recurring.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="form-group mb-3" id="recurring_period_group" {% if not form.is_recurring.data %}style="display: none;"{% endif %}>
-                    <label for="recurring_period" class="form-label">{{ trans('recurring_period') | default('Recurring Period') }}</label>
-                    <select name="recurring_period" id="recurring_period" class="form-select">
+                <div class="form-group mb-3" id="recurring_period_group" {% if not form.is_recurring.data %}style="display: none;" aria-hidden="true"{% else %}aria-hidden="false"{% endif %}>
+                    <label for="recurring_period" class="form-label">{{ trans('recurring_period', default='Recurring Period') }}</label>
+                    <select name="recurring_period" id="recurring_period" class="form-select" aria-describedby="recurring_period_error">
                         {% for value, label in form.recurring_period.choices %}
                             <option value="{{ value }}" {% if form.recurring_period.data == value %}selected{% endif %}>
-                                {{ trans(value) | default(label) }}
+                                {{ trans(value, default=label) }}
                             </option>
                         {% endfor %}
                     </select>
+                    {% if form.recurring_period.errors %}
+                        <div id="recurring_period_error" class="invalid-feedback d-block">
+                            {% for error in form.recurring_period.errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">{{ trans('save') | default('Save') }}</button>
+                    <button type="submit" id="submit-btn" class="btn btn-primary">{{ trans('save', default='Save') }}</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endif %}
+{% endblock %}
+{% block extra_scripts %}
 <script>
-    document.getElementById('is_recurring').addEventListener('change', function() {
-        document.getElementById('recurring_period_group').style.display = this.checked ? 'block' : 'none';
+    document.addEventListener('DOMContentLoaded', function() {
+        const isRecurringCheckbox = document.querySelector('#is_recurring');
+        const recurringPeriodGroup = document.querySelector('#recurring_period_group');
+        const submitBtn = document.querySelector('#submit-btn');
+
+        // Toggle recurring_period visibility
+        function toggleRecurringPeriod() {
+            const isChecked = isRecurringCheckbox.checked;
+            recurringPeriodGroup.style.display = isChecked ? 'block' : 'none';
+            recurringPeriodGroup.setAttribute('aria-hidden', !isChecked);
+        }
+
+        // Handle form submission
+        function handleSubmit(event) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{ trans('saving', default='Saving...') }}';
+        }
+
+        isRecurringCheckbox.addEventListener('change', toggleRecurringPeriod);
+        document.querySelector('.validate-form').addEventListener('submit', handleSubmit);
+
+        // Initialize visibility on page load
+        toggleRecurringPeriod();
     });
 </script>
 {% endblock %}
