@@ -65,7 +65,12 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     try:
-        user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+        # Handle both ObjectId and string _id (for admin)
+        try:
+            query_id = ObjectId(user_id)
+        except:
+            query_id = user_id
+        user_data = mongo.db.users.find_one({'_id': query_id})
         if user_data:
             return User(str(user_data['_id']), user_data.get('email'))
         return None
@@ -189,7 +194,6 @@ def setup_database():
             except Exception as e:
                 logger.error(f"Could not create reset_token index: {str(e)}")
 
-        # Add setup_complete index for wizard
         if 'setup_complete_1' not in users_indexes:
             try:
                 db.users.create_index([('setup_complete', ASCENDING)])
@@ -197,7 +201,6 @@ def setup_database():
             except Exception as e:
                 logger.error(f"Could not create setup_complete index: {str(e)}")
 
-        # Ensure existing users have setup_complete field
         try:
             result = db.users.update_many(
                 {'setup_complete': {'$exists': False}},
@@ -209,16 +212,17 @@ def setup_database():
 
         if not db.users.find_one({'_id': 'admin'}):
             try:
+                admin_password = os.getenv('ADMIN_PASSWORD', 'Admin123!')
                 db.users.insert_one({
                     '_id': 'admin',
                     'email': 'ficoreafrica@gmail.com',
-                    'password': generate_password_hash(os.getenv('ADMIN_PASSWORD', 'Admin123!')),
+                    'password': generate_password_hash(admin_password),
                     'dark_mode': False,
                     'is_admin': True,
                     'setup_complete': False,
                     'created_at': datetime.utcnow()
                 })
-                logger.info("Default admin user created")
+                logger.info(f"Default admin user created with password: {admin_password}")
             except errors.DuplicateKeyError:
                 logger.info("Admin user already exists, skipping creation")
             except Exception as e:
@@ -300,7 +304,7 @@ def setup_database():
             except errors.DuplicateKeyError as e:
                 logger.warning(f"Duplicate key error for sessions index, skipping: {str(e)}")
             except Exception as e:
-                logger.error(f"Could not create sessions index: {str(e)}")
+                logger.error(f"Could not create session index: {str(e)}")
 
         try:
             db.command({
@@ -322,7 +326,7 @@ def setup_database():
         except Exception as e:
             logger.warning(f"Could not set schema validation for feedback collection: {str(e)}")
 
-        logger.info("Database initialization completed successfully")
+        logger.info("Database setup completed successfully")
         return True
     except Exception as e:
         logger.error(f"Error initializing database: {str(e)}")
@@ -332,18 +336,18 @@ def setup_database():
 def setup_database_route():
     setup_key = request.args.get('key')
     if setup_key != os.getenv('SETUP_KEY', 'setup-secret'):
-        return render_template('errors/403.html'), 403
-    
+        return render_template('errors/403.html', content=trans_function('forbidden_access', default='Access denied')), 403
+
     if os.getenv('FLASK_ENV', 'development') == 'production' and not os.getenv('ALLOW_DB_SETUP', 'false').lower() == 'true':
-        flash(trans_function('database_setup_production_disabled', default='Database setup disabled in production'), 'danger')
-        return render_template('errors/403.html'), 403
+        flash(trans_function('database_setup_disabled', default='Database setup disabled in production'), 'danger')
+        return render_template('errors/403.html', content=trans_function('forbidden_access', default='Access denied')), 403
 
     if setup_database():
         flash(trans_function('database_setup_success', default='Database setup successful'), 'success')
         return redirect(url_for('index'))
     else:
         flash(trans_function('database_setup_error', default='Database setup failed'), 'danger')
-        return render_template('errors/500.html'), 500
+        return render_template('errors/500.html', content=trans_function('internal_error', default='Internal server error')), 500
 
 @app.route('/')
 def index():
@@ -356,22 +360,27 @@ def about():
 @app.route('/feedback', methods=['GET', 'POST'])
 def feedback():
     lang = session.get('lang', 'en')
-    tool_options = ['invoices', 'transactions', 'profile']
+    tool_options = [['invoices', trans_function('tool_invoices', default='Invoices')],
+                    ['transactions', trans_function('tool_transactions', default='Transactions')],
+                    ['profile', trans_function('tool_profile', default='Profile')]]
+    
     if request.method == 'POST':
         try:
             tool_name = request.form.get('tool_name')
             rating = request.form.get('rating')
             comment = request.form.get('comment', '').strip()
 
-            if not tool_name or tool_name not in tool_options:
+            valid_tools = [option[0] for option in tool_options]
+            if not tool_name or tool_name not in valid_tools:
                 flash(trans_function('invalid_tool', default='Invalid tool selected'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
+            
             if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
-                flash(trans_function('invalid_rating', default='Rating must be between 1 and 5'), 'danger')
+                flash(trans_function('invalid_rating', default='Invalid rating'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
             feedback_entry = {
-                'user_id': None,
+                'user_id': str(current_user.id) if current_user.is_authenticated else None,
                 'tool_name': tool_name,
                 'rating': int(rating),
                 'comment': comment or None,
@@ -380,6 +389,7 @@ def feedback():
             mongo.db.feedback.insert_one(feedback_entry)
             flash(trans_function('feedback_success', default='Feedback submitted successfully'), 'success')
             return redirect(url_for('index'))
+
         except Exception as e:
             logger.error(f"Error processing feedback: {str(e)}")
             flash(trans_function('feedback_error', default='Error submitting feedback'), 'danger')
@@ -394,21 +404,36 @@ def admin_dashboard():
 @app.route('/dashboard/general')
 def general_dashboard():
     try:
-        user_id = current_user.id if current_user.is_authenticated else 'guest'
-        recent_invoices = list(mongo.db.invoices.find({'user_id': user_id}).sort('created_at', -1).limit(5))
-        recent_transactions = list(mongo.db.transactions.find({'user_id': user_id}).sort('created_at', -1).limit(5))
+        user_id = str(current_user.id) if current_user.is_authenticated else 'guest'
+        recent_invoices = list(mongo.db.invoices.find({'user_id': user_id}).sort('created_at', DESCENDING).limit(10))
+        recent_transactions = list(mongo.db.transactions.find({'user_id': user_id}).sort('created_at', DESCENDING).limit(10))
+
         for invoice in recent_invoices:
             invoice['_id'] = str(invoice['_id'])
-            if isinstance(invoice.get('created_at'), str):
-                invoice['created_at'] = datetime.strptime(invoice['created_at'], '%Y-%m-%d')
+            if isinstance(invoice.get('createdAt'), str):
+                try:
+                    invoice['created_at'] = datetime.strptime(invoice['created_at'], '%Y-%m-%d')
+                except ValueError:
+                    pass
             if isinstance(invoice.get('due_date'), str):
-                invoice['due_date'] = datetime.strptime(invoice['due_date'], '%Y-%m-%d')
+                try:
+                    invoice['due_date'] = datetime.strptime(invoice['due_date'], '%Y-%m-%d')
+                except ValueError):
+                    pass
             if isinstance(invoice.get('settled_date'), str):
-                invoice['settled_date'] = datetime.strptime(invoice['settled_date'], '%Y-%m-%d')
+                try:
+                    invoice['settled_date'] = datetime.strptime(invoice['settled_date'], '%Y-%m-%d')
+                except ValueError:
+                    pass
+        
         for transaction in recent_transactions:
             transaction['_id'] = str(transaction['_id'])
             if isinstance(transaction.get('created_at'), str):
-                transaction['created_at'] = datetime.strptime(transaction['created_at'], '%Y-%m-%d')
+                try:
+                    transaction['created_at'] = datetime.strptime(transaction['created_at'], '%Y-%m-%d')
+                except ValueError:
+                    pass
+
         return render_template('dashboard/general_dashboard.html',
                              recent_invoices=recent_invoices,
                              recent_transactions=recent_transactions)
@@ -416,8 +441,8 @@ def general_dashboard():
         logger.error(f"Error fetching dashboard data: {str(e)}")
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
         return render_template('dashboard/general_dashboard.html',
-                             recent_invoices=[],
-                             recent_transactions=[]), 500
+                               recent_invoices=[],
+                               recent_transactions=[]), 500
 
 @app.errorhandler(403)
 def forbidden(e):
@@ -440,6 +465,6 @@ with app.app_context():
         logger.info("Database initialization skipped in production environment")
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 10000))
+    port = int(os.getenv('PORT', 5000'))
     logger.info(f"Starting Flask app on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False)
