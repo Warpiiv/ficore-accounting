@@ -12,7 +12,7 @@ from bson import ObjectId
 
 logger = logging.getLogger(__name__)
 
-invoices_bp = Blueprint('invoices', __name__, template_folder='templates')
+invoices_bp = Blueprint('invoices', __name__, template_folder='templates/invoices')
 
 class InvoiceForm(FlaskForm):
     customer_name = StringField('Customer Name', [
