@@ -32,34 +32,37 @@ class InvoiceForm(FlaskForm):
     due_date = DateField('Due Date', format='%Y-%m-%d', validators=[validators.Optional()])
     settled_date = DateField('Settled Date', format='%Y-%m-%d', validators=[validators.Optional()])
 
-@invoices_bp.route('/invoice_dashboard', methods=['GET'])
+@invoices_bp.route('/dashboard', methods=['GET'])
+@login_required
 def invoice_dashboard():
     status_filter = ''
     customer_filter = ''
-    start_date = ''
-    end_date = ''
+    start_date_filter = ''
+    end_date_filter = ''
     try:
-        user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
+        user = mongo.db.users.find_one({'_id': current_user.id})
+        query = {'user_id': str(current_user.id)}
+        if user.get('is_admin', False):
+            query = {}  # Admins can see all invoices
         status_filter = request.args.get('status', '')
-        customer_filter = request.args.get('customer', '')
-        start_date = request.args.get('start_date', '')
-        end_date = request.args.get('end_date', '')
+        customer_filter = request.args.get('customer_name', '')
+        start_date_filter = request.args.get('start_date', '')
+        end_date_filter = request.args.get('end_date', '')
         
-        query = {'user_id': user_id}
         if status_filter:
             query['status'] = status_filter
         if customer_filter:
             query['customer_name'] = {'$regex': customer_filter, '$options': 'i'}
-        if start_date and end_date:
+        if start_date_filter and end_date_filter:
             try:
                 query['created_at'] = {
-                    '$gte': datetime.strptime(start_date, '%Y-%m-%d'),
-                    '$lte': datetime.strptime(end_date, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+                    '$gte': datetime.strptime(start_date_filter, '%Y-%m-%d'),
+                    '$lte': datetime.strptime(end_date_filter, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
                 }
             except ValueError:
                 flash(trans_function('invalid_date_format', default='Invalid date format'), 'danger')
-                logger.warning(f"Invalid date range: {start_date} to {end_date}")
+                logger.warning(f"Invalid date range: {start_date_filter} to {end_date_filter}")
         
         logger.debug(f"Invoice query: {query}")
         invoices = list(mongo.db.invoices.find(query).sort('created_at', -1).limit(50))
@@ -80,20 +83,23 @@ def invoice_dashboard():
             invoice['due_date'] = due_date
             invoice['settled_date'] = settled_date
             invoice['is_overdue'] = invoice['status'] == 'pending' and due_date and due_date < date.today()
-        return render_template('invoices/view.html', invoices=invoices, 
-                            status_filter=status_filter, customer_filter=customer_filter,
-                            start_date=start_date, end_date=end_date)
+        return render_template('invoices/view.html', 
+                             invoices=invoices, 
+                             status_filter=status_filter, 
+                             customer_filter=customer_filter,
+                             start_date_filter=start_date_filter, 
+                             end_date_filter=end_date_filter)
     except Exception as e:
         logger.error(f"Error fetching invoices: {str(e)}")
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
         return render_template('invoices/view.html', invoices=[]), 500
 
 @invoices_bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create_invoice():
     form = InvoiceForm()
     if form.validate_on_submit():
         try:
-            user_id = current_user.id if current_user.is_authenticated else 'guest'
             mongo = current_app.extensions['pymongo']
             last_invoice = mongo.db.invoices.find_one(sort=[('invoice_number', -1)])
             if last_invoice and last_invoice.get('invoice_number'):
@@ -101,7 +107,7 @@ def create_invoice():
                     last_num = int(last_invoice['invoice_number'])
                     invoice_number = str(last_num + 1).zfill(6)
                 except ValueError:
-                    count = mongo.db.invoices.count_documents({})
+                    count = mongo.db.invoices.count_documents({'user_id': str(current_user.id)})
                     invoice_number = str(count + 1).zfill(6)
             else:
                 invoice_number = '000001'
@@ -110,7 +116,7 @@ def create_invoice():
             settled_date = form.settled_date.data if form.status.data == 'settled' else None
 
             invoice = {
-                'user_id': user_id,
+                'user_id': str(current_user.id),
                 'customer_name': form.customer_name.data.strip(),
                 'description': form.description.data.strip(),
                 'amount': float(form.amount.data),
@@ -123,16 +129,16 @@ def create_invoice():
             try:
                 result = mongo.db.invoices.insert_one(invoice)
                 flash(trans_function('invoice_created', default='Invoice created successfully'), 'success')
-                logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
-                return redirect(url_for('invoices.invoice_dashboard'))
+                logger.info(f"Invoice created by user {current_user.id}: {result.inserted_id}")
+                return redirect(url_for('invoices.dashboard'))
             except pymongo.errors.DuplicateKeyError:
                 last_invoice = mongo.db.invoices.find_one(sort=[('invoice_number', -1)])
                 last_num = int(last_invoice['invoice_number']) if last_invoice and last_invoice.get('invoice_number') else 0
                 invoice['invoice_number'] = str(last_num + 1).zfill(6)
                 result = mongo.db.invoices.insert_one(invoice)
                 flash(trans_function('invoice_created', default='Invoice created successfully'), 'success')
-                logger.info(f"Invoice created by user {user_id}: {result.inserted_id}")
-                return redirect(url_for('invoices.invoice_dashboard'))
+                logger.info(f"Invoice created by user {current_user.id}: {result.inserted_id}")
+                return redirect(url_for('invoices.dashboard'))
         except Exception as e:
             logger.error(f"Error creating invoice: {str(e)}")
             flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
@@ -140,13 +146,13 @@ def create_invoice():
     return render_template('invoices/create.html', form=form)
     
 @invoices_bp.route('/update/<invoice_id>', methods=['GET', 'POST'])
+@login_required
 def update_invoice(invoice_id):
-    user_id = current_user.id if current_user.is_authenticated else 'guest'
     mongo = current_app.extensions['pymongo']
-    invoice = mongo.db.invoices.find_one({'_id': ObjectId(invoice_id), 'user_id': user_id})
+    invoice = mongo.db.invoices.find_one({'_id': ObjectId(invoice_id), 'user_id': str(current_user.id)})
     if not invoice:
         flash(trans_function('invoice_not_found', default='Invoice not found'), 'danger')
-        return redirect(url_for('invoices.invoice_dashboard'))
+        return redirect(url_for('invoices.dashboard'))
     
     due_date = invoice.get('due_date')
     settled_date = invoice.get('settled_date')
@@ -176,7 +182,7 @@ def update_invoice(invoice_id):
             settled_date = form.settled_date.data if form.status.data == 'settled' else None
 
             mongo.db.invoices.update_one(
-                {'_id': ObjectId(invoice_id), 'user_id': user_id},
+                {'_id': ObjectId(invoice_id), 'user_id': str(current_user.id)},
                 {
                     '$set': {
                         'customer_name': form.customer_name.data.strip(),
@@ -190,8 +196,8 @@ def update_invoice(invoice_id):
                 }
             )
             flash(trans_function('invoice_updated', default='Invoice updated successfully'), 'success')
-            logger.info(f"Invoice updated by user {user_id}: {invoice_id}")
-            return redirect(url_for('invoices.invoice_dashboard'))
+            logger.info(f"Invoice updated by user {current_user.id}: {invoice_id}")
+            return redirect(url_for('invoices.dashboard'))
         except Exception as e:
             logger.error(f"Error updating invoice: {str(e)}")
             flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
@@ -199,28 +205,32 @@ def update_invoice(invoice_id):
     return render_template('invoices/create.html', form=form, invoice_id=invoice_id)
 
 @invoices_bp.route('/delete/<invoice_id>', methods=['POST'])
+@login_required
 def delete_invoice(invoice_id):
     try:
-        user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
-        result = mongo.db.invoices.delete_one({'_id': ObjectId(invoice_id), 'user_id': user_id})
+        result = mongo.db.invoices.delete_one({'_id': ObjectId(invoice_id), 'user_id': str(current_user.id)})
         if result.deleted_count == 0:
             flash(trans_function('invoice_not_found', default='Invoice not found'), 'danger')
         else:
             flash(trans_function('invoice_deleted', default='Invoice deleted successfully'), 'success')
-            logger.info(f"Invoice deleted by user {user_id}: {invoice_id}")
-        return redirect(url_for('invoices.invoice_dashboard'))
+            logger.info(f"Invoice deleted by user {current_user.id}: {invoice_id}")
+        return redirect(url_for('invoices.dashboard'))
     except Exception as e:
         logger.error(f"Error deleting invoice: {str(e)}")
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
-        return redirect(url_for('invoices.invoice_dashboard')), 500
+        return redirect(url_for('invoices.dashboard')), 500
 
 @invoices_bp.route('/export/csv', methods=['GET'])
+@login_required
 def export_invoices_csv():
     try:
-        user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
-        invoices = list(mongo.db.invoices.find({'user_id': user_id}))
+        user = mongo.db.users.find_one({'_id': current_user.id})
+        query = {'user_id': str(current_user.id)}
+        if user.get('is_admin', False):
+            query = {}  # Admins can export all invoices
+        invoices = list(mongo.db.invoices.find(query))
         output = StringIO()
         writer = csv.writer(output)
         writer.writerow(['Invoice Number', 'Customer Name', 'Description', 'Amount', 'Status', 'Created At', 'Due Date', 'Settled Date'])
@@ -263,4 +273,4 @@ def export_invoices_csv():
     except Exception as e:
         logger.error(f"Error exporting invoices: {str(e)}")
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
-        return redirect(url_for('invoices.invoice_dashboard')), 500
+        return redirect(url_for('invoices.dashboard')), 500
