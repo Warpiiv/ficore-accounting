@@ -8,15 +8,20 @@ import logging
 import uuid
 from datetime import datetime, timedelta
 from utils import trans_function, is_valid_email
+import re
 
 logger = logging.getLogger(__name__)
 
 users_bp = Blueprint('users', __name__, template_folder='templates')
 
+# Username validation regex: alphanumeric, underscores, 3-50 characters
+USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_]{3,50}$')
+
 class LoginForm(FlaskForm):
     username = StringField('Username', [
         validators.DataRequired(message='Username is required'),
-        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters')
+        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters'),
+        validators.Regexp(USERNAME_REGEX, message='Username must be alphanumeric with underscores')
     ])
     password = PasswordField('Password', [
         validators.DataRequired(message='Password is required'),
@@ -26,7 +31,8 @@ class LoginForm(FlaskForm):
 class SignupForm(FlaskForm):
     username = StringField('Username', [
         validators.DataRequired(message='Username is required'),
-        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters')
+        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters'),
+        validators.Regexp(USERNAME_REGEX, message='Username must be alphanumeric with underscores')
     ])
     email = StringField('Email', [
         validators.DataRequired(message='Email is required'),
@@ -60,27 +66,35 @@ class ProfileForm(FlaskForm):
     ])
     username = StringField('Username', [
         validators.DataRequired(message='Username is required'),
-        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters')
+        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters'),
+        validators.Regexp(USERNAME_REGEX, message='Username must be alphanumeric with underscores')
     ])
 
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # TODO: Re-enable authentication check before production
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('index'))
+    # Redirect authenticated users to index
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
-            user = mongo.db.users.find_one({'_id': form.username.data.strip()})
+            username = form.username.data.strip()
+            # Validate username format
+            if not USERNAME_REGEX.match(username):
+                flash(trans_function('invalid_username_format'), 'danger')
+                logger.warning(f"Invalid username format: {username}")
+                return render_template('users/login.html', form=form)
+            # Query by username (stored as _id)
+            user = mongo.db.users.find_one({'_id': username})
             if user and check_password_hash(user['password'], form.password.data):
-                from app import User  # Import here to avoid circular import
+                from app import User  # Avoid circular import
                 login_user(User(user['_id'], user['email']), remember=True)
                 flash(trans_function('logged_in'), 'success')
-                logger.info(f"User {form.username.data} logged in successfully")
+                logger.info(f"User {username} logged in successfully")
                 return redirect(url_for('users.profile'))
             flash(trans_function('invalid_credentials'), 'danger')
-            logger.warning(f"Failed login attempt for username: {form.username.data}")
+            logger.warning(f"Failed login attempt for username: {username}")
         except Exception as e:
             logger.error(f"Error during login: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
@@ -89,9 +103,8 @@ def login():
 
 @users_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    # TODO: Re-enable authentication check before production
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('index'))
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = SignupForm()
     if form.validate_on_submit():
         try:
@@ -110,7 +123,7 @@ def signup():
                 'created_at': datetime.utcnow()
             }
             mongo.db.users.insert_one(user_data)
-            from app import User  # Import here to avoid circular import
+            from app import User  # Avoid circular import
             login_user(User(username, email), remember=True)
             flash(trans_function('signup_success'), 'success')
             logger.info(f"New user created: {username}")
@@ -123,9 +136,8 @@ def signup():
 
 @users_bp.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
-    # TODO: Re-enable authentication check before production
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('index'))
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = ForgotPasswordForm()
     if form.validate_on_submit():
         try:
@@ -166,9 +178,8 @@ def forgot_password():
 
 @users_bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
-    # TODO: Re-enable authentication check before production
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('index'))
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     token = request.args.get('token')
     form = ResetPasswordForm()
     if form.validate_on_submit():
@@ -202,18 +213,11 @@ def reset_password():
     return render_template('users/reset_password.html', form=form, token=token)
 
 @users_bp.route('/profile', methods=['GET'])
+@login_required
 def profile():
-    # TODO: Re-enable @login_required before production
     try:
         mongo = current_app.extensions['pymongo']
-        # Use a default user for unauthenticated access
-        user_id = current_user.id if current_user.is_authenticated else 'guest'
-        user = mongo.db.users.find_one({'_id': user_id}) if current_user.is_authenticated else {
-            '_id': 'guest',
-            'email': 'guest@example.com',
-            'dark_mode': False,
-            'is_admin': False
-        }
+        user = mongo.db.users.find_one({'_id': current_user.id})
         if user:
             user['_id'] = str(user['_id'])
             return render_template('users/profile.html', user=user, form=ProfileForm())
@@ -225,50 +229,46 @@ def profile():
         return redirect(url_for('index')), 500
 
 @users_bp.route('/update_profile', methods=['GET', 'POST'])
+@login_required
 def update_profile():
-    # TODO: Re-enable @login_required before production
     form = ProfileForm(data={
-        'username': current_user.id if current_user.is_authenticated else 'guest',
-        'email': current_user.email if current_user.is_authenticated else 'guest@example.com'
+        'username': current_user.id,
+        'email': current_user.email
     })
     if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
             new_username = form.username.data.strip()
             new_email = form.email.data.strip()
-            user_id = current_user.id if current_user.is_authenticated else None
-            if user_id:
-                if new_username != user_id and mongo.db.users.find_one({'_id': new_username}):
-                    flash(trans_function('username_exists'), 'danger')
-                    return render_template('users/profile.html', form=form, user={'_id': user_id, 'email': current_user.email})
-                if new_email != current_user.email and mongo.db.users.find_one({'email': new_email}):
-                    flash(trans_function('email_exists'), 'danger')
-                    return render_template('users/profile.html', form=form, user={'_id': user_id, 'email': current_user.email})
-                mongo.db.users.update_one(
-                    {'_id': user_id},
-                    {
-                        '$set': {
-                            '_id': new_username,
-                            'email': new_email,
-                            'updated_at': datetime.utcnow()
-                        }
+            if new_username != current_user.id and mongo.db.users.find_one({'_id': new_username}):
+                flash(trans_function('username_exists'), 'danger')
+                return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
+            if new_email != current_user.email and mongo.db.users.find_one({'email': new_email}):
+                flash(trans_function('email_exists'), 'danger')
+                return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
+            mongo.db.users.update_one(
+                {'_id': current_user.id},
+                {
+                    '$set': {
+                        '_id': new_username,
+                        'email': new_email,
+                        'updated_at': datetime.utcnow()
                     }
-                )
-                if current_user.is_authenticated:
-                    current_user.id = new_username
-                    current_user.email = new_email
-                flash(trans_function('profile_updated'), 'success')
-                logger.info(f"Profile updated for user: {new_username}")
-            else:
-                flash(trans_function('profile_update_guest'), 'warning')
+                }
+            )
+            current_user.id = new_username
+            current_user.email = new_email
+            flash(trans_function('profile_updated'), 'success')
+            logger.info(f"Profile updated for user: {new_username}")
             return redirect(url_for('users.profile'))
         except Exception as e:
             logger.error(f"Error updating profile: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
-            return render_template('users/profile.html', form=form, user={'_id': user_id or 'guest', 'email': current_user.email or 'guest@example.com'}), 500
-    return render_template('users/profile.html', form=form, user={'_id': current_user.id or 'guest', 'email': current_user.email or 'guest@example.com'})
+            return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email}), 500
+    return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
 
 @users_bp.route('/logout')
+@login_required
 def logout():
     logout_user()
     flash(trans_function('logged_out'), 'success')
