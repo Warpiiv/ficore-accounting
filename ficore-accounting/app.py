@@ -1,7 +1,7 @@
 from flask import Flask, session, redirect, url_for, flash, render_template, request, Response
 from flask_pymongo import PyMongo
 from flask_cors import CORS
-from flask_login import LoginManager, UserMixin, login_user, current_user
+from flask_login import LoginManager, UserMixin, login_user, current_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash
 from datetime import datetime, date, timedelta
@@ -163,6 +163,15 @@ def setup_database():
     try:
         db = mongo.db
         collections = db.list_collection_names()
+
+        # Clean up shared 'guest' data
+        try:
+            db.invoices.delete_many({'user_id': 'guest'})
+            db.transactions.delete_many({'user_id': 'guest'})
+            db.feedback.delete_many({'user_id': {'$in': ['guest', None]}})
+            logger.info("Cleaned up shared 'guest' data")
+        except Exception as e:
+            logger.error(f"Error cleaning up guest data: {str(e)}")
 
         if 'users' not in collections:
             db.create_collection('users')
@@ -351,6 +360,7 @@ def about():
     return render_template('general/about.html')
 
 @app.route('/feedback', methods=['GET', 'POST'])
+@login_required
 def feedback():
     lang = session.get('lang', 'en')
     tool_options = [['invoices', trans_function('tool_invoices', default='Invoices')],
@@ -368,12 +378,12 @@ def feedback():
                 flash(trans_function('invalid_tool', default='Invalid tool selected'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
             
-            if not rating or not rating.is_digit() or int(rating) < 1 or int(rating) > 5:
+            if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
                 flash(trans_function('invalid_rating', default='Invalid rating'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
             feedback_entry = {
-                'user_id': str(current_user.id) if current_user.is_authenticated else None,
+                'user_id': str(current_user.id),
                 'tool_name': tool_name,
                 'rating': int(rating),
                 'comment': comment or None,
@@ -391,19 +401,61 @@ def feedback():
     return render_template('general/feedback.html', tool_options=tool_options)
 
 @app.route('/dashboard/admin')
+@login_required
 def admin_dashboard():
-    return render_template('dashboard/admin_dashboard.html')
+    try:
+        mongo = current_app.extensions['pymongo']
+        user = mongo.db.users.find_one({'_id': current_user.id})
+        if not user.get('is_admin', False):
+            flash(trans_function('forbidden_access', default='Access denied'), 'danger')
+            return redirect(url_for('index')), 403
+        invoices = list(mongo.db.invoices.find().sort('created_at', DESCENDING).limit(50))
+        transactions = list(mongo.db.transactions.find().sort('created_at', DESCENDING).limit(50))
+        for invoice in invoices:
+            invoice['_id'] = str(invoice['_id'])
+            if isinstance(invoice.get('created_at'), str):
+                try:
+                    invoice['created_at'] = datetime.strptime(invoice['created_at'], '%Y-%m-%d')
+                except ValueError:
+                    pass
+            if isinstance(invoice.get('due_date'), str):
+                try:
+                    invoice['due_date'] = datetime.strptime(invoice['due_date'], '%Y-%m-%d')
+                except ValueError:
+                    pass
+            if isinstance(invoice.get('settled_date'), str):
+                try:
+                    invoice['settled_date'] = datetime.strptime(invoice['settled_date'], '%Y-%m-%d')
+                except ValueError:
+                    pass
+        for transaction in transactions:
+            transaction['_id'] = str(transaction['_id'])
+            if isinstance(transaction.get('created_at'), str):
+                try:
+                    transaction['created_at'] = datetime.strptime(transaction['created_at'], '%Y-%m-%d')
+                except ValueError:
+                    pass
+        return render_template('dashboard/admin_dashboard.html', invoices=invoices, transactions=transactions)
+    except Exception as e:
+        logger.error(f"Error loading admin dashboard: {str(e)}")
+        flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
+        return redirect(url_for('index')), 500
 
 @app.route('/dashboard/general')
+@login_required
 def general_dashboard():
     try:
-        user_id = str(current_user.id) if current_user.is_authenticated else 'guest'
-        recent_invoices = list(mongo.db.invoices.find({'user_id': user_id}).sort('created_at', DESCENDING).limit(10))
-        recent_transactions = list(mongo.db.transactions.find({'user_id': user_id}).sort('created_at', DESCENDING).limit(10))
+        mongo = current_app.extensions['pymongo']
+        user = mongo.db.users.find_one({'_id': current_user.id})
+        query = {'user_id': str(current_user.id)}
+        if user.get('is_admin', False):
+            query = {}  # Admins can see all data
+        recent_invoices = list(mongo.db.invoices.find(query).sort('created_at', DESCENDING).limit(10))
+        recent_transactions = list(mongo.db.transactions.find(query).sort('created_at', DESCENDING).limit(10))
 
         for invoice in recent_invoices:
             invoice['_id'] = str(invoice['_id'])
-            if isinstance(invoice.get('createdAt'), str):
+            if isinstance(invoice.get('created_at'), str):
                 try:
                     invoice['created_at'] = datetime.strptime(invoice['created_at'], '%Y-%m-%d')
                 except ValueError:
