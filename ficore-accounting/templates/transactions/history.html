@@ -13,14 +13,18 @@
         {{ trans('admin_view_all', default='You are viewing all transactions as an admin.') }}
     </div>
     {% endif %}
-    {% if get_flashed_messages() %}
-        <div class="alert alert-{{ 'danger' if 'danger' in get_flashed_messages() else 'success' }} alert-dismissible fade show" role="alert">
-            {% for message in get_flashed_messages() %}
-                {{ message }}
-            {% endfor %}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close', default='Close') }}"></button>
-        </div>
-    {% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' }} alert-dismissible fade show" role="alert">
+                        {{ trans(message, default=message) }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close', default='Close') }}"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="card mb-3">
         <div class="card-body">
             <h5>{{ trans('balance_summary', default='Balance Summary') }}</h5>
@@ -46,15 +50,9 @@
     <div class="card mb-3">
         <div class="card-body">
             <form class="row g-3" method="GET" action="{{ url_for('transactions.history') }}">
-                {{ form.csrf_token }}
                 <div class="col-md-3 col-sm-12">
                     <label for="filter_date" class="form-label">{{ trans('filter_by_date', default='Filter by Date') }}</label>
                     <input type="date" name="date" id="filter_date" class="form-control" value="{{ filter_values.date or '' }}" aria-describedby="filter_date_error">
-                    {% if form.date.errors %}
-                        <div id="filter_date_error" class="invalid-feedback d-block">
-                            {% for error in form.date.errors %}{{ error }}<br>{% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
                 <div class="col-md-3 col-sm-12">
                     <label for="filter_category" class="form-label">{{ trans('filter_by_category', default='Filter by Category') }}</label>
@@ -66,20 +64,10 @@
                             </option>
                         {% endfor %}
                     </select>
-                    {% if form.category.errors %}
-                        <div id="filter_category_error" class="invalid-feedback d-block">
-                            {% for error in form.category.errors %}{{ error }}<br>{% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
                 <div class="col-md-3 col-sm-12">
                     <label for="filter_description" class="form-label">{{ trans('filter_by_description', default='Filter by Description') }}</label>
                     <input type="text" name="description" id="filter_description" class="form-control" value="{{ filter_values.description or '' }}" aria-describedby="filter_description_error">
-                    {% if form.description.errors %}
-                        <div id="filter_description_error" class="invalid-feedback d-block">
-                            {% for error in form.description.errors %}{{ error }}<br>{% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
                 <div class="col-12 text-end">
                     <button type="submit" class="btn btn-primary me-2">{{ trans('filter', default='Filter') }}</button>
@@ -92,7 +80,7 @@
         <div class="card-body">
             <div class="text-end mb-3">
                 <a href="{{ url_for('transactions.add') }}" class="btn btn-primary">
-                    {{ trans('track_transaction', default='Add Transaction') }}
+                    {{ trans('add_transaction', default='Add Transaction') }}
                 </a>
             </div>
             {% if transactions %}
