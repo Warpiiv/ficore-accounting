@@ -64,18 +64,24 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    user_data = mongo.db.users.find_one({'_id': user_id})
-    if user_data:
-        return User(user_id, user_data.get('email'))
-    return None
+    try:
+        user_data = mongo.db.users.find_one({'_id': ObjectId(user_id)})
+        if user_data:
+            return User(str(user_data['_id']), user_data.get('email'))
+        return None
+    except Exception as e:
+        logger.error(f"Error loading user {user_id}: {str(e)}")
+        return None
 
 from invoices.routes import invoices_bp
 from transactions.routes import transactions_bp
 from users.routes import users_bp
+from wizard.wizard_blueprint import wizard_bp
 
 app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
 app.register_blueprint(users_bp, url_prefix='/users')
+app.register_blueprint(wizard_bp, url_prefix='/wizard')
 
 app.jinja_env.globals['trans'] = trans_function
 
@@ -183,6 +189,24 @@ def setup_database():
             except Exception as e:
                 logger.error(f"Could not create reset_token index: {str(e)}")
 
+        # Add setup_complete index for wizard
+        if 'setup_complete_1' not in users_indexes:
+            try:
+                db.users.create_index([('setup_complete', ASCENDING)])
+                logger.info("Created setup_complete index on users")
+            except Exception as e:
+                logger.error(f"Could not create setup_complete index: {str(e)}")
+
+        # Ensure existing users have setup_complete field
+        try:
+            result = db.users.update_many(
+                {'setup_complete': {'$exists': False}},
+                {'$set': {'setup_complete': False}}
+            )
+            logger.info(f"Updated {result.modified_count} user documents with setup_complete field")
+        except Exception as e:
+            logger.error(f"Error updating users with setup_complete field: {str(e)}")
+
         if not db.users.find_one({'_id': 'admin'}):
             try:
                 db.users.insert_one({
@@ -191,6 +215,7 @@ def setup_database():
                     'password': generate_password_hash(os.getenv('ADMIN_PASSWORD', 'Admin123!')),
                     'dark_mode': False,
                     'is_admin': True,
+                    'setup_complete': False,
                     'created_at': datetime.utcnow()
                 })
                 logger.info("Default admin user created")
