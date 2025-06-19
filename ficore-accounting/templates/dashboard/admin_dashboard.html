@@ -1,81 +1,63 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script>{% extends 'base.html' %}
-{% block title %}{{ trans('admin_dashboard') | default('Admin Dashboard') }}{% endblock %}
+{% extends "base.html" %}
 {% block content %}
-<div class="container my-5">
-    <h1 class="text-center mb-4">{{ trans('admin_dashboard') | default('Admin Dashboard') }}</h1>
-    <div class="card">
-        <div class="card-body">
-            <h2 class="card-title">{{ trans('admin_overview') | default('Admin Overview') }}</h2>
-            <p class="card-text">{{ trans('admin_welcome') | default('Welcome to the Admin Dashboard. Manage users, invoices, and transactions below.') }}</p>
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h3 class="card-title">{{ trans('total_users') | default('Total Users') }}</h3>
-                            <p class="card-text amount-highlight">{{ 100 | format_number }}</p> <!-- Placeholder -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h3 class="card-title">{{ trans('total_invoices') | default('Total Invoices') }}</h3>
-                            <p class="card-text amount-highlight">{{ 500 | format_currency }}</p> <!-- Placeholder -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h3 class="card-title">{{ trans('total_transactions') | default('Total Transactions') }}</h3>
-                            <p class="card-text amount-highlight">{{ 1000 | format_currency }}</p> <!-- Placeholder -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-4">
-                <a href="{{ url_for('index') }}" class="btn btn-primary">{{ trans('core_back_to_home') | default('Back to Home') }}</a>
-            </div>
-        </div>
-    </div>
+<div class="container mt-5">
+    <h2>{{ trans('admin_dashboard_title', default='Admin Dashboard') }}</h2>
+    <p>{{ trans('admin_view_all_data', default='Viewing all users\' data.') }}</p>
+
+    <h3>{{ trans('all_invoices', default='All Invoices') }}</h3>
+    {% if invoices %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{{ trans('user_id', default='User') }}</th>
+                    <th>{{ trans('invoice_number', default='Invoice Number') }}</th>
+                    <th>{{ trans('customer_name', default='Customer') }}</th>
+                    <th>{{ trans('amount', default='Amount') }}</th>
+                    <th>{{ trans('status', default='Status') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                    <tr>
+                        <td>{{ invoice.user_id }}</td>
+                        <td>{{ invoice.invoice_number }}</td>
+                        <td>{{ invoice.customer_name }}</td>
+                        <td>{{ invoice.amount | format_currency }}</td>
+                        <td>{{ invoice.status | capitalize }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ trans('no_invoices', default='No invoices found.') }}</p>
+    {% endif %}
+
+    <h3>{{ trans('all_transactions', default='All Transactions') }}</h3>
+    {% if transactions %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{{ trans('user_id', default='User') }}</th>
+                    <th>{{ trans('type', default='Type') }}</th>
+                    <th>{{ trans('category', default='Category') }}</th>
+                    <th>{{ trans('amount', default='Amount') }}</th>
+                    <th>{{ trans('description', default='Description') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.user_id }}</td>
+                        <td>{{ transaction.type | capitalize }}</td>
+                        <td>{{ transaction.category | capitalize }}</td>
+                        <td>{{ transaction.amount | format_currency }}</td>
+                        <td>{{ transaction.description }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ trans('no_transactions', default='No transactions found.') }}</p>
+    {% endif %}
 </div>
 {% endblock %}
