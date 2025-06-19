@@ -30,7 +30,7 @@
                     </select>
                     {% if form.type.errors %}
                         <div id="type_error" class="invalid-feedback d-block">
-                            {% for error in form.type.errors %}{{ error }}<br>{% endfor %}
+                            {% for error in form.type.errors %}{{ trans(error, default=error) }}<br>{% endfor %}
                         </div>
                     {% endif %}
                 </div>
@@ -45,7 +45,7 @@
                     </select>
                     {% if form.category.errors %}
                         <div id="category_error" class="invalid-feedback d-block">
-                            {% for error in form.category.errors %}{{ error }}<br>{% endfor %}
+                            {% for error in form.category.errors %}{{ trans(error, default=error) }}<br>{% endfor %}
                         </div>
                     {% endif %}
                 </div>
@@ -54,7 +54,7 @@
                     <input type="number" name="amount" id="amount" class="form-control" value="{{ form.amount.data or '' }}" step="0.01" min="0.01" required aria-describedby="amount_error">
                     {% if form.amount.errors %}
                         <div id="amount_error" class="invalid-feedback d-block">
-                            {% for error in form.amount.errors %}{{ error }}<br>{% endfor %}
+                            {% for error in form.amount.errors %}{{ trans(error, default=error) }}<br>{% endfor %}
                         </div>
                     {% endif %}
                 </div>
@@ -63,7 +63,7 @@
                     <textarea name="description" id="description" class="form-control" required aria-describedby="description_error">{{ form.description.data or '' }}</textarea>
                     {% if form.description.errors %}
                         <div id="description_error" class="invalid-feedback d-block">
-                            {% for error in form.description.errors %}{{ error }}<br>{% endfor %}
+                            {% for error in form.description.errors %}{{ trans(error, default=error) }}<br>{% endfor %}
                         </div>
                     {% endif %}
                 </div>
@@ -72,7 +72,7 @@
                     <label for="is_recurring" class="form-check-label">{{ trans('recurring', default='Recurring Transaction') }}</label>
                     {% if form.is_recurring.errors %}
                         <div id="is_recurring_error" class="invalid-feedback d-block">
-                            {% for error in form.is_recurring.errors %}{{ error }}<br>{% endfor %}
+                            {% for error in form.is_recurring.errors %}{{ trans(error, default=error) }}<br>{% endfor %}
                         </div>
                     {% endif %}
                 </div>
@@ -87,7 +87,7 @@
                     </select>
                     {% if form.recurring_period.errors %}
                         <div id="recurring_period_error" class="invalid-feedback d-block">
-                            {% for error in form.recurring_period.errors %}{{ error }}<br>{% endfor %}
+                            {% for error in form.recurring_period.errors %}{{ trans(error, default=error) }}<br>{% endfor %}
                         </div>
                     {% endif %}
                 </div>
