@@ -420,7 +420,7 @@ main {
     background: var(--button-primary-hover);
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 10px 20px rgba(224, 106, 53, 0.25);
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .btn-primary:focus-visible {
