@@ -94,7 +94,7 @@ def invoice_dashboard():
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
         return render_template('invoices/view.html', invoices=[]), 500
 
-@invoices_bp.route('/create', methods=['GET', 'POST'])
+@invoices_bp.route('/create', methods=['GET', 'POST'], endpoint='create')
 @login_required
 def create_invoice():
     form = InvoiceForm()
