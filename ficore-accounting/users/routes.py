@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, current_app
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, validators
+from wtforms import StringField, PasswordField, TextAreaField, SelectField, SubmitField, validators
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Message
+from flask_babel import _, lazy_gettext
 import logging
 import uuid
 from datetime import datetime, timedelta
@@ -70,9 +71,23 @@ class ProfileForm(FlaskForm):
         validators.Regexp(USERNAME_REGEX, message='Username must be alphanumeric with underscores')
     ])
 
+class BusinessSetupForm(FlaskForm):
+    business_name = StringField(lazy_gettext('Business Name'), 
+                               validators=[validators.DataRequired(), validators.Length(min=2, max=100)])
+    address = TextAreaField(lazy_gettext('Business Address'), 
+                            validators=[validators.DataRequired(), validators.Length(max=500)])
+    industry = SelectField(lazy_gettext('Industry'), 
+                          choices=[
+                              ('retail', lazy_gettext('Retail')),
+                              ('services', lazy_gettext('Services')),
+                              ('manufacturing', lazy_gettext('Manufacturing')),
+                              ('other', lazy_gettext('Other'))
+                          ], 
+                          validators=[validators.DataRequired()])
+    submit = SubmitField(lazy_gettext('Save and Continue'))
+
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # Redirect authenticated users to index
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -80,18 +95,19 @@ def login():
         try:
             mongo = current_app.extensions['pymongo']
             username = form.username.data.strip()
-            # Validate username format
             if not USERNAME_REGEX.match(username):
                 flash(trans_function('invalid_username_format'), 'danger')
                 logger.warning(f"Invalid username format: {username}")
                 return render_template('users/login.html', form=form)
-            # Query by username (stored as _id)
             user = mongo.db.users.find_one({'_id': username})
             if user and check_password_hash(user['password'], form.password.data):
-                from app import User  # Avoid circular import
+                from app import User
                 login_user(User(user['_id'], user['email']), remember=True)
                 flash(trans_function('logged_in'), 'success')
                 logger.info(f"User {username} logged in successfully")
+                # Check if setup is complete, redirect to wizard if not
+                if not user.get('setup_complete', False):
+                    return redirect(url_for('users.setup_wizard'))
                 return redirect(url_for('users.profile'))
             flash(trans_function('invalid_credentials'), 'danger')
             logger.warning(f"Failed login attempt for username: {username}")
@@ -120,14 +136,16 @@ def signup():
                 'password': generate_password_hash(form.password.data),
                 'dark_mode': False,
                 'is_admin': False,
-                'created_at': datetime.utcnow()
+                'created_at': datetime.utcnow(),
+                'setup_complete': False  # Ensure new users need to complete wizard
             }
             mongo.db.users.insert_one(user_data)
-            from app import User  # Avoid circular import
+            from app import User
             login_user(User(username, email), remember=True)
             flash(trans_function('signup_success'), 'success')
             logger.info(f"New user created: {username}")
-            return redirect(url_for('index'))
+            # Redirect to wizard for new users
+            return redirect(url_for('users.setup_wizard'))
         except Exception as e:
             logger.error(f"Error during signup: {str(e)}")
             flash(trans_function('signup_error'), 'danger')
@@ -267,6 +285,40 @@ def update_profile():
             return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email}), 500
     return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
 
+@users_bp.route('/setup_wizard', methods=['GET', 'POST'])
+@login_required
+def setup_wizard():
+    mongo = current_app.extensions['pymongo']
+    user = mongo.db.users.find_one({'_id': current_user.id})
+    if user.get('setup_complete', False):
+        return redirect(url_for('dashboard.general_dashboard'))
+    
+    form = BusinessSetupForm()
+    if form.validate_on_submit():
+        try:
+            mongo.db.users.update_one(
+                {'_id': current_user.id},
+                {
+                    '$set': {
+                        'business_details': {
+                            'name': form.business_name.data,
+                            'address': form.address.data,
+                            'industry': form.industry.data
+                        },
+                        'setup_complete': True
+                    }
+                }
+            )
+            flash(trans_function('business_setup_completed'), 'success')
+            logger.info(f"Business setup completed for user: {current_user.id}")
+            return redirect(url_for('dashboard.general_dashboard'))
+        except Exception as e:
+            logger.error(f"Error during business setup: {str(e)}")
+            flash(trans_function('core_something_went_wrong'), 'danger')
+            return render_template('users/setup.html', form=form), 500
+    
+    return render_template('users/setup.html', form=form)
+
 @users_bp.route('/logout')
 @login_required
 def logout():
@@ -289,3 +341,14 @@ def forgot_password_redirect():
 @users_bp.route('/auth/reset-password')
 def reset_password_redirect():
     return redirect(url_for('users.reset_password'))
+
+# Redirect new users to wizard if setup is incomplete
+@users_bp.before_app_request
+def check_wizard_completion():
+    if (current_user.is_authenticated and 
+        request.endpoint not in ['users.setup_wizard', 'users.logout', 'users.login', 
+                               'users.signup', 'users.forgot_password', 'users.reset_password']):
+        mongo = current_app.extensions['pymongo']
+        user = mongo.db.users.find_one({'_id': current_user.id})
+        if not user.get('setup_complete', False):
+            return redirect(url_for('users.setup_wizard'))
