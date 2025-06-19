@@ -33,19 +33,22 @@ class TransactionForm(FlaskForm):
         ('none', 'None'), ('weekly', 'Weekly'), ('monthly', 'Monthly'), ('yearly', 'Yearly')
     ])
 
-@transactions_bp.route('/transaction_history', methods=['GET'])
+@transactions_bp.route('/history', methods=['GET'])
+@login_required
 def transaction_history():
     date_filter = ''
     category_filter = ''
     description_filter = ''
     try:
-        user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
+        user = mongo.db.users.find_one({'_id': current_user.id})
+        query = {'user_id': str(current_user.id)}
+        if user.get('is_admin', False):
+            query = {}  # Admins can see all transactions
         date_filter = request.args.get('date', '')
         category_filter = request.args.get('category', '')
         description_filter = request.args.get('description', '')
 
-        query = {'user_id': user_id}
         if date_filter:
             try:
                 date = datetime.strptime(date_filter, '%Y-%m-%d')
@@ -119,14 +122,14 @@ def transaction_history():
                              }), 500
 
 @transactions_bp.route('/add', methods=['GET', 'POST'])
+@login_required
 def add_transaction():
     form = TransactionForm()
     if form.validate_on_submit():
         try:
-            user_id = current_user.id if current_user.is_authenticated else 'guest'
             mongo = current_app.extensions['pymongo']
             transaction = {
-                'user_id': user_id,
+                'user_id': str(current_user.id),
                 'type': form.type.data,
                 'category': form.category.data,
                 'amount': float(form.amount.data),
@@ -138,8 +141,8 @@ def add_transaction():
             }
             result = mongo.db.transactions.insert_one(transaction)
             flash(trans_function('transaction_added', default='Transaction added successfully'), 'success')
-            logger.info(f"Transaction added by user {user_id}: {result.inserted_id}")
-            return redirect(url_for('transactions.transaction_history'))
+            logger.info(f"Transaction added by user {current_user.id}: {result.inserted_id}")
+            return redirect(url_for('transactions.history'))
         except Exception as e:
             logger.error(f"Error adding transaction: {str(e)}")
             flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
@@ -147,13 +150,13 @@ def add_transaction():
     return render_template('transactions/add.html', form=form)
 
 @transactions_bp.route('/update/<transaction_id>', methods=['GET', 'POST'])
+@login_required
 def update_transaction(transaction_id):
-    user_id = current_user.id if current_user.is_authenticated else 'guest'
     mongo = current_app.extensions['pymongo']
-    transaction = mongo.db.transactions.find_one({'_id': ObjectId(transaction_id), 'user_id': user_id})
+    transaction = mongo.db.transactions.find_one({'_id': ObjectId(transaction_id), 'user_id': str(current_user.id)})
     if not transaction:
         flash(trans_function('transaction_not_found', default='Transaction not found'), 'danger')
-        return redirect(url_for('transactions.transaction_history'))
+        return redirect(url_for('transactions.history'))
     
     form = TransactionForm(data={
         'type': transaction['type'],
@@ -167,7 +170,7 @@ def update_transaction(transaction_id):
     if form.validate_on_submit():
         try:
             mongo.db.transactions.update_one(
-                {'_id': ObjectId(transaction_id), 'user_id': user_id},
+                {'_id': ObjectId(transaction_id), 'user_id': str(current_user.id)},
                 {
                     '$set': {
                         'type': form.type.data,
@@ -181,8 +184,8 @@ def update_transaction(transaction_id):
                 }
             )
             flash(trans_function('transaction_updated', default='Transaction updated successfully'), 'success')
-            logger.info(f"Transaction updated by user {user_id}: {transaction_id}")
-            return redirect(url_for('transactions.transaction_history'))
+            logger.info(f"Transaction updated by user {current_user.id}: {transaction_id}")
+            return redirect(url_for('transactions.history'))
         except Exception as e:
             logger.error(f"Error updating transaction: {str(e)}")
             flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
@@ -190,28 +193,32 @@ def update_transaction(transaction_id):
     return render_template('transactions/add.html', form=form, transaction_id=transaction_id)
 
 @transactions_bp.route('/delete/<transaction_id>', methods=['POST'])
+@login_required
 def delete_transaction(transaction_id):
     try:
-        user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
-        result = mongo.db.transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': user_id})
+        result = mongo.db.transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': str(current_user.id)})
         if result.deleted_count == 0:
             flash(trans_function('transaction_not_found', default='Transaction not found'), 'danger')
         else:
             flash(trans_function('transaction_deleted', default='Transaction deleted successfully'), 'success')
-            logger.info(f"Transaction deleted by user {user_id}: {transaction_id}")
-        return redirect(url_for('transactions.transaction_history'))
+            logger.info(f"Transaction deleted by user {current_user.id}: {transaction_id}")
+        return redirect(url_for('transactions.history'))
     except Exception as e:
         logger.error(f"Error deleting transaction: {str(e)}")
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
-        return redirect(url_for('transactions.transaction_history')), 500
+        return redirect(url_for('transactions.history')), 500
 
 @transactions_bp.route('/export', methods=['GET'])
+@login_required
 def export_transactions():
     try:
-        user_id = current_user.id if current_user.is_authenticated else 'guest'
         mongo = current_app.extensions['pymongo']
-        transactions = list(mongo.db.transactions.find({'user_id': user_id}))
+        user = mongo.db.users.find_one({'_id': current_user.id})
+        query = {'user_id': str(current_user.id)}
+        if user.get('is_admin', False):
+            query = {}  # Admins can export all transactions
+        transactions = list(mongo.db.transactions.find(query))
         output = StringIO()
         writer = csv.writer(output)
         writer.writerow(['Type', 'Category', 'Amount', 'Description', 'Is Recurring', 'Recurring Period', 'Created At'])
@@ -241,4 +248,4 @@ def export_transactions():
     except Exception as e:
         logger.error(f"Error exporting transactions: {str(e)}")
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
-        return redirect(url_for('transactions.transaction_history')), 500
+        return redirect(url_for('transactions.history')), 500
