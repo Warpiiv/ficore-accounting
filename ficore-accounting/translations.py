@@ -6,6 +6,7 @@ TRANSLATIONS = {
         'core_helping_african_smes': 'Helping African SMEs simplify records and grow financially.',
         'general_dashboard_desc': 'View a summary of all your financial records and activities here.',
         'create_invoice_desc': 'Create and manage new invoices for your clients.',
+        'Username or email already exists': 'Username or email already exists',
         'add_transaction_desc': 'Add new transactions like income and expenses to track your cash flow.',
         'core_please_complete_all_records': 'Please ensure all records are complete and accurate.',
         'go_to_invoices': 'Go to Invoices',
@@ -449,7 +450,7 @@ TRANSLATIONS = {
         'other': 'Sauran',
         'save_and_continue': 'Ajiye kuma Ci gaba',
         'business_setup_completed_successfully': 'An kammala saitin kasuwanci cikin nasara!',
-        
+        'Username or email already exists': 'Sunan mai amfani ko imel ɗin ya riga ya wanzu',
         # Module: invoice
         'invoice_details': 'Bayanin Takardun Jira',
         'are_you_sure_delete_invoice': 'Kana da tabbacin kana son share wannan Takardar?',
