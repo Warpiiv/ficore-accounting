@@ -12,6 +12,18 @@ TRANSLATIONS = {
         'core_toggle_menu': 'Toggle Menu',
         'core_invoices': 'Invoices',
         'core_cancel': 'Cancel',
+        'complete_your_business_setup': 'Complete Your Business Setup',
+        'business_details_get_started': 'Please provide your business details to get started.',
+        'business_name': 'Business Name',
+        'business_address': 'Business Address',
+        'industry': 'Industry',
+        'retail': 'Retail',
+        'services': 'Services',
+        'manufacturing': 'Manufacturing',
+        'other': 'Other',
+        'save_and_continue': 'Save and Continue',
+        'business_setup_completed_successfully': 'Business setup completed successfully!',
+
         
         # Module: invoice
         'invoice_details': 'Invoice Details',
@@ -426,6 +438,17 @@ TRANSLATIONS = {
         'core_toggle_menu': 'Canja Menu',
         'core_invoices': 'Takardun Kudi',
         'core_cancel': 'Soke',
+        'complete_your_business_setup': 'Kammala Saita Kasuwancinku',
+        'business_details_get_started': 'Da fatan za a ba da bayanan kasuwancinku don farawa.',
+        'business_name': 'Sunan Kasuwanci',
+        'business_address': 'Adireshin Kasuwanci',
+        'industry': 'Masana\'antu',
+        'retail': 'Dillali',
+        'services': 'Ayyuka',
+        'manufacturing': 'Masana\'antu',
+        'other': 'Sauran',
+        'save_and_continue': 'Ajiye kuma Ci gaba',
+        'business_setup_completed_successfully': 'An kammala saitin kasuwanci cikin nasara!',
         
         # Module: invoice
         'invoice_details': 'Bayanin Takardun Jira',
