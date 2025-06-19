@@ -65,7 +65,6 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     try:
-        # Query directly with user_id as string, since _id is a string (username)
         user_data = mongo.db.users.find_one({'_id': user_id})
         if user_data:
             return User(str(user_data['_id']), user_data.get('email'))
@@ -77,12 +76,10 @@ def load_user(user_id):
 from invoices.routes import invoices_bp
 from transactions.routes import transactions_bp
 from users.routes import users_bp
-from wizard.wizard_blueprint import wizard_bp
 
 app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
 app.register_blueprint(users_bp, url_prefix='/users')
-app.register_blueprint(wizard_bp, url_prefix='/wizard')
 
 app.jinja_env.globals['trans'] = trans_function
 
@@ -371,7 +368,7 @@ def feedback():
                 flash(trans_function('invalid_tool', default='Invalid tool selected'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
             
-            if not rating or not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
+            if not rating or not rating.is_digit() or int(rating) < 1 or int(rating) > 5:
                 flash(trans_function('invalid_rating', default='Invalid rating'), 'danger')
                 return render_template('general/feedback.html', tool_options=tool_options)
 
