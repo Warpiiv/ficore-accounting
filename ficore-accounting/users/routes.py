@@ -37,7 +37,10 @@ class SignupForm(FlaskForm):
     ])
     email = StringField('Email', [
         validators.DataRequired(message='Email is required'),
-        validators.Email(message='Invalid email address')
+        validators.Email(message='Invalid email address'),
+        validators.Length(max=254),
+        validators.InputRequired(),
+        lambda form, field: is_valid_email(field.data) or validators.ValidationError('Invalid email domain')
     ])
     password = PasswordField('Password', [
         validators.DataRequired(message='Password is required'),
@@ -94,7 +97,7 @@ def login():
     if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
-            username = form.username.data.strip()
+            username = form.username.data.strip().lower()
             if not USERNAME_REGEX.match(username):
                 flash(trans_function('invalid_username_format'), 'danger')
                 logger.warning(f"Invalid username format: {username}")
@@ -103,9 +106,7 @@ def login():
             if user and check_password_hash(user['password'], form.password.data):
                 from app import User
                 login_user(User(user['_id'], user['email']), remember=True)
-                flash(trans_function('logged_in'), 'success')
-                logger.info(f"User {username} logged in successfully")
-                # Check if setup is complete, redirect to wizard if not
+                logger.info(f"User {username} logged in successfully, session authenticated: {current_user.is_authenticated}")
                 if not user.get('setup_complete', False):
                     return redirect(url_for('users.setup_wizard'))
                 return redirect(url_for('users.profile'))
@@ -125,8 +126,10 @@ def signup():
     if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
-            username = form.username.data.strip()
-            email = form.email.data.strip()
+            mongo.db.command('ping')
+            username = form.username.data.strip().lower()
+            email = form.email.data.strip().lower()
+            logger.debug(f"Signup attempt: username={username}, email={email}")
             if mongo.db.users.find_one({'_id': username}) or mongo.db.users.find_one({'email': email}):
                 flash(trans_function('user_exists'), 'danger')
                 return render_template('users/signup.html', form=form)
@@ -137,14 +140,16 @@ def signup():
                 'dark_mode': False,
                 'is_admin': False,
                 'created_at': datetime.utcnow(),
-                'setup_complete': False  # Ensure new users need to complete wizard
+                'setup_complete': False
             }
-            mongo.db.users.insert_one(user_data)
+            result = mongo.db.users.insert_one(user_data)
+            if not result.inserted_id:
+                logger.error("Failed to insert user document")
+                flash(trans_function('signup_error'), 'danger')
+                return render_template('users/signup.html', form=form), 500
             from app import User
             login_user(User(username, email), remember=True)
-            flash(trans_function('signup_success'), 'success')
-            logger.info(f"New user created: {username}")
-            # Redirect to wizard for new users
+            logger.info(f"New user created and logged in: {username}, session authenticated: {current_user.is_authenticated}")
             return redirect(url_for('users.setup_wizard'))
         except Exception as e:
             logger.error(f"Error during signup: {str(e)}")
@@ -160,7 +165,7 @@ def forgot_password():
     if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
-            email = form.email.data.strip()
+            email = form.email.data.strip().lower()
             user = mongo.db.users.find_one({'email': email})
             if not user:
                 flash(trans_function('email_not_found'), 'danger')
@@ -256,8 +261,8 @@ def update_profile():
     if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
-            new_username = form.username.data.strip()
-            new_email = form.email.data.strip()
+            new_username = form.username.data.strip().lower()
+            new_email = form.email.data.strip().lower()
             if new_username != current_user.id and mongo.db.users.find_one({'_id': new_username}):
                 flash(trans_function('username_exists'), 'danger')
                 return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
@@ -342,7 +347,6 @@ def forgot_password_redirect():
 def reset_password_redirect():
     return redirect(url_for('users.reset_password'))
 
-# Redirect new users to wizard if setup is incomplete
 @users_bp.before_app_request
 def check_wizard_completion():
     if (current_user.is_authenticated and 
