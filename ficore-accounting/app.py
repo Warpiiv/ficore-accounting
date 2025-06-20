@@ -11,7 +11,7 @@ from flask_wtf import CSRFProtect
 import logging
 from bson import ObjectId
 from translations import TRANSLATIONS
-from utils import trans_function
+from utils import trans_function, is_valid_email
 from flask_session import Session
 from pymongo import ASCENDING, DESCENDING, errors
 from pymongo.operations import UpdateOne
@@ -93,62 +93,64 @@ app.register_blueprint(invoices_bp, url_prefix='/invoices')
 app.register_blueprint(transactions_bp, url_prefix='/transactions')
 app.register_blueprint(users_bp, url_prefix='/users')
 
-app.jinja_env.globals['trans'] = trans_function
+# Register Jinja2 filters and globals within app context
+with app.app_context():
+    app.jinja_env.globals['trans'] = trans_function
 
-@app.template_filter('trans')
-def trans_filter(key):
-    return trans_function(key)
+    @app.template_filter('trans')
+    def trans_filter(key):
+        return trans_function(key)
 
-@app.template_filter('format_number')
-def format_number(value):
-    try:
-        if isinstance(value, (int, float)):
-            return f"{float(value):,.2f}"
-        return str(value)
-    except (ValueError, TypeError) as e:
-        logger.warning(f"Error formatting number {value}: {str(e)}")
-        return str(value)
+    @app.template_filter('format_number')
+    def format_number(value):
+        try:
+            if isinstance(value, (int, float)):
+                return f"{float(value):,.2f}"
+            return str(value)
+        except (ValueError, TypeError) as e:
+            logger.warning(f"Error formatting number {value}: {str(e)}")
+            return str(value)
 
-@app.template_filter('format_currency')
-def format_currency(value):
-    try:
-        value = float(value)
-        if value.is_integer():
-            return f"₦{int(value):,}"
-        return f"₦{value:,.2f}"
-    except (TypeError, ValueError) as e:
-        logger.warning(f"Error formatting currency {value}: {str(e)}")
-        return str(value)
+    @app.template_filter('format_currency')
+    def format_currency(value):
+        try:
+            value = float(value)
+            if value.is_integer():
+                return f"₦{int(value):,}"
+            return f"₦{value:,.2f}"
+        except (TypeError, ValueError) as e:
+            logger.warning(f"Error formatting currency {value}: {str(e)}")
+            return str(value)
 
-@app.template_filter('format_datetime')
-def format_datetime(value):
-    try:
-        if isinstance(value, datetime):
-            return value.strftime('%B %d, %Y, %I:%M %p')
-        elif isinstance(value, date):
-            return value.strftime('%B %d, %Y')
-        elif isinstance(value, str):
-            parsed = datetime.strptime(value, '%Y-%m-%d')
-            return parsed.strftime('%B %d, %Y, %I:%M %p')
-        return str(value)
-    except Exception as e:
-        logger.warning(f"Error formatting datetime {value}: {str(e)}")
-        return str(value)
+    @app.template_filter('format_datetime')
+    def format_datetime(value):
+        try:
+            if isinstance(value, datetime):
+                return value.strftime('%B %d, %Y, %I:%M %p')
+            elif isinstance(value, date):
+                return value.strftime('%B %d, %Y')
+            elif isinstance(value, str):
+                parsed = datetime.strptime(value, '%Y-%m-%d')
+                return parsed.strftime('%B %d, %Y, %I:%M %p')
+            return str(value)
+        except Exception as e:
+            logger.warning(f"Error formatting datetime {value}: {str(e)}")
+            return str(value)
 
-@app.template_filter('format_date')
-def format_date(value):
-    try:
-        if isinstance(value, datetime):
-            return value.strftime('%Y-%m-%d')
-        elif isinstance(value, date):
-            return value.strftime('%Y-%m-%d')
-        elif isinstance(value, str):
-            parsed = datetime.strptime(value, '%Y-%m-%d').date()
-            return parsed.strftime('%Y-%m-%d')
-        return str(value)
-    except Exception as e:
-        logger.warning(f"Error formatting date {value}: {str(e)}")
-        return str(value)
+    @app.template_filter('format_date')
+    def format_date(value):
+        try:
+            if isinstance(value, datetime):
+                return value.strftime('%Y-%m-%d')
+            elif isinstance(value, date):
+                return value.strftime('%Y-%m-%d')
+            elif isinstance(value, str):
+                parsed = datetime.strptime(value, '%Y-%m-%d').date()
+                return parsed.strftime('%Y-%m-%d')
+            return str(value)
+        except Exception as e:
+            logger.warning(f"Error formatting date {value}: {str(e)}")
+            return str(value)
 
 @app.route('/api/translations/<lang>')
 def get_translations(lang):
