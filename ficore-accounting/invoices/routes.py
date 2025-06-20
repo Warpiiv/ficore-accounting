@@ -34,7 +34,7 @@ class InvoiceForm(FlaskForm):
 
 @invoices_bp.route('/dashboard', methods=['GET'])
 @login_required
-def invoice_dashboard():
+def dashboard():
     status_filter = ''
     customer_filter = ''
     start_date_filter = ''
