@@ -1,10 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, SelectField, SubmitField, validators
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Message
-from flask_babel import _  # Keeping _ for potential future use, but not relying on it
 import logging
 import uuid
 from datetime import datetime, timedelta
@@ -112,8 +111,12 @@ def login():
                 return redirect(url_for('users.profile'))
             flash(trans_function('invalid_credentials'), 'danger')
             logger.warning(f"Failed login attempt for username: {username}")
+        except errors.PyMongoError as e:
+            logger.error(f"MongoDB error during login: {str(e)}")
+            flash(trans_function('core_something_went_wrong'), 'danger')
+            return render_template('users/login.html', form=form), 500
         except Exception as e:
-            logger.error(f"Error during login: {str(e)}")
+            logger.error(f"Unexpected error during login: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
             return render_template('users/login.html', form=form), 500
     return render_template('users/login.html', form=form)
@@ -151,8 +154,12 @@ def signup():
             login_user(User(username, email), remember=True)
             logger.info(f"New user created and logged in: {username}, session authenticated: {current_user.is_authenticated}")
             return redirect(url_for('users.setup_wizard'))
+        except errors.PyMongoError as e:
+            logger.error(f"MongoDB error during signup: {str(e)}")
+            flash(trans_function('signup_error'), 'danger')
+            return render_template('users/signup.html', form=form), 500
         except Exception as e:
-            logger.error(f"Error during signup: {str(e)}")
+            logger.error(f"Unexpected error during signup: {str(e)}")
             flash(trans_function('signup_error'), 'danger')
             return render_template('users/signup.html', form=form), 500
     return render_template('users/signup.html', form=form)
@@ -193,8 +200,12 @@ def forgot_password():
                 return render_template('users/forgot_password.html', form=form)
             flash(trans_function('reset_email_sent'), 'success')
             return render_template('users/forgot_password.html', form=form)
+        except errors.PyMongoError as e:
+            logger.error(f"MongoDB error during forgot password: {str(e)}")
+            flash(trans_function('forgot_password_error'), 'danger')
+            return render_template('users/forgot_password.html', form=form), 500
         except Exception as e:
-            logger.error(f"Error during forgot password: {str(e)}")
+            logger.error(f"Unexpected error during forgot password: {str(e)}")
             flash(trans_function('forgot_password_error'), 'danger')
             return render_template('users/forgot_password.html', form=form), 500
     return render_template('users/forgot_password.html', form=form)
@@ -226,8 +237,12 @@ def reset_password():
             flash(trans_function('reset_password_success'), 'success')
             logger.info(f"Password reset for user: {user['_id']}")
             return redirect(url_for('users.login'))
+        except errors.PyMongoError as e:
+            logger.error(f"MongoDB error during password reset: {str(e)}")
+            flash(trans_function('reset_password_error'), 'danger')
+            return render_template('users/reset_password.html', form=form, token=token), 500
         except Exception as e:
-            logger.error(f"Error during password reset: {str(e)}")
+            logger.error(f"Unexpected error during password reset: {str(e)}")
             flash(trans_function('reset_password_error'), 'danger')
             return render_template('users/reset_password.html', form=form, token=token), 500
     if not token:
@@ -246,8 +261,12 @@ def profile():
             return render_template('users/profile.html', user=user, form=ProfileForm())
         flash(trans_function('user_not_found'), 'danger')
         return redirect(url_for('index'))
+    except errors.PyMongoError as e:
+        logger.error(f"MongoDB error fetching profile: {str(e)}")
+        flash(trans_function('core_something_went_wrong'), 'danger')
+        return redirect(url_for('index')), 500
     except Exception as e:
-        logger.error(f"Error fetching profile: {str(e)}")
+        logger.error(f"Unexpected error fetching profile: {str(e)}")
         flash(trans_function('core_something_went_wrong'), 'danger')
         return redirect(url_for('index')), 500
 
@@ -284,8 +303,12 @@ def update_profile():
             flash(trans_function('profile_updated'), 'success')
             logger.info(f"Profile updated for user: {new_username}")
             return redirect(url_for('users.profile'))
+        except errors.PyMongoError as e:
+            logger.error(f"MongoDB error updating profile: {str(e)}")
+            flash(trans_function('core_something_went_wrong'), 'danger')
+            return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email}), 500
         except Exception as e:
-            logger.error(f"Error updating profile: {str(e)}")
+            logger.error(f"Unexpected error updating profile: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
             return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email}), 500
     return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
@@ -317,8 +340,12 @@ def setup_wizard():
             flash(trans_function('business_setup_completed'), 'success')
             logger.info(f"Business setup completed for user: {current_user.id}")
             return redirect(url_for('dashboard.general_dashboard'))
+        except errors.PyMongoError as e:
+            logger.error(f"MongoDB error during business setup: {str(e)}")
+            flash(trans_function('core_something_went_wrong'), 'danger')
+            return render_template('users/setup.html', form=form), 500
         except Exception as e:
-            logger.error(f"Error during business setup: {str(e)}")
+            logger.error(f"Unexpected error during business setup: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
             return render_template('users/setup.html', form=form), 500
     
@@ -357,7 +384,11 @@ def check_wizard_completion():
             user = mongo.db.users.find_one({'_id': current_user.id})
             if not user.get('setup_complete', False):
                 return redirect(url_for('users.setup_wizard'))
+        except errors.PyMongoError as e:
+            logger.error(f"MongoDB error checking wizard completion: {str(e)}")
+            flash(trans_function('core_something_went_wrong'), 'danger')
+            return redirect(url_for('index')), 500
         except Exception as e:
-            logger.error(f"Error checking wizard completion: {str(e)}")
+            logger.error(f"Unexpected error checking wizard completion: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
             return redirect(url_for('index')), 500
