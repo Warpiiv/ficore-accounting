@@ -320,7 +320,7 @@ def setup_wizard():
     mongo = current_app.extensions['pymongo']
     user = mongo.db.users.find_one({'_id': current_user.id})
     if user.get('setup_complete', False):
-        return redirect(url_for('general_dashboard'))  # Updated to correct endpoint
+        return redirect(url_for('general_dashboard'))
     
     form = BusinessSetupForm()
     if form.validate_on_submit():
@@ -340,7 +340,7 @@ def setup_wizard():
             )
             flash(trans_function('business_setup_completed'), 'success')
             logger.info(f"Business setup completed for user: {current_user.id}")
-            return redirect(url_for('general_dashboard'))  # Updated to correct endpoint
+            return redirect(url_for('users.profile'))  # Redirect to profile after setup
         except errors.PyMongoError as e:
             logger.error(f"MongoDB error during business setup: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
