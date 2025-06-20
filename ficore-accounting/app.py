@@ -15,7 +15,6 @@ from utils import trans_function
 from flask_session import Session
 from pymongo import ASCENDING, DESCENDING, errors
 from pymongo.operations import UpdateOne
-from flask_babel import Babel, lazy_gettext
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -55,10 +54,11 @@ mail = Mail(app)
 sess = Session(app)
 
 # Initialize Flask-Babel
+from flask_babel import Babel
 babel = Babel(app)
 
 # Locale selector for dynamic language support
-@babel.localeselector
+@babel.locale_selector
 def get_locale():
     return session.get('lang', request.accept_languages.best_match(['en', 'ha']) or 'en')
 
