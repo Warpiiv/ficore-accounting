@@ -15,6 +15,9 @@ from utils import trans_function, is_valid_email
 from flask_session import Session
 from pymongo import ASCENDING, DESCENDING, errors
 from pymongo.operations import UpdateOne
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from itsdangerous import URLSafeTimedSerializer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,13 +26,16 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
 CSRFProtect(app)
 
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
+# Ensure SECRET_KEY is set securely
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+if not app.config['SECRET_KEY']:
+    raise ValueError("SECRET_KEY must be set in environment variables")
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')
 app.config['SESSION_TYPE'] = 'mongodb'
 app.config['SESSION_MONGODB_DB'] = 'minirecords'
 app.config['SESSION_MONGODB_COLLECTION'] = 'sessions'
-app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=3600)
+app.config['SESSION_PERMANENT'] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('FLASK_ENV', 'development') == 'production'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
@@ -53,14 +59,20 @@ app.config['SESSION_MONGODB'] = mongo.cx
 mail = Mail(app)
 sess = Session(app)
 
+# Initialize Limiter for rate limiting
+limiter = Limiter(get_remote_address, app=app, default_limits=["100 per day", "10 per hour"])
+# Initialize Serializer for secure tokens
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login'
 
 class User(UserMixin):
-    def __init__(self, id, email):
+    def __init__(self, id, email, display_name=None):
         self.id = id
         self.email = email
+        self.display_name = display_name or id  # Default to id if no display_name
 
     def is_active(self):
         return True
@@ -79,7 +91,7 @@ def load_user(user_id):
     try:
         user_data = mongo.db.users.find_one({'_id': user_id})
         if user_data:
-            return User(str(user_data['_id']), user_data.get('email'))
+            return User(str(user_data['_id']), user_data.get('email'), user_data.get('display_name'))
         return None
     except Exception as e:
         logger.error(f"Error loading user {user_id}: {str(e)}")
@@ -224,9 +236,9 @@ def setup_database():
         try:
             result = db.users.update_many(
                 {'setup_complete': {'$exists': False}},
-                {'$set': {'setup_complete': False}}
+                {'$set': {'setup_complete': False, 'display_name': ''}}
             )
-            logger.info(f"Updated {result.modified_count} user documents with setup_complete field")
+            logger.info(f"Updated {result.modified_count} user documents with setup_complete and display_name fields")
         except Exception as e:
             logger.error(f"Error updating users with setup_complete field: {str(e)}")
 
@@ -243,6 +255,7 @@ def setup_database():
                     'dark_mode': False,
                     'is_admin': True,
                     'setup_complete': False,
+                    'display_name': admin_username,
                     'created_at': datetime.utcnow()
                 })
                 logger.info(f"Default admin user created: username={admin_username}, email={admin_email}")
@@ -355,6 +368,20 @@ def setup_database():
         logger.error(f"Error initializing database: {str(e)}")
         return False
 
+# Server-side setup enforcement
+def verify_setup_completion():
+    if current_user.is_authenticated:
+        try:
+            mongo = app.extensions['pymongo']
+            user = mongo.db.users.find_one({'_id': current_user.id})
+            if user and not user.get('setup_complete', False):
+                return redirect(url_for('users.setup_wizard'))
+        except Exception as e:
+            logger.error(f"Error verifying setup completion: {str(e)}")
+            flash(trans_function('core_something_went_wrong'), 'danger')
+            return redirect(url_for('index'))
+    return None
+
 @app.route('/setup', methods=['GET'])
 def setup_database_route():
     setup_key = request.args.get('key')
@@ -374,15 +401,24 @@ def setup_database_route():
 
 @app.route('/')
 def index():
+    redirect_response = verify_setup_completion()
+    if redirect_response:
+        return redirect_response
     return render_template('general/home.html')
 
 @app.route('/about')
 def about():
+    redirect_response = verify_setup_completion()
+    if redirect_response:
+        return redirect_response
     return render_template('general/about.html')
 
 @app.route('/feedback', methods=['GET', 'POST'])
 @login_required
 def feedback():
+    redirect_response = verify_setup_completion()
+    if redirect_response:
+        return redirect_response
     lang = session.get('lang', 'en')
     tool_options = [['invoices', trans_function('tool_invoices', default='Invoices')],
                     ['transactions', trans_function('tool_transactions', default='Transactions')],
@@ -424,6 +460,9 @@ def feedback():
 @app.route('/dashboard/admin')
 @login_required
 def admin_dashboard():
+    redirect_response = verify_setup_completion()
+    if redirect_response:
+        return redirect_response
     try:
         mongo = app.extensions['pymongo']
         user = mongo.db.users.find_one({'_id': current_user.id})
@@ -465,6 +504,9 @@ def admin_dashboard():
 @app.route('/dashboard/general')
 @login_required
 def general_dashboard():
+    redirect_response = verify_setup_completion()
+    if redirect_response:
+        return redirect_response
     try:
         mongo = app.extensions['pymongo']
         user = mongo.db.users.find_one({'_id': current_user.id})
