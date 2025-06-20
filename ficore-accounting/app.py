@@ -61,7 +61,7 @@ mail = Mail(app)
 sess = Session(app)
 
 # Initialize Limiter for rate limiting
-limiter = Limiter(get_remote_address, app=app, default_limits=["100 per day", "10 per hour"])
+limiter = Limiter(get_remote_address, app=app, default_limits=["100 per day", "100 per hour"])
 # Initialize Serializer for secure tokens
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
@@ -475,8 +475,8 @@ def admin_dashboard():
         if not user.get('is_admin', False):
             flash(trans_function('forbidden_access', default='Access denied'), 'danger')
             return redirect(url_for('index')), 403
-        invoices = list(mongo.db.invoices.find().sort('created_at', DESCENDING).limit(50))
-        transactions = list(mongo.db.transactions.find().sort('created_at', DESCENDING).limit(50))
+        invoices = list(mongo.db.invoices.find().sort('created_at', DESCENDING).limit(100))
+        transactions = list(mongo.db.transactions.find().sort('created_at', DESCENDING).limit(100))
         for invoice in invoices:
             invoice['_id'] = str(invoice['_id'])
             if isinstance(invoice.get('created_at'), str):
@@ -519,8 +519,8 @@ def general_dashboard():
         query = {'user_id': str(current_user.id)}
         if user.get('is_admin', False):
             query = {}  # Admins can see all data
-        recent_invoices = list(mongo.db.invoices.find(query).sort('created_at', DESCENDING).limit(10))
-        recent_transactions = list(mongo.db.transactions.find(query).sort('created_at', DESCENDING).limit(10))
+        recent_invoices = list(mongo.db.invoices.find(query).sort('created_at', DESCENDING).limit(100))
+        recent_transactions = list(mongo.db.transactions.find(query).sort('created_at', DESCENDING).limit(100))
 
         for invoice in recent_invoices:
             invoice['_id'] = str(invoice['_id'])
