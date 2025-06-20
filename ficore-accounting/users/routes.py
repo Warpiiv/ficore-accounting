@@ -10,6 +10,9 @@ import uuid
 from datetime import datetime, timedelta
 from utils import trans_function, is_valid_email
 import re
+from flask_limiter import Limiter
+from itsdangerous import URLSafeTimedSerializer
+from flask_recaptcha import ReCaptcha
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +20,9 @@ users_bp = Blueprint('users', __name__, template_folder='templates/users')
 
 # Username validation regex: alphanumeric, underscores, 3-50 characters
 USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_]{3,50}$')
+
+# Initialize ReCaptcha (requires RECAPTCHA_PUBLIC_KEY and RECAPTCHA_PRIVATE_KEY in environment)
+recaptcha = ReCaptcha(app=users_bp)
 
 class LoginForm(FlaskForm):
     username = StringField(trans_function('Username', default='Username'), [
@@ -52,6 +58,7 @@ class ForgotPasswordForm(FlaskForm):
         validators.DataRequired(message=trans_function('Email is required', default='Email is required')),
         validators.Email(message=trans_function('Invalid email address', default='Invalid email address'))
     ])
+    recaptcha = ReCaptchaField()  # Requires ReCaptcha setup
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField(trans_function('Password', default='Password'), [
@@ -62,16 +69,16 @@ class ResetPasswordForm(FlaskForm):
         validators.DataRequired(message=trans_function('Confirm password is required', default='Confirm password is required')),
         validators.EqualTo('password', message=trans_function('Passwords must match', default='Passwords must match'))
     ])
+    recaptcha = ReCaptchaField()  # Requires ReCaptcha setup
 
 class ProfileForm(FlaskForm):
     email = StringField(trans_function('Email', default='Email'), [
         validators.DataRequired(message=trans_function('Email is required', default='Email is required')),
         validators.Email(message=trans_function('Invalid email address', default='Invalid email address'))
     ])
-    username = StringField(trans_function('Username', default='Username'), [
-        validators.DataRequired(message=trans_function('Username is required', default='Username is required')),
-        validators.Length(min=3, max=50, message=trans_function('Username must be between 3 and 50 characters', default='Username must be between 3 and 50 characters')),
-        validators.Regexp(USERNAME_REGEX, message=trans_function('Username must be alphanumeric with underscores', default='Username must be alphanumeric with underscores'))
+    display_name = StringField(trans_function('Display Name', default='Display Name'), [
+        validators.DataRequired(message=trans_function('Display Name is required', default='Display Name is required')),
+        validators.Length(min=3, max=50, message=trans_function('Display Name must be between 3 and 50 characters', default='Display Name must be between 3 and 50 characters'))
     ])
 
 class BusinessSetupForm(FlaskForm):
@@ -105,7 +112,7 @@ def login():
             user = mongo.db.users.find_one({'_id': username})
             if user and check_password_hash(user['password'], form.password.data):
                 from app import User
-                login_user(User(user['_id'], user['email']), remember=True)
+                login_user(User(user['_id'], user['email'], user.get('display_name')), remember=True)
                 logger.info(f"User {username} logged in successfully, session authenticated: {current_user.is_authenticated}")
                 if not user.get('setup_complete', False):
                     return redirect(url_for('users.setup_wizard'))
@@ -144,7 +151,8 @@ def signup():
                 'dark_mode': False,
                 'is_admin': False,
                 'created_at': datetime.utcnow(),
-                'setup_complete': False
+                'setup_complete': False,
+                'display_name': username  # Initial display_name
             }
             result = mongo.db.users.insert_one(user_data)
             if not result.inserted_id:
@@ -152,7 +160,7 @@ def signup():
                 flash(trans_function('signup_error'), 'danger')
                 return render_template('users/signup.html', form=form), 500
             from app import User
-            login_user(User(username, email), remember=True)
+            login_user(User(username, email, username), remember=True)
             logger.info(f"New user created and logged in: {username}, session authenticated: {current_user.is_authenticated}")
             return redirect(url_for('users.setup_wizard'))
         except errors.PyMongoError as e:
@@ -166,11 +174,12 @@ def signup():
     return render_template('users/signup.html', form=form)
 
 @users_bp.route('/forgot_password', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def forgot_password():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = ForgotPasswordForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and recaptcha.verify():
         try:
             mongo = current_app.extensions['pymongo']
             email = form.email.data.strip().lower()
@@ -178,8 +187,8 @@ def forgot_password():
             if not user:
                 flash(trans_function('email_not_found'), 'danger')
                 return render_template('users/forgot_password.html', form=form)
-            reset_token = str(uuid.uuid4())
-            expiry = datetime.utcnow() + timedelta(hours=1)
+            reset_token = serializer.dumps(email, salt='reset-salt')
+            expiry = datetime.utcnow() + timedelta(minutes=15)
             mongo.db.users.update_one(
                 {'_id': user['_id']},
                 {'$set': {'reset_token': reset_token, 'reset_token_expiry': expiry}}
@@ -190,65 +199,44 @@ def forgot_password():
                 recipients=[email],
                 body=f"{trans_function('reset_password_body')}\n\n{reset_url}\n\n{trans_function('reset_password_expiry')}"
             )
-            try:
-                from app import mail
-                mail.send(msg)
-                logger.info(f"Password reset email sent to {email}")
-            except Exception as e:
-                logger.error(f"Failed to send reset email to {email}: {str(e)}")
-                logger.info(f"Reset URL for {email}: {reset_url}")
-                flash(trans_function('reset_email_failed'), 'warning')
-                return render_template('users/forgot_password.html', form=form)
+            mail.send(msg)
             flash(trans_function('reset_email_sent'), 'success')
             return render_template('users/forgot_password.html', form=form)
-        except errors.PyMongoError as e:
-            logger.error(f"MongoDB error during forgot password: {str(e)}")
-            flash(trans_function('forgot_password_error'), 'danger')
-            return render_template('users/forgot_password.html', form=form), 500
         except Exception as e:
-            logger.error(f"Unexpected error during forgot password: {str(e)}")
+            logger.error(f"Error during forgot password: {str(e)}")
             flash(trans_function('forgot_password_error'), 'danger')
             return render_template('users/forgot_password.html', form=form), 500
     return render_template('users/forgot_password.html', form=form)
 
 @users_bp.route('/reset_password', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def reset_password():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     token = request.args.get('token')
+    try:
+        email = serializer.loads(token, salt='reset-salt', max_age=900)  # 15 minutes
+    except Exception:
+        flash(trans_function('invalid_or_expired_token'), 'danger')
+        return redirect(url_for('users.forgot_password'))
     form = ResetPasswordForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and recaptcha.verify():
         try:
             mongo = current_app.extensions['pymongo']
-            token = request.form.get('token') or token
-            user = mongo.db.users.find_one({
-                'reset_token': token,
-                'reset_token_expiry': {'$gt': datetime.utcnow()}
-            })
+            user = mongo.db.users.find_one({'email': email})
             if not user:
                 flash(trans_function('invalid_or_expired_token'), 'danger')
                 return render_template('users/reset_password.html', form=form, token=token)
             mongo.db.users.update_one(
                 {'_id': user['_id']},
-                {
-                    '$set': {'password': generate_password_hash(form.password.data)},
-                    '$unset': {'reset_token': '', 'reset_token_expiry': ''}
-                }
+                {'$set': {'password': generate_password_hash(form.password.data)}, '$unset': {'reset_token': '', 'reset_token_expiry': ''}}
             )
             flash(trans_function('reset_password_success'), 'success')
-            logger.info(f"Password reset for user: {user['_id']}")
             return redirect(url_for('users.login'))
-        except errors.PyMongoError as e:
-            logger.error(f"MongoDB error during password reset: {str(e)}")
-            flash(trans_function('reset_password_error'), 'danger')
-            return render_template('users/reset_password.html', form=form, token=token), 500
         except Exception as e:
-            logger.error(f"Unexpected error during password reset: {str(e)}")
+            logger.error(f"Error during password reset: {str(e)}")
             flash(trans_function('reset_password_error'), 'danger')
             return render_template('users/reset_password.html', form=form, token=token), 500
-    if not token:
-        flash(trans_function('invalid_or_expired_token'), 'danger')
-        return redirect(url_for('users.forgot_password'))
     return render_template('users/reset_password.html', form=form, token=token)
 
 @users_bp.route('/profile', methods=['GET'])
@@ -275,44 +263,41 @@ def profile():
 @login_required
 def update_profile():
     form = ProfileForm(data={
-        'username': current_user.id,
-        'email': current_user.email
+        'email': current_user.email,
+        'display_name': current_user.display_name
     })
     if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
-            new_username = form.username.data.strip().lower()
             new_email = form.email.data.strip().lower()
-            if new_username != current_user.id and mongo.db.users.find_one({'_id': new_username}):
-                flash(trans_function('username_exists'), 'danger')
-                return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
+            new_display_name = form.display_name.data.strip()
             if new_email != current_user.email and mongo.db.users.find_one({'email': new_email}):
                 flash(trans_function('email_exists'), 'danger')
-                return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
+                return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email, 'display_name': current_user.display_name})
             mongo.db.users.update_one(
                 {'_id': current_user.id},
                 {
                     '$set': {
-                        '_id': new_username,
                         'email': new_email,
+                        'display_name': new_display_name,
                         'updated_at': datetime.utcnow()
                     }
                 }
             )
-            current_user.id = new_username
             current_user.email = new_email
+            current_user.display_name = new_display_name
             flash(trans_function('profile_updated'), 'success')
-            logger.info(f"Profile updated for user: {new_username}")
+            logger.info(f"Profile updated for user: {current_user.id}")
             return redirect(url_for('users.profile'))
         except errors.PyMongoError as e:
             logger.error(f"MongoDB error updating profile: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
-            return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email}), 500
+            return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email, 'display_name': current_user.display_name}), 500
         except Exception as e:
             logger.error(f"Unexpected error updating profile: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
-            return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email}), 500
-    return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email})
+            return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email, 'display_name': current_user.display_name}), 500
+    return render_template('users/profile.html', form=form, user={'_id': current_user.id, 'email': current_user.email, 'display_name': current_user.display_name})
 
 @users_bp.route('/setup_wizard', methods=['GET', 'POST'])
 @login_required
@@ -340,7 +325,7 @@ def setup_wizard():
             )
             flash(trans_function('business_setup_completed'), 'success')
             logger.info(f"Business setup completed for user: {current_user.id}")
-            return redirect(url_for('users.profile'))  # Redirect to profile after setup
+            return redirect(url_for('users.profile'))
         except errors.PyMongoError as e:
             logger.error(f"MongoDB error during business setup: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
@@ -357,6 +342,7 @@ def setup_wizard():
 def logout():
     logout_user()
     flash(trans_function('logged_out'), 'success')
+    session.clear()  # Invalidate session
     return redirect(url_for('index'))
 
 @users_bp.route('/auth/signin')
