@@ -9,7 +9,7 @@
 <div class="container my-5">
     <h1 class="text-center mb-4 text-color">{{ trans('view_invoices', default='View Invoices') }}</h1>
     {% if current_user.is_admin %}
-    <div class="alert alert-info text-center">
+    <div class="alert alert-info text-center" role="alert">
         {{ trans('admin_view_all', default='You are viewing all invoices as an admin.') }}
     </div>
     {% endif %}
@@ -17,55 +17,55 @@
         <div class="card-body">
             <div class="mb-4">
                 <form class="grid grid-form" method="GET" action="{{ url_for('invoices.dashboard') }}">
-                    {{ form.csrf_token }}
+                    {{ form.hidden_tag() }}
                     <div>
-                        <label class="form-label text-color" for="status_filter">{{ trans('status', default='Status') }}</label>
-                        <select name="status" id="status_filter" class="form-control">
-                            <option value="">{{ trans('all', default='All') }}</option>
-                            <option value="pending" {{ 'selected' if status_filter == 'pending' else '' }}>{{ trans('pending', default='Pending') }}</option>
-                            <option value="settled" {{ 'selected' if status_filter == 'settled' else '' }}>{{ trans('settled', default='Settled') }}</option>
-                        </select>
+                        <label class="form-label text-color" for="{{ form.status.id }}">{{ trans('status', default='Status') }}</label>
+                        {{ form.status(class="form-control", id=form.status.id, aria_describedby="statusHelp") }}
+                        <small id="statusHelp" class="form-text text-muted">{{ trans('select_status', default='Select a status to filter invoices') }}</small>
                     </div>
                     <div>
-                        <label class="form-label text-color" for="customer_filter">{{ trans('customer_name', default='Customer Name') }}</label>
-                        <input type="text" name="customer" id="customer_filter" class="form-control" value="{{ customer_filter or '' }}">
+                        <label class="form-label text-color" for="{{ form.customer_name.id }}">{{ trans('customer_name', default='Customer Name') }}</label>
+                        {{ form.customer_name(class="form-control", id=form.customer_name.id, value=customer_filter or '', aria_describedby="customerHelp") }}
+                        <small id="customerHelp" class="form-text text-muted">{{ trans('enter_customer_name', default='Enter a customer name to filter') }}</small>
                     </div>
                     <div>
-                        <label class="form-label text-color" for="start_date_filter">{{ trans('start_date', default='Start Date') }}</label>
-                        <input type="date" name="start_date" id="start_date_filter" class="form-control" value="{{ start_date_filter or '' }}">
+                        <label class="form-label text-color" for="{{ form.start_date.id }}">{{ trans('start_date', default='Start Date') }}</label>
+                        {{ form.start_date(class="form-control", id=form.start_date.id, value=start_date_filter or '', aria_describedby="startDateHelp") }}
+                        <small id="startDateHelp" class="form-text text-muted">{{ trans('select_start_date', default='Select a start date for filtering') }}</small>
                     </div>
                     <div>
-                        <label class="form-label text-color" for="end_date_filter">{{ trans('end_date', default='End Date') }}</label>
-                        <input type="date" name="end_date" id="end_date_filter" class="form-control" value="{{ end_date_filter or '' }}">
+                        <label class="form-label text-color" for="{{ form.end_date.id }}">{{ trans('end_date', default='End Date') }}</label>
+                        {{ form.end_date(class="form-control", id=form.end_date.id, value=end_date_filter or '', aria_describedby="endDateHelp") }}
+                        <small id="endDateHelp" class="form-text text-muted">{{ trans('select_end_date', default='Select an end date for filtering') }}</small>
                     </div>
                     <div class="form-buttons-group">
-                        <button type="submit" class="btn btn-primary me-2">{{ trans('filter', default='Filter') }}</button>
-                        <a href="{{ url_for('invoices.export_invoices_csv') }}" class="btn btn-secondary">{{ trans('export_csv', default='Export to CSV') }}</a>
+                        {{ form.submit(class="btn btn-primary me-2") }}
+                        <a href="{{ url_for('invoices.export_invoices_csv') }}" class="btn btn-secondary" aria-label="{{ trans('export_csv', default='Export to CSV') }}">{{ trans('export_csv', default='Export to CSV') }}</a>
                     </div>
                 </form>
             </div>
             <div class="text-end mb-3">
-                <a href="{{ url_for('invoices.create') }}" class="btn btn-primary">
+                <a href="{{ url_for('invoices.create') }}" class="btn btn-primary" aria-label="{{ trans('create_invoice', default='Create Invoice') }}">
                     {{ trans('create_invoice', default='Create Invoice') }}
                 </a>
             </div>
             {% if invoices %}
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover" aria-label="{{ trans('invoices_table', default='Invoices Table') }}">
                         <thead>
                             <tr>
                                 {% if current_user.is_admin %}
-                                <th>{{ trans('user_id', default='User ID') }}</th>
+                                <th scope="col">{{ trans('user_id', default='User ID') }}</th>
                                 {% endif %}
-                                <th class="d-none d-md-table-cell">{{ trans('invoice_number', default='Invoice Number') }}</th>
-                                <th class="d-md-table-cell">{{ trans('customer_name', default='Customer Name') }}</th>
-                                <th class="d-md-table-cell">{{ trans('description', default='Description') }}</th>
-                                <th>{{ trans('amount', default='Amount') }}</th>
-                                <th>{{ trans('status', default='Status') }}</th>
-                                <th class="d-none d-md-table-cell">{{ trans('created_at', default='Created At') }}</th>
-                                <th class="d-none d-md-table-cell">{{ trans('due_date', default='Due Date') }}</th>
-                                <th class="d-none d-md-table-cell">{{ trans('settled_date', default='Settled Date') }}</th>
-                                <th>{{ trans('actions', default='Actions') }}</th>
+                                <th scope="col" class="d-none d-md-table-cell">{{ trans('invoice_number', default='Invoice Number') }}</th>
+                                <th scope="col" class="d-md-table-cell">{{ trans('customer_name', default='Customer Name') }}</th>
+                                <th scope="col" class="d-md-table-cell">{{ trans('description', default='Description') }}</th>
+                                <th scope="col">{{ trans('amount', default='Amount') }}</th>
+                                <th scope="col">{{ trans('status', default='Status') }}</th>
+                                <th scope="col" class="d-none d-md-table-cell">{{ trans('created_at', default='Created At') }}</th>
+                                <th scope="col" class="d-none d-md-table-cell">{{ trans('due_date', default='Due Date') }}</th>
+                                <th scope="col" class="d-none d-md-table-cell">{{ trans('settled_date', default='Settled Date') }}</th>
+                                <th scope="col">{{ trans('actions', default='Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,8 +75,8 @@
                                     <td class="text-color">{{ invoice.user_id | escape }}</td>
                                     {% endif %}
                                     <td class="text-color d-none d-md-table-cell">{{ invoice.invoice_number | escape }}</td>
-                                    <td class="text-color text-truncate invoice-customer-name">{{ invoice.customer_name | escape }}</td>
-                                    <td class="text-color text-truncate invoice-description d-md-table-cell">{{ invoice.description | escape }}</td>
+                                    <td class="text-color text-truncate invoice-customer-name" style="max-width: 150px;">{{ invoice.customer_name | escape }}</td>
+                                    <td class="text-color text-truncate invoice-description d-md-table-cell" style="max-width: 200px;">{{ invoice.description | escape }}</td>
                                     <td class="amount-highlight">{{ invoice.amount | format_currency }}</td>
                                     <td class="text-color">{{ trans(invoice.status, default=invoice.status | capitalize) }}</td>
                                     <td class="text-color d-none d-md-table-cell">{{ invoice.created_at | format_datetime }}</td>
@@ -84,7 +84,7 @@
                                     <td class="text-color d-none d-md-table-cell">{{ invoice.settled_date | format_date if invoice.settled_date else '-' }}</td>
                                     <td>
                                         {% if current_user.is_admin or invoice.user_id == current_user.id %}
-                                        <a href="{{ url_for('invoices.update', invoice_id=invoice._id) | escape }}" class="btn btn-sm btn-primary p-1" aria-label="{{ trans('edit_invoice', default='Edit Invoice') | escape }}">
+                                        <a href="{{ url_for('invoices.update', invoice_id=invoice._id) | escape }}" class="btn btn-sm btn-primary p-1 me-1" aria-label="{{ trans('edit_invoice', default='Edit Invoice') | escape }}">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button class="btn btn-sm btn-danger p-1 delete-invoice-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal{{ invoice._id | escape }}" data-invoice-id="{{ invoice._id | escape }}" aria-label="{{ trans('delete_invoice', default='Delete Invoice') | escape }}">
@@ -146,7 +146,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_cancel', default='Cancel') | escape }}</button>
                 <form action="{{ url_for('invoices.delete', invoice_id=invoice._id) | escape }}" method="POST" style="display:inline;">
-                    {{ form.csrf_token }}
+                    {{ form.hidden_tag() }}
                     <button type="submit" class="btn btn-danger">{{ trans('delete', default='Delete') | escape }}</button>
                 </form>
             </div>
@@ -161,7 +161,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Ensure delete buttons trigger modals correctly
         document.querySelectorAll('.delete-invoice-btn').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevent row click from opening details modal
                 const invoiceId = this.getAttribute('data-invoice-id');
                 const modal = document.querySelector(`#deleteInvoiceModal${invoiceId}`);
                 if (modal) {
