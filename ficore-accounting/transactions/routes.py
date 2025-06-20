@@ -35,7 +35,7 @@ class TransactionForm(FlaskForm):
 
 @transactions_bp.route('/history', methods=['GET'])
 @login_required
-def transaction_history():
+def history():
     date_filter = ''
     category_filter = ''
     description_filter = ''
@@ -123,7 +123,7 @@ def transaction_history():
 
 @transactions_bp.route('/add', methods=['GET', 'POST'])
 @login_required
-def add_transaction():
+def add():
     form = TransactionForm()
     if form.validate_on_submit():
         try:
@@ -151,7 +151,7 @@ def add_transaction():
 
 @transactions_bp.route('/update/<transaction_id>', methods=['GET', 'POST'])
 @login_required
-def update_transaction(transaction_id):
+def update(transaction_id):
     mongo = current_app.extensions['pymongo']
     transaction = mongo.db.transactions.find_one({'_id': ObjectId(transaction_id), 'user_id': str(current_user.id)})
     if not transaction:
@@ -194,7 +194,7 @@ def update_transaction(transaction_id):
 
 @transactions_bp.route('/delete/<transaction_id>', methods=['POST'])
 @login_required
-def delete_transaction(transaction_id):
+def delete(transaction_id):
     try:
         mongo = current_app.extensions['pymongo']
         result = mongo.db.transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': str(current_user.id)})
@@ -211,7 +211,7 @@ def delete_transaction(transaction_id):
 
 @transactions_bp.route('/export', methods=['GET'])
 @login_required
-def export_transactions():
+def export():
     try:
         mongo = current_app.extensions['pymongo']
         user = mongo.db.users.find_one({'_id': current_user.id})
