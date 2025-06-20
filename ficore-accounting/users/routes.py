@@ -12,7 +12,6 @@ from utils import trans_function, is_valid_email
 import re
 from flask_limiter import Limiter
 from itsdangerous import URLSafeTimedSerializer
-from flask_recaptcha import ReCaptcha
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +19,6 @@ users_bp = Blueprint('users', __name__, template_folder='templates/users')
 
 # Username validation regex: alphanumeric, underscores, 3-50 characters
 USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_]{3,50}$')
-
-# Initialize ReCaptcha (requires RECAPTCHA_PUBLIC_KEY and RECAPTCHA_PRIVATE_KEY in environment)
-recaptcha = ReCaptcha(app=users_bp)
 
 class LoginForm(FlaskForm):
     username = StringField(trans_function('Username', default='Username'), [
@@ -58,7 +54,6 @@ class ForgotPasswordForm(FlaskForm):
         validators.DataRequired(message=trans_function('Email is required', default='Email is required')),
         validators.Email(message=trans_function('Invalid email address', default='Invalid email address'))
     ])
-    recaptcha = ReCaptchaField()  # Requires ReCaptcha setup
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField(trans_function('Password', default='Password'), [
@@ -69,7 +64,6 @@ class ResetPasswordForm(FlaskForm):
         validators.DataRequired(message=trans_function('Confirm password is required', default='Confirm password is required')),
         validators.EqualTo('password', message=trans_function('Passwords must match', default='Passwords must match'))
     ])
-    recaptcha = ReCaptchaField()  # Requires ReCaptcha setup
 
 class ProfileForm(FlaskForm):
     email = StringField(trans_function('Email', default='Email'), [
@@ -179,7 +173,7 @@ def forgot_password():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = ForgotPasswordForm()
-    if form.validate_on_submit() and recaptcha.verify():
+    if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
             email = form.email.data.strip().lower()
@@ -220,7 +214,7 @@ def reset_password():
         flash(trans_function('invalid_or_expired_token'), 'danger')
         return redirect(url_for('users.forgot_password'))
     form = ResetPasswordForm()
-    if form.validate_on_submit() and recaptcha.verify():
+    if form.validate_on_submit():
         try:
             mongo = current_app.extensions['pymongo']
             user = mongo.db.users.find_one({'email': email})
