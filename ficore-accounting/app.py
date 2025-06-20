@@ -27,7 +27,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/minirecords')
 app.config['SESSION_TYPE'] = 'mongodb'
 app.config['SESSION_MONGODB_DB'] = 'minirecords'
-app.config['SESSION_MONGODB_COLLECT'] = 'sessions'
+app.config['SESSION_MONGODB_COLLECTION'] = 'sessions'
 app.config['SESSION_PERMANENT'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=3600)
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('FLASK_ENV', 'development') == 'production'
