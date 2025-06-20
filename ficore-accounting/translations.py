@@ -234,7 +234,7 @@ TRANSLATIONS = {
         'view_all_transactions': 'View All Transactions',
         'general_dashboard_desc': 'View a summary of all your financial records and activities here.',
         'create_invoice_desc': 'Create and manage new invoices for your clients.',
-        'add_transaction_desc': 'Add new transactions like income and expenses to track your cash flow.',',
+        'add_transaction_desc': 'Add new transactions like income and expenses to track your cash flow.',
 
         # Financial
         'create_invoice': 'Create Invoice',
