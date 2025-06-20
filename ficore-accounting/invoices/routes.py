@@ -91,7 +91,7 @@ def dashboard():
         return render_template('invoices/view.html', 
                              invoices=invoices, 
                              form=form,
-                             status_filter=status_filter, 
+                             statusibe_filter=status_filter, 
                              customer_filter=customer_filter,
                              start_date_filter=start_date_filter, 
                              end_date_filter=end_date_filter)
@@ -104,7 +104,7 @@ def dashboard():
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
         return render_template('invoices/view.html', invoices=[], form=FilterForm()), 500
 
-@invoices_bp.route('/create', methods=['GET', 'POST'])
+@invoices_bp.route('/create', methods=['GET', 'POST'], endpoint='create')
 @login_required
 def create_invoice():
     form = InvoiceForm()
@@ -150,7 +150,7 @@ def create_invoice():
                 logger.info(f"Invoice {invoice['invoice_number']} created by user {current_user.id}: {result.inserted_id}")
                 return redirect(url_for('invoices.dashboard'))
         except pymongo.errors.PyMongoError as e:
-            logger.error(f"MongoDB error creating.invoice for user {current_user.id}: {str(e)}")
+            logger.error(f"MongoDB error creating invoice for user {current_user.id}: {str(e)}")
             flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
             return render_template('invoices/create.html', form=form), 500
         except Exception as e:
