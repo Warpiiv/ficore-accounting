@@ -70,13 +70,13 @@
                         </thead>
                         <tbody>
                             {% for invoice in invoices %}
-                                <tr class="{{ 'row-overdue' if invoice.is_overdue else 'row-pending' if invoice.status == 'pending' else 'row-settled' }}" data-bs-toggle="modal" data-bs-target="#invoiceDetailsModal{{ invoice._id }}">
+                                <tr class="{{ 'row-overdue' if invoice.is_overdue else 'row-pending' if invoice.status == 'pending' else 'row-settled' }}" data-bs-toggle="modal" data-bs-target="#invoiceDetailsModal{{ invoice._id | escape }}">
                                     {% if current_user.is_admin %}
-                                    <td class="text-color">{{ invoice.user_id }}</td>
+                                    <td class="text-color">{{ invoice.user_id | escape }}</td>
                                     {% endif %}
-                                    <td class="text-color d-none d-md-table-cell">{{ invoice.invoice_number }}</td>
-                                    <td class="text-color text-truncate invoice-customer-name">{{ invoice.customer_name }}</td>
-                                    <td class="text-color text-truncate invoice-description d-md-table-cell">{{ invoice.description }}</td>
+                                    <td class="text-color d-none d-md-table-cell">{{ invoice.invoice_number | escape }}</td>
+                                    <td class="text-color text-truncate invoice-customer-name">{{ invoice.customer_name | escape }}</td>
+                                    <td class="text-color text-truncate invoice-description d-md-table-cell">{{ invoice.description | escape }}</td>
                                     <td class="amount-highlight">{{ invoice.amount | format_currency }}</td>
                                     <td class="text-color">{{ trans(invoice.status, default=invoice.status | capitalize) }}</td>
                                     <td class="text-color d-none d-md-table-cell">{{ invoice.created_at | format_datetime }}</td>
@@ -84,10 +84,10 @@
                                     <td class="text-color d-none d-md-table-cell">{{ invoice.settled_date | format_date if invoice.settled_date else '-' }}</td>
                                     <td>
                                         {% if current_user.is_admin or invoice.user_id == current_user.id %}
-                                        <a href="{{ url_for('invoices.update', invoice_id=invoice._id) }}" class="btn btn-sm btn-primary p-1" aria-label="{{ trans('edit_invoice', default='Edit Invoice') }}">
+                                        <a href="{{ url_for('invoices.update', invoice_id=invoice._id) | escape }}" class="btn btn-sm btn-primary p-1" aria-label="{{ trans('edit_invoice', default='Edit Invoice') | escape }}">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button class="btn btn-sm btn-danger p-1 delete-invoice-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal{{ invoice._id }}" data-invoice-id="{{ invoice._id }}" aria-label="{{ trans('delete_invoice', default='Delete Invoice') }}">
+                                        <button class="btn btn-sm btn-danger p-1 delete-invoice-btn" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal{{ invoice._id | escape }}" data-invoice-id="{{ invoice._id | escape }}" aria-label="{{ trans('delete_invoice', default='Delete Invoice') | escape }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                         {% endif %}
@@ -106,20 +106,20 @@
 
 <!-- Details Modal for Each Invoice -->
 {% for invoice in invoices %}
-<div class="modal fade" id="invoiceDetailsModal{{ invoice._id }}" tabindex="-1" aria-labelledby="invoiceDetailsModalLabel{{ invoice._id }}" aria-hidden="true">
+<div class="modal fade" id="invoiceDetailsModal{{ invoice._id | escape }}" tabindex="-1" aria-labelledby="invoiceDetailsModalLabel{{ invoice._id | escape }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="invoiceDetailsModalLabel{{ invoice._id }}">{{ trans('invoice_details', default='Invoice Details') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close', default='Close') }}"></button>
+                <h5 class="modal-title" id="invoiceDetailsModalLabel{{ invoice._id | escape }}">{{ trans('invoice_details', default='Invoice Details') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close', default='Close') | escape }}"></button>
             </div>
             <div class="modal-body">
                 {% if current_user.is_admin %}
-                <p><strong>{{ trans('user_id', default='User ID') }}:</strong> {{ invoice.user_id }}</p>
+                <p><strong>{{ trans('user_id', default='User ID') }}:</strong> {{ invoice.user_id | escape }}</p>
                 {% endif %}
-                <p><strong>{{ trans('invoice_number', default='Invoice Number') }}:</strong> {{ invoice.invoice_number }}</p>
-                <p><strong>{{ trans('customer_name', default='Customer Name') }}:</strong> {{ invoice.customer_name }}</p>
-                <p><strong>{{ trans('description', default='Description') }}:</strong> {{ invoice.description }}</p>
+                <p><strong>{{ trans('invoice_number', default='Invoice Number') }}:</strong> {{ invoice.invoice_number | escape }}</p>
+                <p><strong>{{ trans('customer_name', default='Customer Name') }}:</strong> {{ invoice.customer_name | escape }}</p>
+                <p><strong>{{ trans('description', default='Description') }}:</strong> {{ invoice.description | escape }}</p>
                 <p><strong>{{ trans('amount', default='Amount') }}:</strong> {{ invoice.amount | format_currency }}</p>
                 <p><strong>{{ trans('status', default='Status') }}:</strong> {{ trans(invoice.status, default=invoice.status | capitalize) }}</p>
                 <p><strong>{{ trans('created_at', default='Created At') }}:</strong> {{ invoice.created_at | format_datetime }}</p>
@@ -127,27 +127,27 @@
                 <p><strong>{{ trans('settled_date', default='Settled Date') }}:</strong> {{ invoice.settled_date | format_date if invoice.settled_date else '-' }}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_close', default='Close') }}</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_close', default='Close') | escape }}</button>
             </div>
         </div>
     </div>
 </div>
 <!-- Delete Confirmation Modal for Each Invoice -->
-<div class="modal fade" id="deleteInvoiceModal{{ invoice._id }}" tabindex="-1" aria-labelledby="deleteInvoiceModalLabel{{ invoice._id }}" aria-hidden="true">
+<div class="modal fade" id="deleteInvoiceModal{{ invoice._id | escape }}" tabindex="-1" aria-labelledby="deleteInvoiceModalLabel{{ invoice._id | escape }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteInvoiceModalLabel{{ invoice._id }}">{{ trans('confirm_delete', default='Confirm Delete') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close', default='Close') }}"></button>
+                <h5 class="modal-title" id="deleteInvoiceModalLabel{{ invoice._id | escape }}">{{ trans('confirm_delete', default='Confirm Delete') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close', default='Close') | escape }}"></button>
             </div>
             <div class="modal-body">
-                <p>{{ trans('delete_invoice_confirm', default='Are you sure you want to delete invoice #{0} for {1}?', invoice.invoice_number, invoice.customer_name) }}</p>
+                <p>{{ trans('delete_invoice_confirm', invoice_number=invoice.invoice_number | escape, customer_name=invoice.customer_name | escape) | default('Are you sure you want to delete invoice #' ~ (invoice.invoice_number | escape) ~ ' for ' ~ (invoice.customer_name | escape) ~ '?') }}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_cancel', default='Cancel') }}</button>
-                <form action="{{ url_for('invoices.delete', invoice_id=invoice._id) }}" method="POST" style="display:inline;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_cancel', default='Cancel') | escape }}</button>
+                <form action="{{ url_for('invoices.delete', invoice_id=invoice._id) | escape }}" method="POST" style="display:inline;">
                     {{ form.csrf_token }}
-                    <button type="submit" class="btn btn-danger">{{ trans('delete', default='Delete') }}</button>
+                    <button type="submit" class="btn btn-danger">{{ trans('delete', default='Delete') | escape }}</button>
                 </form>
             </div>
         </div>
