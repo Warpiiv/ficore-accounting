@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, TextAreaField, SelectField, Subm
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Message
-from flask_babel import _, lazy_gettext
+from flask_babel import _  # Keeping _ for potential future use, but not relying on it
 import logging
 import uuid
 from datetime import datetime, timedelta
@@ -19,75 +19,75 @@ users_bp = Blueprint('users', __name__, template_folder='templates/users')
 USERNAME_REGEX = re.compile(r'^[a-zA-Z0-9_]{3,50}$')
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', [
-        validators.DataRequired(message='Username is required'),
-        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters'),
-        validators.Regexp(USERNAME_REGEX, message='Username must be alphanumeric with underscores')
+    username = StringField(trans_function('Username', default='Username'), [
+        validators.DataRequired(message=trans_function('Username is required', default='Username is required')),
+        validators.Length(min=3, max=50, message=trans_function('Username must be between 3 and 50 characters', default='Username must be between 3 and 50 characters')),
+        validators.Regexp(USERNAME_REGEX, message=trans_function('Username must be alphanumeric with underscores', default='Username must be alphanumeric with underscores'))
     ])
-    password = PasswordField('Password', [
-        validators.DataRequired(message='Password is required'),
-        validators.Length(min=8, message='Password must be at least 8 characters')
+    password = PasswordField(trans_function('Password', default='Password'), [
+        validators.DataRequired(message=trans_function('Password is required', default='Password is required')),
+        validators.Length(min=8, message=trans_function('Password must be at least 8 characters', default='Password must be at least 8 characters'))
     ])
 
 class SignupForm(FlaskForm):
-    username = StringField('Username', [
-        validators.DataRequired(message='Username is required'),
-        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters'),
-        validators.Regexp(USERNAME_REGEX, message='Username must be alphanumeric with underscores')
+    username = StringField(trans_function('Username', default='Username'), [
+        validators.DataRequired(message=trans_function('Username is required', default='Username is required')),
+        validators.Length(min=3, max=50, message=trans_function('Username must be between 3 and 50 characters', default='Username must be between 3 and 50 characters')),
+        validators.Regexp(USERNAME_REGEX, message=trans_function('Username must be alphanumeric with underscores', default='Username must be alphanumeric with underscores'))
     ])
-    email = StringField('Email', [
-        validators.DataRequired(message='Email is required'),
-        validators.Email(message='Invalid email address'),
+    email = StringField(trans_function('Email', default='Email'), [
+        validators.DataRequired(message=trans_function('Email is required', default='Email is required')),
+        validators.Email(message=trans_function('Invalid email address', default='Invalid email address')),
         validators.Length(max=254),
         validators.InputRequired(),
-        lambda form, field: is_valid_email(field.data) or validators.ValidationError('Invalid email domain')
+        lambda form, field: is_valid_email(field.data) or validators.ValidationError(trans_function('Invalid email domain', default='Invalid email domain'))
     ])
-    password = PasswordField('Password', [
-        validators.DataRequired(message='Password is required'),
-        validators.Length(min=8, message='Password must be at least 8 characters')
+    password = PasswordField(trans_function('Password', default='Password'), [
+        validators.DataRequired(message=trans_function('Password is required', default='Password is required')),
+        validators.Length(min=8, message=trans_function('Password must be at least 8 characters', default='Password must be at least 8 characters'))
     ])
 
 class ForgotPasswordForm(FlaskForm):
-    email = StringField('Email', [
-        validators.DataRequired(message='Email is required'),
-        validators.Email(message='Invalid email address')
+    email = StringField(trans_function('Email', default='Email'), [
+        validators.DataRequired(message=trans_function('Email is required', default='Email is required')),
+        validators.Email(message=trans_function('Invalid email address', default='Invalid email address'))
     ])
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Password', [
-        validators.DataRequired(message='Password is required'),
-        validators.Length(min=8, message='Password must be at least 8 characters')
+    password = PasswordField(trans_function('Password', default='Password'), [
+        validators.DataRequired(message=trans_function('Password is required', default='Password is required')),
+        validators.Length(min=8, message=trans_function('Password must be at least 8 characters', default='Password must be at least 8 characters'))
     ])
-    confirm_password = PasswordField('Confirm Password', [
-        validators.DataRequired(message='Confirm password is required'),
-        validators.EqualTo('password', message='Passwords must match')
+    confirm_password = PasswordField(trans_function('Confirm Password', default='Confirm Password'), [
+        validators.DataRequired(message=trans_function('Confirm password is required', default='Confirm password is required')),
+        validators.EqualTo('password', message=trans_function('Passwords must match', default='Passwords must match'))
     ])
 
 class ProfileForm(FlaskForm):
-    email = StringField('Email', [
-        validators.DataRequired(message='Email is required'),
-        validators.Email(message='Invalid email address')
+    email = StringField(trans_function('Email', default='Email'), [
+        validators.DataRequired(message=trans_function('Email is required', default='Email is required')),
+        validators.Email(message=trans_function('Invalid email address', default='Invalid email address'))
     ])
-    username = StringField('Username', [
-        validators.DataRequired(message='Username is required'),
-        validators.Length(min=3, max=50, message='Username must be between 3 and 50 characters'),
-        validators.Regexp(USERNAME_REGEX, message='Username must be alphanumeric with underscores')
+    username = StringField(trans_function('Username', default='Username'), [
+        validators.DataRequired(message=trans_function('Username is required', default='Username is required')),
+        validators.Length(min=3, max=50, message=trans_function('Username must be between 3 and 50 characters', default='Username must be between 3 and 50 characters')),
+        validators.Regexp(USERNAME_REGEX, message=trans_function('Username must be alphanumeric with underscores', default='Username must be alphanumeric with underscores'))
     ])
 
 class BusinessSetupForm(FlaskForm):
-    business_name = StringField(lazy_gettext('Business Name'), 
+    business_name = StringField(trans_function('Business Name', default='Business Name'), 
                                validators=[validators.DataRequired(), validators.Length(min=2, max=100)])
-    address = TextAreaField(lazy_gettext('Business Address'), 
+    address = TextAreaField(trans_function('Business Address', default='Business Address'), 
                             validators=[validators.DataRequired(), validators.Length(max=500)])
-    industry = SelectField(lazy_gettext('Industry'), 
+    industry = SelectField(trans_function('Industry', default='Industry'), 
                           choices=[
-                              ('retail', lazy_gettext('Retail')),
-                              ('services', lazy_gettext('Services')),
-                              ('manufacturing', lazy_gettext('Manufacturing')),
-                              ('other', lazy_gettext('Other'))
+                              ('retail', trans_function('Retail', default='Retail')),
+                              ('services', trans_function('Services', default='Services')),
+                              ('manufacturing', trans_function('Manufacturing', default='Manufacturing')),
+                              ('other', trans_function('Other', default='Other'))
                           ], 
                           validators=[validators.DataRequired()])
-    submit = SubmitField(lazy_gettext('Save and Continue'))
+    submit = SubmitField(trans_function('Save and Continue', default='Save and Continue'))
 
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
