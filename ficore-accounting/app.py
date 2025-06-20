@@ -41,9 +41,10 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.jinja_env.undefined = jinja2.Undefined
 
-FACEBOOK_URL = os.getenv('FACEBOOK_URL', 'https://www.facebook.com')
-TWITTER_URL = os.getenv('TWITTER_URL', 'https://www.twitter.com')
-LINKEDIN_URL = os.getenv('LINKEDIN_URL', 'https://www.linkedin.com')
+# Dynamically fetch social links from environment variables
+app.config['FACEBOOK_URL'] = os.getenv('FACEBOOK_URL', 'https://www.facebook.com')
+app.config['TWITTER_URL'] = os.getenv('TWITTER_URL', 'https://www.twitter.com')
+app.config['LINKEDIN_URL'] = os.getenv('LINKEDIN_URL', 'https://www.linkedin.com')
 
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
@@ -107,6 +108,11 @@ app.register_blueprint(users_bp, url_prefix='/users')
 
 # Register Jinja2 filters and globals within app context
 with app.app_context():
+    # Register social links as Jinja2 globals
+    app.jinja_env.globals['FACEBOOK_URL'] = app.config['FACEBOOK_URL']
+    app.jinja_env.globals['TWITTER_URL'] = app.config['TWITTER_URL']
+    app.jinja_env.globals['LINKEDIN_URL'] = app.config['LINKEDIN_URL']
+
     app.jinja_env.globals['trans'] = trans_function
 
     @app.template_filter('trans')
@@ -574,5 +580,5 @@ with app.app_context():
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
-    logger.info(f"Starting Flask app on port {port}")
+    logger.info(f"Starting Flask app on port {port} at {datetime.now().strftime('%I:%M %p WAT on %B %d, %Y')}")
     app.run(host='0.0.0.0', port=port, debug=False)
