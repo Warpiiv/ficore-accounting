@@ -1,3 +1,4 @@
+# translations.py
 TRANSLATIONS = {
     'en': {
         # Setup
@@ -23,21 +24,25 @@ TRANSLATIONS = {
         'other': 'Other',
         'save_and_continue': 'Save and Continue',
         'business_setup_completed_successfully': 'Business setup completed successfully!',
-        'Username': 'Username',
+        'Username': 'Username',  # For forms
+        'username': 'Username',  # For templates
         'Username is required': 'Username is required',
         'Username must be between 3 and 50 characters': 'Username must be between 3 and 50 characters',
         'Username must be alphanumeric with underscores': 'Username must be alphanumeric with underscores',
-        'Password': 'Password',
+        'Password': 'Password',  # For forms
+        'password': 'Password',  # For templates
         'Password is required': 'Password is required',
         'Password must be at least 8 characters': 'Password must be at least 8 characters',
-        'Email': 'Email',
+        'Email': 'Email',  # For forms
+        'email': 'Email',  # For templates
         'Email is required': 'Email is required',
         'Invalid email address': 'Invalid email address',
         'Confirm Password': 'Confirm Password',
+        'confirm_password': 'Confirm Password',
         'Confirm password is required': 'Confirm password is required',
         'Passwords must match': 'Passwords must match',
-        'Display Name': 'Display Name',
-        'display_name': 'Display Name',  # Added lowercase variant
+        'Display Name': 'Display Name',  # For forms
+        'display_name': 'Display Name',  # For templates
         'Display Name is required': 'Display Name is required',
         'Display Name must be between 3 and 50 characters': 'Display Name must be between 3 and 50 characters',
         'core_records_logo': 'Ficore Records Logo',
@@ -57,15 +62,30 @@ TRANSLATIONS = {
         'core_contact_us': 'Contact Us',
         'core_provide_feedback': 'Provide Feedback',
         'core_close': 'Close',
-        'core_logout': 'Logout',  # Added
-        'core_profile': 'Profile',  # Added
-        'tool_invoices': 'Invoices',  # Added for feedback form
-        'tool_transactions': 'Transactions',  # Added for feedback form
-        'tool_profile': 'Profile',  # Added for feedback form
+        'core_logout': 'Logout',  # Added for navigation
+        'core_profile': 'Profile',  # Added for profile page
+        'tool_invoices': 'Invoices',  # For feedback form
+        'tool_transactions': 'Transactions',  # For feedback form
+        'tool_profile': 'Profile',  # For feedback form
+        'dashboard_title': 'Dashboard',  # Added for general_dashboard.html
+        'admin_dashboard_title': 'Admin Dashboard',  # Added for admin_dashboard.html
+        'all_invoices': 'All Invoices',  # Added for admin_dashboard.html
+        'all_transactions': 'All Transactions',  # Added for admin_dashboard.html
+        'login_required': 'Please log in to view your dashboard.',  # Added for general_dashboard.html
+        'login': 'Log In',  # Added for general_dashboard.html
 
         # Module: Invoice
         'invoice_details': 'Invoice Details',
         'are_you_sure_delete_invoice': 'Are you sure you want to delete this invoice?',
+        'invoice_number': 'Invoice Number',
+        'customer_name': 'Customer Name',
+        'amount': 'Amount (₦)',
+        'status': 'Status',
+        'actions': 'Actions',
+        'no_invoices': 'No invoices found',
+        'edit': 'Edit',
+        'delete': 'Delete',
+        'confirm_delete': 'Are you sure?',
 
         # Module: Transaction
         'track_transaction': 'Track Transaction',
@@ -77,6 +97,10 @@ TRANSLATIONS = {
         'filter_by_description': 'Filter by Description',
         'add_transaction': 'Add Transaction',
         'go_to_dashboard': 'Go to Dashboard',
+        'type': 'Type',
+        'category': 'Category',
+        'description': 'Description',
+        'no_transactions': 'No transactions found',
 
         # Module: Core
         'core_helping_african_smes': 'Helping African SMEs simplify records and grow financially.',
@@ -112,10 +136,6 @@ TRANSLATIONS = {
         'recurring_period': 'Recurring Period',
         'expense': 'Expense',
         'income': 'Income',
-        'type': 'Type',
-        'category': 'Category',
-        'amount': 'Amount (₦)',
-        'description': 'Description',
         'money_in': 'Money In',
         'money_out': 'Money Out',
         'sales': 'Sales',
@@ -125,11 +145,6 @@ TRANSLATIONS = {
         'weekly': 'Weekly',
         'monthly': 'Monthly',
         'yearly': 'Yearly',
-        'edit': 'Edit',
-        'delete': 'Delete',
-        'confirm_delete': 'Are you sure?',
-        'confirm_delete_message': 'Are you sure you want to delete this item?',
-        'no_transactions': 'No transactions found',
         'transaction_added': 'Transaction added successfully',
         'transaction_updated': 'Transaction updated successfully',
         'transaction_deleted': 'Transaction deleted successfully',
@@ -140,7 +155,6 @@ TRANSLATIONS = {
         'invoice_updated': 'Invoice updated successfully',
         'invoice_deleted': 'Invoice deleted successfully',
         'invoice_not_found': 'Invoice not found',
-        'no_invoices': 'No invoices found',
         'core_something_went_wrong': 'An error occurred, please try again',
         'invalid_date_format': 'Invalid date format',
         'invalid_amount': 'Amount must be greater than zero',
@@ -154,12 +168,6 @@ TRANSLATIONS = {
         'forbidden': 'Forbidden',
         'page_not_found': 'Page not found',
         'internal_server_error': 'Internal server error',
-        'customer_name': 'Customer Name',
-        'status': 'Status',
-        'due_date': 'Due Date',
-        'settled_date': 'Settled Date',
-        'invoice_number': 'Invoice Number',
-        'actions': 'Actions',
         'error_saving': 'Error saving invoice',
         'something_went_wrong': 'Something went wrong',
         'invoices': 'Invoices',
@@ -184,21 +192,19 @@ TRANSLATIONS = {
         'already_have_account': 'Already have an account? Sign In',
         'back_to_signin': 'Back to Sign In',
         'create_account': 'Create an Account',
-        'email': 'Email',
         'forgot_password': 'Forgot Password',
         'invalid_credentials': 'Invalid credentials',
         'logged_in': 'Logged in successfully',
         'logged_out': 'Logged out successfully',
         'new_password': 'New Password',
-        'password': 'Password',
-        'confirm_password': 'Confirm Password',
         'reset_password': 'Reset Password',
         'user_id': 'User ID',
-        'username': 'Username',
         'username_exists': 'Username already exists',
         'email_exists': 'Email already exists',
         'profile_updated': 'Profile updated successfully',
         'user_not_found': 'User not found',
+        'invalid_username_format': 'Invalid username format',
+        'invalid_email_domain': 'Invalid email domain',
 
         # General
         'about_description': 'Ficore Records is a simplified software designed to empower small and medium enterprises (SMEs) across Africa with efficient financial record-keeping. Since 2025, we have been committed to making financial management accessible and intuitive.',
@@ -252,17 +258,12 @@ TRANSLATIONS = {
         'create_invoice_desc': 'Create and manage new invoices for your clients.',
         'add_transaction_desc': 'Add new transactions like income and expenses to track your cash flow.',
 
-        # Financial
-        'create_invoice': 'Create Invoice',
-
         # Consent Banner
         'core_consent_banner_records': 'By using Ficore Records, you understand that we provide tools for planning only, not banking.',
 
-        # Additional keys for error handling
-        'forbidden_access': 'Access denied',  # Added for 403 errors
-        'database_setup_disabled': 'Database setup disabled in production',  # Added for setup route
-        'invalid_username_format': 'Invalid username format',  # Added for login validation
-        'invalid_email_domain': 'Invalid email domain'  # Added for signup validation
+        # Error Handling
+        'forbidden_access': 'Access denied',
+        'database_setup_disabled': 'Database setup disabled in production',
     },
     'ha': {
         # Setup
@@ -289,20 +290,24 @@ TRANSLATIONS = {
         'save_and_continue': 'Ajiye kuma Ci gaba',
         'business_setup_completed_successfully': 'An kammala saitin kasuwanci cikin nasara!',
         'Username': 'Sunan Mai Amfani',
+        'username': 'Sunan Mai Amfani',
         'Username is required': 'Ana buƙatar Sunan Mai Amfani',
         'Username must be between 3 and 50 characters': 'Sunan Mai Amfani dole ne ya kasance tsakanin 3 da 50 haruffa',
         'Username must be alphanumeric with underscores': 'Sunan Mai Amfani dole ne ya kasance alphanumeric tare da alamu na ƙasa',
         'Password': 'Kalmar Sirri',
+        'password': 'Kalmar Sirri',
         'Password is required': 'Ana buƙatar Kalmar Sirri',
         'Password must be at least 8 characters': 'Kalmar Sirri dole ne ta kasance aƙalla 8 haruffa',
         'Email': 'Imel',
+        'email': 'Imel',
         'Email is required': 'Ana buƙatar Imel',
         'Invalid email address': 'Adireshin Imel mara inganci',
         'Confirm Password': 'Tabbatar da Kalmar Sirri',
+        'confirm_password': 'Tabbatar da Kalmar Sirri',
         'Confirm password is required': 'Ana buƙatar Tabbatar da Kalmar Sirri',
         'Passwords must match': 'Kalaman Sirri dole ne su yi daidai',
         'Display Name': 'Sunan Nuni',
-        'display_name': 'Sunan Nuni',  # Added lowercase variant
+        'display_name': 'Sunan Nuni',
         'Display Name is required': 'Ana buƙatar Sunan Nuni',
         'Display Name must be between 3 and 50 characters': 'Sunan Nuni dole ne ya kasance tsakanin 3 da 50 haruffa',
         'core_records_logo': 'Logo na Ficore Records',
@@ -322,15 +327,30 @@ TRANSLATIONS = {
         'core_contact_us': 'Tuntube Mu',
         'core_provide_feedback': 'Bayar da Ra’ayi',
         'core_close': 'Rufe',
-        'core_logout': 'Fita',  # Added
-        'core_profile': 'Bayanan Martaba',  # Added
-        'tool_invoices': 'Lissafin Kuɗi',  # Added for feedback form
-        'tool_transactions': 'Ma\'amaloli',  # Added for feedback form
-        'tool_profile': 'Bayanan Martaba',  # Added for feedback form
+        'core_logout': 'Fita',
+        'core_profile': 'Bayanan Martaba',
+        'tool_invoices': 'Lissafin Kuɗi',
+        'tool_transactions': 'Ma\'amaloli',
+        'tool_profile': 'Bayanan Martaba',
+        'dashboard_title': 'Dashboard',
+        'admin_dashboard_title': 'Dashboard na Admin',
+        'all_invoices': 'Duk Lissafin Kuɗi',
+        'all_transactions': 'Duk Ma\'amaloli',
+        'login_required': 'Don Allah shiga don duba dashboard naka.',
+        'login': 'Shiga',
 
         # Module: Invoice
         'invoice_details': 'Bayanin Takardun Jira',
         'are_you_sure_delete_invoice': 'Kana da tabbacin kana son share wannan Takardar?',
+        'invoice_number': 'Lambar Takardar Jira',
+        'customer_name': 'Sunan Abokin Ciniki',
+        'amount': 'Adadin Kuɗi (₦)',
+        'status': 'Matsayi',
+        'actions': 'Ayyuka',
+        'no_invoices': 'Ba a sami lissafin kuɗi ba',
+        'edit': 'Gyara',
+        'delete': 'Share',
+        'confirm_delete': 'Ka tabbata?',
 
         # Module: Transaction
         'track_transaction': 'Bibiyar Ma\'amala',
@@ -342,6 +362,10 @@ TRANSLATIONS = {
         'filter_by_description': 'Tace ta Bayani',
         'add_transaction': 'Ƙara Ma\'amala',
         'go_to_dashboard': 'Je zuwa Dashboard',
+        'type': 'Nau\'i',
+        'category': 'Rukuni',
+        'description': 'Bayani',
+        'no_transactions': 'Babu ma\'amaloli da aka samu',
 
         # Module: Core
         'core_helping_african_smes': 'Taimaka wa Ƙanana Masana\'antu na Afirka wajen sauƙaƙe rajista da haɓaka kuɗi.',
@@ -377,10 +401,6 @@ TRANSLATIONS = {
         'recurring_period': 'Lokacin Maimaitawa',
         'expense': 'Kuɗin Fita',
         'income': 'Kuɗin Shiga',
-        'type': 'Nau\'i',
-        'category': 'Rukuni',
-        'amount': 'Adadin Kuɗi (₦)',
-        'description': 'Bayani',
         'money_in': 'Kuɗi Shiga',
         'money_out': 'Kuɗi Fita',
         'sales': 'Sayarwa',
@@ -390,22 +410,16 @@ TRANSLATIONS = {
         'weekly': 'Mako-Mako',
         'monthly': 'Wata-Wata',
         'yearly': 'Shekara-Shekara',
-        'edit': 'Gyara',
-        'delete': 'Share',
-        'confirm_delete': 'Ka tabbata?',
-        'confirm_delete_message': 'Shin kun tabbata kuna son share wannan abu?',
-        'no_transactions': 'Babu ma\'amaloli da aka samu',
         'transaction_added': 'An ƙara ma\'amala cikin nasara',
         'transaction_updated': 'An sabunta ma\'amala cikin nasara',
         'transaction_deleted': 'An share ma\'amala cikin nasara',
         'transaction_not_found': 'Ba a sami ma\'amala ba',
-        'create_invoice': 'Ƙirƙiri Takardar Jira',
+        'create_invoice': 'ƘirƝiri Takardar Jira',
         'edit_invoice': 'Gyara Takardar Jira',
-        'invoice_created': 'An ƙirƙiri lissafin kuɗi cikin nasara',
+        'invoice_created': 'An ƝirƝiri lissafin kuɗi cikin nasara',
         'invoice_updated': 'An sabunta lissafin kuɗi cikin nasara',
         'invoice_deleted': 'An goge lissafin kuɗi cikin nasara',
         'invoice_not_found': 'Ba a sami lissafin kuɗi ba',
-        'no_invoices': 'Ba a sami lissafin kuɗi ba',
         'core_something_went_wrong': 'Wani abu ya faru ba daidai ba',
         'invalid_date_format': 'Tsarin kwanan wata ba daidai ba ne',
         'invalid_amount': 'Adadin kuɗi ya kamata ya fi sifili',
@@ -419,12 +433,6 @@ TRANSLATIONS = {
         'forbidden': 'An hana shiga',
         'page_not_found': 'Ba a sami shafin ba',
         'internal_server_error': 'Kuskuren uwar garken ciki',
-        'customer_name': 'Sunan Abokin Ciniki',
-        'status': 'Matsayi',
-        'due_date': 'Ranar Ƙarshe',
-        'settled_date': 'Ranar Sasanci',
-        'invoice_number': 'Lambar Takardar Jira',
-        'actions': 'Ayyuka',
         'error_saving': 'Kuskure wajen ajiyar Takardar Jira',
         'something_went_wrong': 'Wani abu ya faru ba daidai ba',
         'invoices': 'Lissafin Kuɗi',
@@ -433,8 +441,8 @@ TRANSLATIONS = {
         'invalid_username': 'Sunan mai amfani dole ne ya kasance aƙalla haruffa 3',
         'invalid_password': 'Kalmar sirri dole ne ta kasance aƙalla haruffa 8',
         'user_exists': 'Sunan mai amfani ko imel tuni yana wanzu',
-        'signup_success': 'An ƙirƝiri asusu cikin nasara',
-        'signup_error': 'Kuskure wajen ƙirƙirar asusu. Sake gwadawa',
+        'signup_success': 'An ƝirƝiri asusu cikin nasara',
+        'signup_error': 'Kuskure wajen ƝirƝirar asusu. Sake gwadawa',
         'email_not_found': 'Ba a sami imel ba',
         'reset_email_sent': 'An aika imel na sake saita kalmar sirri. Duba akwatin saƙonka',
         'reset_email_failed': 'An kasa aika imel na sake saita. Sake gwadawa',
@@ -443,31 +451,29 @@ TRANSLATIONS = {
         'reset_password_body': 'Danna hanyar haɗin da ke ƙasa don sake saita kalmar sirri:',
         'reset_password_expiry': 'Wannan hanyar haɗin tana ƙarewa cikin awa 1',
         'password_mismatch': 'Kalmomin sirri ba su daidaita ba',
-        'invalid_or_expired_token': 'Alamar sake saita ba ta daidaita ko ta ƙare',
+        'invalid_or_expired_token': 'Alamar sake saita ba ta daidaita ko ta Ɲare',
         'reset_password_success': 'An sake saita kalmar sirri cikin nasara',
         'reset_password_error': 'Kuskure wajen sake saita kalmar sirri. Sake gwadawa',
         'already_have_account': 'Tuni kuna da asusu? Shiga',
         'back_to_signin': 'Koma zuwa Shiga',
-        'create_account': 'Ƙirƙiri Asusu',
-        'email': 'Imel',
+        'create_account': 'ƘirƝiri Asusu',
         'forgot_password': 'An manta Kalmar sirri',
         'invalid_credentials': 'Bayanai ba daidai ba',
         'logged_in': 'An shiga cikin nasara',
         'logged_out': 'An fita cikin nasara',
         'new_password': 'Sabuwar Kalmar sirri',
-        'password': 'Kalmar sirri',
-        'confirm_password': 'Tabbatar da Kalmar sirri',
         'reset_password': 'Sake saita Kalmar sirri',
         'user_id': 'ID na Mai amfani',
-        'username': 'Sunan mai amfani',
         'username_exists': 'Sunan mai amfani tuni yana wanzu',
         'email_exists': 'Imel tuni yana wanzu',
         'profile_updated': 'An sabunta bayanan martaba cikin nasara',
         'user_not_found': 'Ba a sami mai amfani ba',
+        'invalid_username_format': 'Tsarin sunan mai amfani ba daidai ba ne',
+        'invalid_email_domain': 'Domain na imel ba daidai ba ne',
 
         # General
-        'about_description': 'Ficore Records software ne mai sauƙi wanda aka ƙera don ƙarfafa ƙananan da matsakaitan kasuwanci (SMEs) a duk faɗin Afirka tare da ingantaccen adana bayanan kuɗi. Tun daga 2025, mun himmatu wajen sa sarrafa kuɗi ya zama mai sauƙi da fahimta.',
-        'about_mission': 'Manufarmu ita ce samar wa SMEs kayan aiki don sauƙaƙe lissafin kuɗi, bin diddigin ma\'amaloli, da sarrafa bayanan martaba, duk yayin da muke kiyaye sauƙi da araha.',
+        'about_description': 'Ficore Records software ne mai sauƙi wanda aka Ɲera don Ɲarfafa Ɲananan da matsakaitan kasuwanci (SMEs) a duk faɗin Afirka tare da ingantaccen adana bayanan kuɗi. Tun daga 2025, mun himmatu wajen sa sarrafa kuɗi ya zama mai sauƙi da fahimta.',
+        'about_mission': 'Manufarmu ita ce samar wa SMEs kayan aiki don sauƙaƝe lissafin kuɗi, bin diddigin ma\'amaloli, da sarrafa bayanan martaba, duk yayin da muke kiyaye sauƙi da araha.',
         'choose_option': 'Zaɓi...',
         'comment': 'Sharhi',
         'core_accept': 'Karba',
@@ -514,19 +520,14 @@ TRANSLATIONS = {
         'view_all_invoices': 'Duba Duk Lissafin Kuɗi',
         'view_all_transactions': 'Duba Duk Ma\'amaloli',
         'general_dashboard_desc': 'Duba taƙaitattun bayanai na lamuran ku na kuɗi duka.',
-        'create_invoice_desc': 'Ƙirƙiri kuma a sarrafa takardun jira na sana\'a da abokan ciniki.',
+        'create_invoice_desc': 'ƘirƝiri kuma a sarrafa takardun jira na sana\'a da abokan ciniki.',
         'add_transaction_desc': 'Kirkiri rikodin na kuɗaɗen mu\'amala don bin diddigin gudana na kuɗi.',
-
-        # Financial
-        'create_invoice': 'Ƙirƙiri Takardar Jira',
 
         # Consent Banner
         'core_consent_banner_records': 'Ta amfani da Ficore Records, ka fahimci cewa muna ba da kayan aiki don shiri kawai, ba banki ba.',
 
-        # Additional keys for error handling
-        'forbidden_access': 'An hana shiga',  # Added for 403 errors
-        'database_setup_disabled': 'An kashe saitin bayanai a cikin samarwa',  # Added for setup route
-        'invalid_username_format': 'Tsarin sunan mai amfani ba daidai ba ne',  # Added for login validation
-        'invalid_email_domain': 'Domain na imel ba daidai ba ne'  # Added for signup validation
+        # Error Handling
+        'forbidden_access': 'An hana shiga',
+        'database_setup_disabled': 'An kashe saitin bayanai a cikin samarwa',
     }
 }
