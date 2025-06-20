@@ -53,15 +53,6 @@ app.config['SESSION_MONGODB'] = mongo.cx
 mail = Mail(app)
 sess = Session(app)
 
-# Initialize Flask-Babel
-from flask_babel import Babel
-babel = Babel(app)
-
-# Locale selector for dynamic language support
-@babel.locale_selector
-def get_locale():
-    return session.get('lang', request.accept_languages.best_match(['en', 'ha']) or 'en')
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'users.login'
