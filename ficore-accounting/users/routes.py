@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, SelectField, SubmitField, validators
 from flask_login import login_required, current_user, login_user, logout_user
+from pymongo import errors
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Message
 import logging
@@ -319,7 +320,7 @@ def setup_wizard():
     mongo = current_app.extensions['pymongo']
     user = mongo.db.users.find_one({'_id': current_user.id})
     if user.get('setup_complete', False):
-        return redirect(url_for('dashboard.general_dashboard'))
+        return redirect(url_for('general_dashboard'))  # Updated to correct endpoint
     
     form = BusinessSetupForm()
     if form.validate_on_submit():
@@ -339,7 +340,7 @@ def setup_wizard():
             )
             flash(trans_function('business_setup_completed'), 'success')
             logger.info(f"Business setup completed for user: {current_user.id}")
-            return redirect(url_for('dashboard.general_dashboard'))
+            return redirect(url_for('general_dashboard'))  # Updated to correct endpoint
         except errors.PyMongoError as e:
             logger.error(f"MongoDB error during business setup: {str(e)}")
             flash(trans_function('core_something_went_wrong'), 'danger')
