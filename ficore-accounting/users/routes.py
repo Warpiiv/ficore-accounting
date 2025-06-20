@@ -10,8 +10,8 @@ import uuid
 from datetime import datetime, timedelta
 from utils import trans_function, is_valid_email
 import re
-from flask_limiter import Limiter
 from itsdangerous import URLSafeTimedSerializer
+from app import limiter  
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +168,7 @@ def signup():
     return render_template('users/signup.html', form=form)
 
 @users_bp.route('/forgot_password', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("5 per minute")  # Now works with imported limiter
 def forgot_password():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -203,7 +203,7 @@ def forgot_password():
     return render_template('users/forgot_password.html', form=form)
 
 @users_bp.route('/reset_password', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("5 per minute")  # Now works with imported limiter
 def reset_password():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
