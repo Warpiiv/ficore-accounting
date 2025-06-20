@@ -91,7 +91,7 @@ def dashboard():
         return render_template('invoices/view.html', 
                              invoices=invoices, 
                              form=form,
-                             statusibe_filter=status_filter, 
+                             status_filter=status_filter, 
                              customer_filter=customer_filter,
                              start_date_filter=start_date_filter, 
                              end_date_filter=end_date_filter)
