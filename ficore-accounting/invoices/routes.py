@@ -52,6 +52,11 @@ def dashboard():
     try:
         mongo = current_app.extensions['pymongo']
         user = mongo.db.users.find_one({'_id': current_user.id})
+        if not user:
+            logger.error(f"User {current_user.id} not found in database")
+            flash(trans_function('core_user_not_found', default='User not found'), 'danger')
+            return redirect(url_for('users.login'))
+
         query = {'user_id': str(current_user.id)}
         if user.get('is_admin', False):
             query = {}  # Admins can see all invoices
@@ -61,14 +66,13 @@ def dashboard():
             query['customer_name'] = {'$regex': customer_filter, '$options': 'i'}
         if start_date_filter and end_date_filter:
             try:
-                query['created_at'] = {
-                    '$gte': datetime.strptime(start_date_filter, '%Y-%m-%d'),
-                    '$lte': datetime.strptime(end_date_filter, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
-                }
+                start_date = datetime.strptime(start_date_filter, '%Y-%m-%d')
+                end_date = datetime.strptime(end_date_filter, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+                query['created_at'] = {'$gte': start_date, '$lte': end_date}
             except ValueError:
                 flash(trans_function('invalid_date_format', default='Invalid date format'), 'danger')
                 logger.warning(f"Invalid date range for user {current_user.id}: {start_date_filter} to {end_date_filter}")
-        
+
         logger.debug(f"Invoice query for user {current_user.id}: {query}")
         invoices = list(mongo.db.invoices.find(query).sort('created_at', -1).limit(50))
         for invoice in invoices:
@@ -88,21 +92,24 @@ def dashboard():
             invoice['due_date'] = due_date
             invoice['settled_date'] = settled_date
             invoice['is_overdue'] = invoice['status'] == 'pending' and due_date and due_date < date.today()
-        return render_template('invoices/view.html', 
-                             invoices=invoices, 
-                             form=form,
-                             status_filter=status_filter, 
-                             customer_filter=customer_filter,
-                             start_date_filter=start_date_filter, 
-                             end_date_filter=end_date_filter)
+
+        return render_template(
+            'invoices/view.html',
+            invoices=invoices,
+            form=form,
+            status_filter=status_filter,
+            customer_filter=customer_filter,
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter
+        )
     except pymongo.errors.PyMongoError as e:
         logger.error(f"MongoDB error fetching invoices for user {current_user.id}: {str(e)}")
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
-        return render_template('invoices/view.html', invoices=[], form=FilterForm()), 500
+        return "An error occurred while loading the invoices dashboard.", 500
     except Exception as e:
         logger.error(f"Unexpected error fetching invoices for user {current_user.id}: {str(e)}")
         flash(trans_function('core_something_went_wrong', default='An error occurred, please try again'), 'danger')
-        return render_template('invoices/view.html', invoices=[], form=FilterForm()), 500
+        return "An error occurred while loading the invoices dashboard.", 500
 
 @invoices_bp.route('/create', methods=['GET', 'POST'], endpoint='create')
 @login_required
