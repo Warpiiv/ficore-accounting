@@ -15,6 +15,7 @@ from utils import trans_function
 from flask_session import Session
 from pymongo import ASCENDING, DESCENDING, errors
 from pymongo.operations import UpdateOne
+from flask_babel import Babel, lazy_gettext
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -52,6 +53,14 @@ app.extensions['pymongo'] = mongo
 app.config['SESSION_MONGODB'] = mongo.cx
 mail = Mail(app)
 sess = Session(app)
+
+# Initialize Flask-Babel
+babel = Babel(app)
+
+# Locale selector for dynamic language support
+@babel.localeselector
+def get_locale():
+    return session.get('lang', request.accept_languages.best_match(['en', 'ha']) or 'en')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -423,7 +432,7 @@ def feedback():
 @login_required
 def admin_dashboard():
     try:
-        mongo = current_app.extensions['pymongo']
+        mongo = app.extensions['pymongo']
         user = mongo.db.users.find_one({'_id': current_user.id})
         if not user.get('is_admin', False):
             flash(trans_function('forbidden_access', default='Access denied'), 'danger')
@@ -464,7 +473,7 @@ def admin_dashboard():
 @login_required
 def general_dashboard():
     try:
-        mongo = current_app.extensions['pymongo']
+        mongo = app.extensions['pymongo']
         user = mongo.db.users.find_one({'_id': current_user.id})
         query = {'user_id': str(current_user.id)}
         if user.get('is_admin', False):
