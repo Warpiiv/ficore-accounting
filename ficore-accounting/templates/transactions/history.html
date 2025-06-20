@@ -18,8 +18,8 @@
             <div class="alert-container">
                 {% for category, message in messages %}
                     <div class="alert alert-{{ 'danger' if category == 'danger' else 'success' }} alert-dismissible fade show" role="alert">
-                        {{ trans(message, default=message) }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close', default='Close') }}"></button>
+                        {{ trans(message, default=message) | escape }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ trans('core_close', default='Close') | escape }}"></button>
                     </div>
                 {% endfor %}
             </div>
@@ -59,7 +59,7 @@
                     <select name="category" id="filter_category" class="form-select" aria-describedby="filter_category_error">
                         <option value="">{{ trans('all_categories', default='All Categories') }}</option>
                         {% for category in categories %}
-                            <option value="{{ category }}" {% if filter_values.category == category %}selected{% endif %}>
+                            <option value="{{ category | escape }}" {% if filter_values.category == category %}selected{% endif %}>
                                 {{ trans(category, default=category | capitalize) }}
                             </option>
                         {% endfor %}
@@ -104,20 +104,20 @@
                             {% for transaction in transactions %}
                                 <tr class="{{ 'table-success' if transaction.type == 'income' else 'table-danger' }}">
                                     {% if current_user.is_admin %}
-                                    <td class="text-color">{{ transaction.user_id }}</td>
+                                    <td class="text-color">{{ transaction.user_id | escape }}</td>
                                     {% endif %}
                                     <td class="text-color">{{ trans(transaction.type, default=transaction.type | capitalize) }}</td>
                                     <td class="text-color">{{ trans(transaction.category, default=transaction.category | capitalize) }}</td>
                                     <td class="amount-highlight">{{ transaction.amount | format_currency }}</td>
-                                    <td class="text-color">{{ transaction.description }}</td>
+                                    <td class="text-color">{{ transaction.description | escape }}</td>
                                     <td class="text-color">{{ trans(transaction.recurring_period, default=transaction.recurring_period | capitalize) if transaction.is_recurring else '-' }}</td>
                                     <td class="text-color">{{ transaction.created_at | format_datetime }}</td>
                                     <td>
                                         {% if current_user.is_admin or transaction.user_id == current_user.id %}
-                                        <a href="{{ url_for('transactions.update', transaction_id=transaction._id) }}" class="btn btn-sm btn-primary p-1" aria-label="{{ trans('edit_transaction', default='Edit Transaction') }}">
+                                        <a href="{{ url_for('transactions.update', transaction_id=transaction._id) | escape }}" class="btn btn-sm btn-primary p-1" aria-label="{{ trans('edit_transaction', default='Edit Transaction') | escape }}">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button class="btn btn-sm btn-danger p-1 delete-transaction-btn" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal{{ transaction._id }}" data-transaction-id="{{ transaction._id }}" aria-label="{{ trans('delete_transaction', default='Delete Transaction') }}">
+                                        <button class="btn btn-sm btn-danger p-1 delete-transaction-btn" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal{{ transaction._id | escape }}" data-transaction-id="{{ transaction._id | escape }}" aria-label="{{ trans('delete_transaction', default='Delete Transaction') | escape }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                         {% endif %}
@@ -136,27 +136,28 @@
 
 <!-- Delete Confirmation Modal for Each Transaction -->
 {% for transaction in transactions %}
-<div class="modal fade" id="deleteTransactionModal{{ transaction._id }}" tabindex="-1" aria-labelledby="deleteTransactionModalLabel{{ transaction._id }}" aria-hidden="true">
+<div class="modal fade" id="deleteTransactionModal{{ transaction._id | escape }}" tabindex="-1" aria-labelledby="deleteTransactionModalLabel{{ transaction._id | escape }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteTransactionModalLabel{{ transaction._id }}">{{ trans('confirm_delete', default='Confirm Delete') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close', default='Close') }}"></button>
+                <h5 class="modal-title" id="deleteTransactionModalLabel{{ transaction._id | escape }}">{{ trans('confirm_delete', default='Confirm Delete') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ trans('core_close', default='Close') | escape }}"></button>
             </div>
             <div class="modal-body">
-                <p>{{ trans('delete_transaction_confirm', default='Are you sure you want to delete the {0} transaction of {1}?', transaction.type | capitalize, transaction.amount | format_currency) }}</p>
+                <p>{{ trans('delete_transaction_confirm', type=transaction.type | capitalize, amount=transaction.amount | format_currency) | default('Are you sure you want to delete the ' ~ (transaction.type | capitalize) ~ ' transaction of ' ~ (transaction.amount | format_currency) ~ '?') }}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_cancel', default='Cancel') }}</button>
-                <form action="{{ url_for('transactions.delete', transaction_id=transaction._id) }}" method="POST" style="display:inline;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ trans('core_cancel', default='Cancel') | escape }}</button>
+                <form action="{{ url_for('transactions.delete', transaction_id=transaction._id) | escape }}" method="POST" style="display:inline;">
                     {{ form.csrf_token }}
-                    <button type="submit" class="btn btn-danger">{{ trans('delete', default='Delete') }}</button>
+                    <button type="submit" class="btn btn-danger">{{ trans('delete', default='Delete') | escape }}</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 {% endfor %}
+{% endif %}
 {% endblock %}
 {% block extra_scripts %}
 <script>
