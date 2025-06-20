@@ -28,9 +28,12 @@
                     <input type="email" name="email" id="email" class="form-control" value="{{ form.email.data or '' }}" required>
                     <div class="invalid-feedback">{{ form.email.errors[0] if form.email.errors else trans('invalid_email') | default('Please enter a valid email') }}</div>
                 </div>
-                <div class="form-group mb-3">
+                <div class="form-group mb-3 position-relative">
                     <label for="password" class="form-label">{{ trans('password') | default('Password') }}</label>
                     <input type="password" name="password" id="password" class="form-control" required>
+                    <span class="password-toggle" onclick="togglePassword('password')">
+                        <i class="bi bi-eye" id="toggle-password-icon"></i>
+                    </span>
                     <div class="invalid-feedback">{{ form.password.errors[0] if form.password.errors else trans('required_field') | default('This field is required') }}</div>
                 </div>
                 <div class="text-center">
