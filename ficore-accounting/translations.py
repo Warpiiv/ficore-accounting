@@ -37,7 +37,7 @@ TRANSLATIONS = {
         'Confirm password is required': 'Confirm password is required',
         'Passwords must match': 'Passwords must match',
         'Display Name': 'Display Name',
-        'display_name': 'Display Name',  # Added for lowercase consistency
+        'display_name': 'Display Name',  # Added lowercase variant
         'Display Name is required': 'Display Name is required',
         'Display Name must be between 3 and 50 characters': 'Display Name must be between 3 and 50 characters',
         'core_records_logo': 'Ficore Records Logo',
@@ -59,6 +59,9 @@ TRANSLATIONS = {
         'core_close': 'Close',
         'core_logout': 'Logout',  # Added
         'core_profile': 'Profile',  # Added
+        'tool_invoices': 'Invoices',  # Added for feedback form
+        'tool_transactions': 'Transactions',  # Added for feedback form
+        'tool_profile': 'Profile',  # Added for feedback form
 
         # Module: Invoice
         'invoice_details': 'Invoice Details',
@@ -253,7 +256,13 @@ TRANSLATIONS = {
         'create_invoice': 'Create Invoice',
 
         # Consent Banner
-        'core_consent_banner_records': 'By using Ficore Records, you understand that we provide tools for planning only, not banking.'
+        'core_consent_banner_records': 'By using Ficore Records, you understand that we provide tools for planning only, not banking.',
+
+        # Additional keys for error handling
+        'forbidden_access': 'Access denied',  # Added for 403 errors
+        'database_setup_disabled': 'Database setup disabled in production',  # Added for setup route
+        'invalid_username_format': 'Invalid username format',  # Added for login validation
+        'invalid_email_domain': 'Invalid email domain'  # Added for signup validation
     },
     'ha': {
         # Setup
@@ -263,6 +272,15 @@ TRANSLATIONS = {
         'provide_business_details': 'Da fatan a ba da bayanan kasuwancin ku don kammala saitin.',
         'business_name': 'Sunan Kasuwanci',
         'business_address': 'Adreshin Kasuwanci',
+        'user_details': 'Bayanan Mai Amfani',
+        'business_details': 'Bayanan Kasuwanci',
+        'update_profile': 'Sabunta Bayanan',
+        'no_business_details': 'Babu bayanan kasuwanci har yanzu. Kammala saiti don ƙara su.',
+        'invalid_email': 'Da fatan a saka ingantaccen imel',
+        'required_field': 'Wannan filin yana da buƙata',
+        'save': 'Ajiye',
+        'go_to_home': 'Tafi Gida',
+        'go_to_general_dashboard': 'Tafi Babban Dashboard',
         'industry': 'Masana\'antu',
         'retail': 'Dillali',
         'services': 'Ayyuka',
@@ -270,6 +288,45 @@ TRANSLATIONS = {
         'other': 'Sauran',
         'save_and_continue': 'Ajiye kuma Ci gaba',
         'business_setup_completed_successfully': 'An kammala saitin kasuwanci cikin nasara!',
+        'Username': 'Sunan Mai Amfani',
+        'Username is required': 'Ana buƙatar Sunan Mai Amfani',
+        'Username must be between 3 and 50 characters': 'Sunan Mai Amfani dole ne ya kasance tsakanin 3 da 50 haruffa',
+        'Username must be alphanumeric with underscores': 'Sunan Mai Amfani dole ne ya kasance alphanumeric tare da alamu na ƙasa',
+        'Password': 'Kalmar Sirri',
+        'Password is required': 'Ana buƙatar Kalmar Sirri',
+        'Password must be at least 8 characters': 'Kalmar Sirri dole ne ta kasance aƙalla 8 haruffa',
+        'Email': 'Imel',
+        'Email is required': 'Ana buƙatar Imel',
+        'Invalid email address': 'Adireshin Imel mara inganci',
+        'Confirm Password': 'Tabbatar da Kalmar Sirri',
+        'Confirm password is required': 'Ana buƙatar Tabbatar da Kalmar Sirri',
+        'Passwords must match': 'Kalaman Sirri dole ne su yi daidai',
+        'Display Name': 'Sunan Nuni',
+        'display_name': 'Sunan Nuni',  # Added lowercase variant
+        'Display Name is required': 'Ana buƙatar Sunan Nuni',
+        'Display Name must be between 3 and 50 characters': 'Sunan Nuni dole ne ya kasance tsakanin 3 da 50 haruffa',
+        'core_records_logo': 'Logo na Ficore Records',
+        'core_change_language': 'Canza Harshe',
+        'core_switch_to': 'Canza zuwa',
+        'core_toggle_dark_mode': 'Canza zuwa Mode Duhu',
+        'core_main_menu': 'Babban Menu',
+        'core_home': 'Gida',
+        'general_dashboard': 'Babban Dashboard',
+        'core_account': 'Asusun',
+        'core_login': 'Shiga',
+        'core_signup': 'Yi Rajista',
+        'core_about_records': 'Game da Ficore Records',
+        'core_connect_on_linkedin': 'Haɗu da mu akan LinkedIn',
+        'core_follow_on_twitter': 'Biyi mu akan Twitter',
+        'core_follow_on_facebook': 'Biyi mu akan Facebook',
+        'core_contact_us': 'Tuntube Mu',
+        'core_provide_feedback': 'Bayar da Ra’ayi',
+        'core_close': 'Rufe',
+        'core_logout': 'Fita',  # Added
+        'core_profile': 'Bayanan Martaba',  # Added
+        'tool_invoices': 'Lissafin Kuɗi',  # Added for feedback form
+        'tool_transactions': 'Ma\'amaloli',  # Added for feedback form
+        'tool_profile': 'Bayanan Martaba',  # Added for feedback form
 
         # Module: Invoice
         'invoice_details': 'Bayanin Takardun Jira',
@@ -290,23 +347,6 @@ TRANSLATIONS = {
         'core_helping_african_smes': 'Taimaka wa Ƙanana Masana\'antu na Afirka wajen sauƙaƙe rajista da haɓaka kuɗi.',
         'core_please_complete_all_records': 'Don Allah tabbatar da cewa duk bayanan sun cika kuma suna da inganci.',
         'go_to_invoices': 'Je zuwa Takardar Jira',
-        'core_records_logo': 'Alamar Ficore Records',
-        'core_change_language': 'Canja Harshe',
-        'core_switch_to': 'Canja zuwa',
-        'core_toggle_dark_mode': 'Canja Yanayin Duɓu',
-        'core_main_menu': 'Babban Menu',
-        'core_home': 'Gida',
-        'general_dashboard': 'Babban Dashboard',
-        'core_account': 'Asusu',
-        'core_login': 'Shiga',
-        'core_signup': 'Yi Rajista',
-        'core_about_records': 'Game da Ficore Records',
-        'core_connect_on_linkedin': 'Haɗa kan LinkedIn',
-        'core_follow_on_twitter': 'Bi a Twitter',
-        'core_follow_on_facebook': 'Bi a Facebook',
-        'core_contact_us': 'Tuntuɓe Mu',
-        'core_provide_feedback': 'Bayar da Ra\'ayi',
-        'core_close': 'Rufe',
         'core_toggle_menu': 'Canja Menu',
         'core_invoices': 'Takardun Kudi',
         'core_cancel': 'Soke',
@@ -346,12 +386,10 @@ TRANSLATIONS = {
         'sales': 'Sayarwa',
         'utilities': 'Abubuwan Amfani',
         'transport': 'Sufuri',
-        'other': 'Sauran',
         'none': 'Babu',
         'weekly': 'Mako-Mako',
         'monthly': 'Wata-Wata',
         'yearly': 'Shekara-Shekara',
-        'save': 'Ajiye',
         'edit': 'Gyara',
         'delete': 'Share',
         'confirm_delete': 'Ka tabbata?',
@@ -371,7 +409,6 @@ TRANSLATIONS = {
         'core_something_went_wrong': 'Wani abu ya faru ba daidai ba',
         'invalid_date_format': 'Tsarin kwanan wata ba daidai ba ne',
         'invalid_amount': 'Adadin kuɗi ya kamata ya fi sifili',
-        'required_field': 'Wannan filin ana buƙata',
         'tags_too_long': 'Alamomi ba za su wuce haruffa 200 ba',
         'language_updated': 'An sabunta harshe cikin nasara',
         'invalid_language': 'Harshen da aka zaɓa ba daidai ba ne',
@@ -391,13 +428,12 @@ TRANSLATIONS = {
         'error_saving': 'Kuskure wajen ajiyar Takardar Jira',
         'something_went_wrong': 'Wani abu ya faru ba daidai ba',
         'invoices': 'Lissafin Kuɗi',
-        'profile': 'Bayanan Martaba',
 
         # Auth
         'invalid_username': 'Sunan mai amfani dole ne ya kasance aƙalla haruffa 3',
         'invalid_password': 'Kalmar sirri dole ne ta kasance aƙalla haruffa 8',
         'user_exists': 'Sunan mai amfani ko imel tuni yana wanzu',
-        'signup_success': 'An ƙirƙiri asusu cikin nasara',
+        'signup_success': 'An ƙirƝiri asusu cikin nasara',
         'signup_error': 'Kuskure wajen ƙirƙirar asusu. Sake gwadawa',
         'email_not_found': 'Ba a sami imel ba',
         'reset_email_sent': 'An aika imel na sake saita kalmar sirri. Duba akwatin saƙonka',
@@ -416,7 +452,6 @@ TRANSLATIONS = {
         'email': 'Imel',
         'forgot_password': 'An manta Kalmar sirri',
         'invalid_credentials': 'Bayanai ba daidai ba',
-        'invalid_email': 'Don Allah shigar da imel daidai',
         'logged_in': 'An shiga cikin nasara',
         'logged_out': 'An fita cikin nasara',
         'new_password': 'Sabuwar Kalmar sirri',
@@ -436,29 +471,19 @@ TRANSLATIONS = {
         'choose_option': 'Zaɓi...',
         'comment': 'Sharhi',
         'core_accept': 'Karba',
-        'core_account': 'Asusu',
-        'core_about_records': 'Game da Ficore Records',
         'core_back_to_home': 'Koma Gida',
         'core_book_consultancy': 'Yi Ajiyar Shawara',
-        'core_close': 'Rufe',
-        'core_connect_on_linkedin': 'Haɗa kan LinkedIn',
-        'core_contact_us': 'Tuntuɓe Mu',
         'core_disclaimer_records': 'Ficore Records software ne mai sauƙi don SMEs.',
         'core_empowering_financial_management': 'Ƙarfafa adana bayanan kuɗi a duk faɗin Afirka tun 2025',
         'core_error_acknowledging_consent': 'Kuskure wajen yarda da yarda. Sake gwadawa.',
-        'core_follow_on_facebook': 'Bi kan Facebook',
-        'core_follow_on_twitter': 'Bi kan Twitter',
         'core_internal_server_error': 'Kuskuren Cikin Gida',
         'core_invalid_request': 'Neman ba daidai ba ne. Sake gwadawa.',
         'core_join_waitlist': 'Shiga Jerin Jira',
         'core_learn_more': 'Ƙarin bayani',
-        'core_logout': 'Fita',
         'core_network_error': 'Kuskuren hanyar sadarwa. Sake gwadawa.',
         'core_page_not_found': 'Ba a Sami Shafin ba',
         'core_page_not_found_message': 'Shafin da kake nema bai wanzu ba.',
         'core_please_complete_all_fields': 'Don Allah cika duk filayen da ake buƙata daidai',
-        'core_profile': 'Bayanan Martaba',
-        'core_provide_feedback': 'Ba da Ra\'ayi',
         'core_return_to_home': 'Koma Gida',
         'core_toggle_navigation': 'Canja Kewayawa',
         'core_welcome_to_records': 'Kula Da Kasuwancinku, Shawara Mai Kyau!',
@@ -468,7 +493,6 @@ TRANSLATIONS = {
         'welcome': 'Barka da zuwa! Sarrafa kasuwancinku cikin sauƙi.',
         'home': 'Gida',
         'invoices_desc': 'Duba bayanai domin bin diddigin lissafin kuɗi.',
-        'transactions': 'Ma\'amaloli',
         'transactions_desc': 'Duba rikodin da kuma matsayin ma\'amalolinku.',
         'feedback': 'Ba da Ra\'ayi',
         'feedback_desc': 'Raba ra\'ayoyinka game da app',
@@ -490,67 +514,19 @@ TRANSLATIONS = {
         'view_all_invoices': 'Duba Duk Lissafin Kuɗi',
         'view_all_transactions': 'Duba Duk Ma\'amaloli',
         'general_dashboard_desc': 'Duba taƙaitattun bayanai na lamuran ku na kuɗi duka.',
-        'Username': 'Sunan Mai Amfani',
-        'Username is required': 'Ana buƙatar Sunan Mai Amfani',
-        'Username must be between 3 and 50 characters': 'Sunan Mai Amfani dole ne ya kasance tsakanin 3 da 50 haruffa',
-        'Username must be alphanumeric with underscores': 'Sunan Mai Amfani dole ne ya kasance alphanumeric tare da alamu na ƙasa',
-        'Password': 'Kalmar Sirri',
-        'Password is required': 'Ana buƙatar Kalmar Sirri',
-        'Password must be at least 8 characters': 'Kalmar Sirri dole ne ta kasance aƙalla 8 haruffa',
-        'Email': 'Imel',
-        'Email is required': 'Ana buƙatar Imel',
-        'Invalid email address': 'Adireshin Imel mara inganci',
-        'Confirm Password': 'Tabbatar da Kalmar Sirri',
-        'Confirm password is required': 'Ana buƙatar Tabbatar da Kalmar Sirri',
-        'Passwords must match': 'Kalaman Sirri dole ne su yi daidai',
-        'Display Name': 'Sunan Nuni',
-        'Display Name is required': 'Ana buƙatar Sunan Nuni',
-        'Display Name must be between 3 and 50 characters': 'Sunan Nuni dole ne ya kasance tsakanin 3 da 50 haruffa',
-        'Business Name': 'Sunan Kasuwanci',
-        'Business Address': 'Adireshin Kasuwanci',
-        'Industry': 'Masana’antu',
-        'Retail': 'Sayar da Kayayyaki',
-        'Services': 'Sabis',
-        'Manufacturing': 'Kera',
-        'Other': 'Sauƙaƙe',
-        'Save and Continue': 'Ajiye da Ci Gaba',
-        'core_records_logo': 'Logo na Ficore Records',
-        'core_change_language': 'Canza Harshe',
-        'core_switch_to': 'Canza zuwa',
-        'core_toggle_dark_mode': 'Canza zuwa Mode Duhu',
-        'core_main_menu': 'Babban Menu',
-        'core_home': 'Gida',
-        'general_dashboard': 'Babban Dashboard',
-        'core_account': 'Asusun',
-        'core_login': 'Shiga',
-        'core_signup': 'Yi Rajista',
-        'core_about_records': 'Game da Ficore Records',
-        'core_connect_on_linkedin': 'Haɗu da mu akan LinkedIn',
-        'core_follow_on_twitter': 'Biyi mu akan Twitter',
-        'core_follow_on_facebook': 'Biyi mu akan Facebook',
-        'core_contact_us': 'Tuntube Mu',
-        'core_provide_feedback': 'Bayar da Ra’ayi',
-        'core_close': 'Rufe',
-        'user_details': 'Bayanan Mai Amfani',
-        'business_details': 'Bayanan Kasuwanci',
-        'update_profile': 'Sabunta Bayanan',
-        'no_business_details': 'Babu bayanan kasuwanci har yanzu. Kammala saiti don ƙara su.',
-        'invalid_email': 'Da fatan a saka ingantaccen imel',
-        'required_field': 'Wannan filin yana da buƙata',
-        'save': 'Ajiye',
-        'go_to_home': 'Tafi Gida',
-        'go_to_general_dashboard': 'Tafi Babban Dashboard',
-        'display_name': 'Sunan Nuni',
-        'core_logout': 'Fita',
-        'core_profile': 'Bayanan Martaba',
-        # Financial
         'create_invoice_desc': 'Ƙirƙiri kuma a sarrafa takardun jira na sana\'a da abokan ciniki.',
         'add_transaction_desc': 'Kirkiri rikodin na kuɗaɗen mu\'amala don bin diddigin gudana na kuɗi.',
 
+        # Financial
+        'create_invoice': 'Ƙirƙiri Takardar Jira',
+
         # Consent Banner
-        'core_consent_banner_records': 'Ta amfani da Ficore Records, ka fahimci cewa muna ba da kayan aiki don shiri kawai, ba banki ba.'
+        'core_consent_banner_records': 'Ta amfani da Ficore Records, ka fahimci cewa muna ba da kayan aiki don shiri kawai, ba banki ba.',
+
+        # Additional keys for error handling
+        'forbidden_access': 'An hana shiga',  # Added for 403 errors
+        'database_setup_disabled': 'An kashe saitin bayanai a cikin samarwa',  # Added for setup route
+        'invalid_username_format': 'Tsarin sunan mai amfani ba daidai ba ne',  # Added for login validation
+        'invalid_email_domain': 'Domain na imel ba daidai ba ne'  # Added for signup validation
     }
 }
-
-def trans_function(key, lang='en'):
-    return TRANSLATIONS.get(lang, {}).get(key, key)
