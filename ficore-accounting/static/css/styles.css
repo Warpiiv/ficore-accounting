@@ -1189,3 +1189,15 @@ main {
         white-space: nowrap;
     }
 }
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.password-toggle:hover {
+    color: #495057;
+}
