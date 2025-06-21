@@ -1,4 +1,9 @@
-# translations.py
+import logging
+from flask import has_request_context, session
+import os
+
+logger = logging.getLogger(__name__)
+
 TRANSLATIONS = {
     'en': {
         # Setup
@@ -24,25 +29,25 @@ TRANSLATIONS = {
         'other': 'Other',
         'save_and_continue': 'Save and Continue',
         'business_setup_completed_successfully': 'Business setup completed successfully!',
-        'Username': 'Username',  # For forms
-        'username': 'Username',  # For templates
+        'Username': 'Username',
+        'username': 'Username',
         'Username is required': 'Username is required',
         'Username must be between 3 and 50 characters': 'Username must be between 3 and 50 characters',
         'Username must be alphanumeric with underscores': 'Username must be alphanumeric with underscores',
-        'Password': 'Password',  # For forms
-        'password': 'Password',  # For templates
+        'Password': 'Password',
+        'password': 'Password',
         'Password is required': 'Password is required',
         'Password must be at least 8 characters': 'Password must be at least 8 characters',
-        'Email': 'Email',  # For forms
-        'email': 'Email',  # For templates
+        'Email': 'Email',
+        'email': 'Email',
         'Email is required': 'Email is required',
         'Invalid email address': 'Invalid email address',
         'Confirm Password': 'Confirm Password',
         'confirm_password': 'Confirm Password',
         'Confirm password is required': 'Confirm password is required',
         'Passwords must match': 'Passwords must match',
-        'Display Name': 'Display Name',  # For forms
-        'display_name': 'Display Name',  # For templates
+        'Display Name': 'Display Name',
+        'display_name': 'Display Name',
         'Display Name is required': 'Display Name is required',
         'Display Name must be between 3 and 50 characters': 'Display Name must be between 3 and 50 characters',
         'core_records_logo': 'Ficore Records Logo',
@@ -62,18 +67,17 @@ TRANSLATIONS = {
         'core_contact_us': 'Contact Us',
         'core_provide_feedback': 'Provide Feedback',
         'core_close': 'Close',
-        'core_logout': 'Logout',  # Added for navigation
-        'core_profile': 'Profile',  # Added for profile page
-        'tool_invoices': 'Invoices',  # For feedback form
-        'tool_transactions': 'Transactions',  # For feedback form
-        'tool_profile': 'Profile',  # For feedback form
-        'dashboard_title': 'Dashboard',  # Added for general_dashboard.html
-        'admin_dashboard_title': 'Admin Dashboard',  # Added for admin_dashboard.html
-        'all_invoices': 'All Invoices',  # Added for admin_dashboard.html
-        'all_transactions': 'All Transactions',  # Added for admin_dashboard.html
-        'login_required': 'Please log in to view your dashboard.',  # Added for general_dashboard.html
-        'login': 'Log In',  # Added for general_dashboard.html
-
+        'core_logout': 'Logout',
+        'core_profile': 'Profile',
+        'tool_invoices': 'Invoices',
+        'tool_transactions': 'Transactions',
+        'tool_profile': 'Profile',
+        'dashboard_title': 'Dashboard',
+        'admin_dashboard_title': 'Admin Dashboard',
+        'all_invoices': 'All Invoices',
+        'all_transactions': 'All Transactions',
+        'login_required': 'Please log in to view your dashboard.',
+        'login': 'Log In',
         # Module: Invoice
         'invoice_details': 'Invoice Details',
         'are_you_sure_delete_invoice': 'Are you sure you want to delete this invoice?',
@@ -86,7 +90,6 @@ TRANSLATIONS = {
         'edit': 'Edit',
         'delete': 'Delete',
         'confirm_delete': 'Are you sure?',
-
         # Module: Transaction
         'track_transaction': 'Track Transaction',
         'transaction_details': 'Transaction Details',
@@ -101,7 +104,6 @@ TRANSLATIONS = {
         'category': 'Category',
         'description': 'Description',
         'no_transactions': 'No transactions found',
-
         # Module: Core
         'core_helping_african_smes': 'Helping African SMEs simplify records and grow financially.',
         'core_please_complete_all_records': 'Please ensure all records are complete and accurate.',
@@ -171,7 +173,6 @@ TRANSLATIONS = {
         'error_saving': 'Error saving invoice',
         'something_went_wrong': 'Something went wrong',
         'invoices': 'Invoices',
-
         # Auth
         'invalid_username': 'Username must be at least 3 characters long',
         'invalid_password': 'Password must be at least 8 characters long',
@@ -205,7 +206,6 @@ TRANSLATIONS = {
         'user_not_found': 'User not found',
         'invalid_username_format': 'Invalid username format',
         'invalid_email_domain': 'Invalid email domain',
-
         # General
         'about_description': 'Ficore Records is a simplified software designed to empower small and medium enterprises (SMEs) across Africa with efficient financial record-keeping. Since 2025, we have been committed to making financial management accessible and intuitive.',
         'about_mission': 'Our mission is to provide SMEs with tools to streamline invoicing, track transactions, and manage profiles, all while maintaining simplicity and affordability.',
@@ -237,7 +237,6 @@ TRANSLATIONS = {
         'transactions_desc': 'See and Track the Record of your transactions',
         'feedback': 'Provide Feedback',
         'feedback_desc': 'Share your thoughts on the app',
-
         # Dashboard
         'admin_dashboard': 'Admin Dashboard',
         'admin_dashboard_desc': 'Manage users and settings',
@@ -257,13 +256,62 @@ TRANSLATIONS = {
         'general_dashboard_desc': 'View a summary of all your financial records and activities here.',
         'create_invoice_desc': 'Create and manage new invoices for your clients.',
         'add_transaction_desc': 'Add new transactions like income and expenses to track your cash flow.',
-
         # Consent Banner
         'core_consent_banner_records': 'By using Ficore Records, you understand that we provide tools for planning only, not banking.',
-
         # Error Handling
         'forbidden_access': 'Access denied',
         'database_setup_disabled': 'Database setup disabled in production',
+        # Module: Coins
+        'coin_amount': 'Coin Amount',
+        'payment_method': 'Payment Method',
+        'card': 'Credit/Debit Card',
+        'bank': 'Bank Transfer',
+        'purchase': 'Purchase',
+        'purchase_success': 'Coins purchased successfully',
+        'coin_balance': 'Coin Balance',
+        'coin_history': 'Coin Transaction History',
+        'credit_coins': 'Credit Coins',
+        'credit_success': 'Coins credited successfully',
+        'date': 'Date',
+        'ref': 'Reference',
+        'unpaid': 'Unpaid',
+        'part_paid': 'Part Paid',
+        'paid': 'Paid',
+        'due_date': 'Due Date',
+        'overdue': 'Overdue',
+        'party_name': 'Party Name',
+        'create_debtor': 'Create Debtor',
+        'create_creditor': 'Create Creditor',
+        'debtors': 'Debtors',
+        'creditors': 'Creditors',
+        'no_debtors': 'No debtors found',
+        'no_creditors': 'No creditors found',
+        'total': 'Total',
+        'receipts': 'Receipts',
+        'payments': 'Payments',
+        'no_receipts': 'No receipts found',
+        'no_payments': 'No payments found',
+        'add_receipt': 'Add Receipt',
+        'add_payment': 'Add Payment',
+        'inventory': 'Inventory',
+        'add_inventory': 'Add Inventory Item',
+        'edit_inventory': 'Edit Inventory Item',
+        'no_inventory': 'No inventory items found',
+        'item_name': 'Item Name',
+        'quantity': 'Quantity',
+        'unit': 'Unit',
+        'buying_price': 'Buying Price',
+        'selling_price': 'Selling Price',
+        'threshold': 'Low Stock Threshold',
+        'back_to_inventory': 'Back to Inventory',
+        'add_item': 'Add Item',
+        'low_stock': 'Low Stock',
+        'yes': 'Yes',
+        'no': 'No',
+        'user_suspended': 'User suspended successfully',
+        'user_deleted': 'User deleted successfully',
+        'item_deleted': 'Item deleted successfully',
+        'invalid_collection': 'Invalid collection'
     },
     'ha': {
         # Setup
@@ -338,7 +386,6 @@ TRANSLATIONS = {
         'all_transactions': 'Duk Ma\'amaloli',
         'login_required': 'Don Allah shiga don duba dashboard naka.',
         'login': 'Shiga',
-
         # Module: Invoice
         'invoice_details': 'Bayanin Takardun Jira',
         'are_you_sure_delete_invoice': 'Kana da tabbacin kana son share wannan Takardar?',
@@ -351,7 +398,6 @@ TRANSLATIONS = {
         'edit': 'Gyara',
         'delete': 'Share',
         'confirm_delete': 'Ka tabbata?',
-
         # Module: Transaction
         'track_transaction': 'Bibiyar Ma\'amala',
         'transaction_details': 'Bayanin Ma\'amala',
@@ -366,7 +412,6 @@ TRANSLATIONS = {
         'category': 'Rukuni',
         'description': 'Bayani',
         'no_transactions': 'Babu ma\'amaloli da aka samu',
-
         # Module: Core
         'core_helping_african_smes': 'Taimaka wa Ƙanana Masana\'antu na Afirka wajen sauƙaƙe rajista da haɓaka kuɗi.',
         'core_please_complete_all_records': 'Don Allah tabbatar da cewa duk bayanan sun cika kuma suna da inganci.',
@@ -436,7 +481,6 @@ TRANSLATIONS = {
         'error_saving': 'Kuskure wajen ajiyar Takardar Jira',
         'something_went_wrong': 'Wani abu ya faru ba daidai ba',
         'invoices': 'Lissafin Kuɗi',
-
         # Auth
         'invalid_username': 'Sunan mai amfani dole ne ya kasance aƙalla haruffa 3',
         'invalid_password': 'Kalmar sirri dole ne ta kasance aƙalla haruffa 8',
@@ -470,7 +514,6 @@ TRANSLATIONS = {
         'user_not_found': 'Ba a sami mai amfani ba',
         'invalid_username_format': 'Tsarin sunan mai amfani ba daidai ba ne',
         'invalid_email_domain': 'Domain na imel ba daidai ba ne',
-
         # General
         'about_description': 'Ficore Records software ne mai sauƙi wanda aka Ɲera don Ɲarfafa Ɲananan da matsakaitan kasuwanci (SMEs) a duk faɗin Afirka tare da ingantaccen adana bayanan kuɗi. Tun daga 2025, mun himmatu wajen sa sarrafa kuɗi ya zama mai sauƙi da fahimta.',
         'about_mission': 'Manufarmu ita ce samar wa SMEs kayan aiki don sauƙaƝe lissafin kuɗi, bin diddigin ma\'amaloli, da sarrafa bayanan martaba, duk yayin da muke kiyaye sauƙi da araha.',
@@ -502,7 +545,6 @@ TRANSLATIONS = {
         'transactions_desc': 'Duba rikodin da kuma matsayin ma\'amalolinku.',
         'feedback': 'Ba da Ra\'ayi',
         'feedback_desc': 'Raba ra\'ayoyinka game da app',
-
         # Dashboard
         'admin_dashboard': 'Dashboard na Admin',
         'admin_dashboard_desc': 'Sarrafa masu amfani da saituna',
@@ -522,12 +564,75 @@ TRANSLATIONS = {
         'general_dashboard_desc': 'Duba taƙaitattun bayanai na lamuran ku na kuɗi duka.',
         'create_invoice_desc': 'ƘirƝiri kuma a sarrafa takardun jira na sana\'a da abokan ciniki.',
         'add_transaction_desc': 'Kirkiri rikodin na kuɗaɗen mu\'amala don bin diddigin gudana na kuɗi.',
-
         # Consent Banner
         'core_consent_banner_records': 'Ta amfani da Ficore Records, ka fahimci cewa muna ba da kayan aiki don shiri kawai, ba banki ba.',
-
         # Error Handling
         'forbidden_access': 'An hana shiga',
         'database_setup_disabled': 'An kashe saitin bayanai a cikin samarwa',
+        # Module: Coins
+        'coin_amount': 'Adadin Kuɗin Kama',
+        'payment_method': 'Hanyar Biyan Kuɗi',
+        'card': 'Katin Kiredit/Debit',
+        'bank': 'Canja wurin Banki',
+        'purchase': 'Saya',
+        'purchase_success': 'An sayi kuɗin kama cikin nasara',
+        'coin_balance': 'Ma\'aunin Kuɗin Kama',
+        'coin_history': 'Tarihin Ma\'amalar Kuɗin Kama',
+        'credit_coins': 'Ƙara Kuɗin Kama',
+        'credit_success': 'An ƙara kuɗin kama cikin nasara',
+        'date': 'Kwanan Wata',
+        'ref': 'Magana',
+        'unpaid': 'Ba a Biya ba',
+        'part_paid': 'An Biya Wani Ƙarami',
+        'paid': 'An Biya',
+        'due_date': 'Ranar Biyan Kuɗi',
+        'overdue': 'Ya Wuce Lokaci',
+        'party_name': 'Sunan Ƙungiya',
+        'create_debtor': 'ƘirƝiri Mai Bashi',
+        'create_creditor': 'ƘirƝiri Mai Ba da Bashi',
+        'debtors': 'Masu Bashi',
+        'creditors': 'Masu Ba da Bashi',
+        'no_debtors': 'Ba a sami masu bashi ba',
+        'no_creditors': 'Ba a sami masu ba da bashi ba',
+        'total': 'Jimla',
+        'receipts': 'Rasitoci',
+        'payments': 'Biyayyu',
+        'no_receipts': 'Ba a sami rasitoci ba',
+        'no_payments': 'Ba a sami biyayyu ba',
+        'add_receipt': 'Ƙara Rasiti',
+        'add_payment': 'Ƙara Biyayya',
+        'inventory': 'Kaya',
+        'add_inventory': 'Ƙara Abun Kaya',
+        'edit_inventory': 'Gyara Abun Kaya',
+        'no_inventory': 'Ba a sami abubuwan kaya ba',
+        'item_name': 'Sunan Abun',
+        'quantity': 'Yawan',
+        'unit': 'Raka\'a',
+        'buying_price': 'Farashin Saya',
+        'selling_price': 'Farashin Sayarwa',
+        'threshold': 'Matsayin Ƙarancin Kaya',
+        'back_to_inventory': 'Koma zuwa Kaya',
+        'add_item': 'Ƙara Abun',
+        'low_stock': 'Ƙarancin Kaya',
+        'yes': 'Eh',
+        'no': 'A\'a',
+        'user_suspended': 'An dakatar da mai amfani cikin nasara',
+        'user_deleted': 'An goge mai amfani cikin nasara',
+        'item_deleted': 'An goge abun cikin nasara',
+        'invalid_collection': 'Tattara mara inganci'
     }
 }
+
+def trans_function(key, default=None):
+    """
+    Translate a key with optional arguments, handling context safely.
+    """
+    lang = 'en'
+    if has_request_context():
+        lang = session.get('lang', 'en')
+        if os.getenv('FLASK_ENV', 'development') == 'development':
+            logger.debug(f"Requested translation: key='{key}', lang='{lang}'")
+    translation = TRANSLATIONS.get(lang, TRANSLATIONS.get('en', {})).get(key, default or key)
+    if translation == (default or key) and os.getenv('FLASK_ENV', 'development') == 'development':
+        logger.debug(f"Missing translation for key '{key}' in language '{lang}'")
+    return translation
