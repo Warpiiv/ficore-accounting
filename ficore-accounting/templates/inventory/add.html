@@ -42,16 +42,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <title>{{ trans('add_inventory', default='Add Inventory Item') }} - Ficore</title>
+    <title>{{ trans('add_item', default='Add Item') }} - Ficore</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="container mx-auto p-4 max-w-lg">
-        <h1 class="text-2xl font-bold mb-4">{{ trans('add_inventory' if not item_id else 'edit_inventory', default='Add Inventory Item' if not item_id else 'Edit Inventory Item') }}</h1>
+        <h1 class="text-2xl font-bold mb-4">{{ trans('add_item', default='Add Item') }}</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -61,54 +57,52 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        <form action="{{ url_for('inventory.add_item' if not item_id else 'inventory.update_item', item_id=item_id) }}" method="post" class="space-y-4">
+        <form action="{{ url_for('inventory.add') }}" method="POST" class="space-y-4">
             {{ form.hidden_tag() }}
             <div>
                 <label for="item_name" class="block text-sm">{{ trans('item_name', default='Item Name') }}</label>
-                {{ form.item_name(class="w-full p-2 border rounded", placeholder=trans('item_name', default='Item Name')) }}
+                {{ form.item_name(class="w-full p-2 border rounded", required=True) }}
                 {% if form.item_name.errors %}
                     <p class="text-red-500 text-sm">{{ form.item_name.errors[0] }}</p>
                 {% endif %}
             </div>
             <div>
-                <label for="quantity" class="block text-sm">{{ trans('quantity', default='Quantity') }}</label>
-                {{ form.quantity(class="w-full p-2 border rounded", placeholder="0.0") }}
-                {% if form.quantity.errors %}
-                    <p class="text-red-500 text-sm">{{ form.quantity.errors[0] }}</p>
+                <label for="qty" class="block text-sm">{{ trans('quantity', default='Quantity') }}</label>
+                {{ form.qty(class="w-full p-2 border rounded", type="number", required=True) }}
+                {% if form.qty.errors %}
+                    <p class="text-red-500 text-sm">{{ form.qty.errors[0] }}</p>
                 {% endif %}
             </div>
             <div>
                 <label for="unit" class="block text-sm">{{ trans('unit', default='Unit') }}</label>
-                {{ form.unit(class="w-full p-2 border rounded") }}
+                {{ form.unit(class="w-full p-2 border rounded", required=True) }}
                 {% if form.unit.errors %}
                     <p class="text-red-500 text-sm">{{ form.unit.errors[0] }}</p>
                 {% endif %}
             </div>
             <div>
                 <label for="buying_price" class="block text-sm">{{ trans('buying_price', default='Buying Price') }}</label>
-                {{ form.buying_price(class="w-full p-2 border rounded", placeholder="0.0") }}
+                {{ form.buying_price(class="w-full p-2 border rounded", type="number", step="0.01", required=True) }}
                 {% if form.buying_price.errors %}
                     <p class="text-red-500 text-sm">{{ form.buying_price.errors[0] }}</p>
                 {% endif %}
             </div>
             <div>
                 <label for="selling_price" class="block text-sm">{{ trans('selling_price', default='Selling Price') }}</label>
-                {{ form.selling_price(class="w-full p-2 border rounded", placeholder="0.0") }}
+                {{ form.selling_price(class="w-full p-2 border rounded", type="number", step="0.01", required=True) }}
                 {% if form.selling_price.errors %}
                     <p class="text-red-500 text-sm">{{ form.selling_price.errors[0] }}</p>
                 {% endif %}
             </div>
             <div>
                 <label for="threshold" class="block text-sm">{{ trans('threshold', default='Low Stock Threshold') }}</label>
-                {{ form.threshold(class="w-full p-2 border rounded", placeholder="0.0") }}
+                {{ form.threshold(class="w-full p-2 border rounded", type="number", required=True) }}
                 {% if form.threshold.errors %}
                     <p class="text-red-500 text-sm">{{ form.threshold.errors[0] }}</p>
                 {% endif %}
             </div>
-            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('submit', default='Submit') }}</button>
+            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('save', default='Save') }}</button>
         </form>
-        <a href="{{ url_for('inventory.inventory_dashboard') }}" class="block mt-4 text-blue-500 hover:underline">{{ trans('back_to_inventory', default='Back to Inventory') }}</a>
     </div>
-    <script src="/service-worker.js"></script>
 </body>
 </html>

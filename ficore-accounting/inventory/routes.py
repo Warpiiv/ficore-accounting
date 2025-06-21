@@ -1,161 +1,105 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app, send_file
-from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SelectField, validators, SubmitField
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from datetime import datetime
-from utils import trans_function
-import logging
-import csv
-from io import StringIO
+from app.utils import requires_role, check_coin_balance, format_currency, format_date
+from app.translations import trans_function as trans
+from app import mongo
 from bson import ObjectId
-from app import limiter
+from datetime import datetime
+import logging
 
 logger = logging.getLogger(__name__)
 
-inventory_bp = Blueprint('inventory', __name__, template_folder='templates/inventory')
+inventory_bp = Blueprint('inventory', __name__, url_prefix='/inventory')
 
-class InventoryForm(FlaskForm):
-    item_name = StringField(trans_function('item_name', default='Item Name'), [
-        validators.DataRequired(message=trans_function('item_name_required', default='Item name is required')),
-        validators.Length(min=2, max=100)
-    ])
-    quantity = FloatField(trans_function('quantity', default='Quantity'), [
-        validators.DataRequired(message=trans_function('quantity_required', default='Quantity is required')),
-        validators.NumberRange(min=0)
-    ])
-    unit = SelectField(trans_function('unit', default='Unit'), choices=[
-        ('unit', trans_function('unit', default='Unit')),
-        ('kg', trans_function('kg', default='Kilogram')),
-        ('liter', trans_function('liter', default='Liter')),
-        ('piece', trans_function('piece', default='Piece'))
-    ], validators=[validators.DataRequired()])
-    buying_price = FloatField(trans_function('buying_price', default='Buying Price'), [
-        validators.DataRequired(message=trans_function('buying_price_required', default='Buying price is required')),
-        validators.NumberRange(min=0)
-    ])
-    selling_price = FloatField(trans_function('selling_price', default='Selling Price'), [
-        validators.DataRequired(message=trans_function('selling_price_required', default='Selling price is required')),
-        validators.NumberRange(min=0)
-    ])
-    threshold = FloatField(trans_function('threshold', default='Low Stock Threshold'), [
-        validators.DataRequired(message=trans_function('threshold_required', default='Threshold is required')),
-        validators.NumberRange(min=0)
-    ])
-    submit = SubmitField(trans_function('submit', default='Submit'))
-
-class FilterForm(FlaskForm):
-    item_name = StringField(trans_function('item_name', default='Item Name'), validators=[validators.Optional(), validators.Length(max=100)])
-    low_stock = SelectField(trans_function('low_stock', default='Low Stock'), choices=[
-        ('', trans_function('all', default='All')),
-        ('yes', trans_function('yes', default='Yes')),
-        ('no', trans_function('no', default='No'))
-    ], validators=[validators.Optional()])
-    submit = SubmitField(trans_function('filter', default='Filter'))
-
-def check_coins_required(action, required_coins=1):
-    """Check if user has enough coins for an action."""
-    mongo = current_app.extensions['pymongo']
-    user = mongo.db.users.find_one({'_id': current_user.id})
-    if user['coin_balance'] < required_coins:
-        flash(trans_function('insufficient_coins', default='Insufficient coins. Please purchase more.'), 'danger')
-        return False
-    return True
-
-def deduct_coins(action, coins=1):
-    """Deduct coins and log transaction."""
-    mongo = current_app.extensions['pymongo']
-    mongo.db.users.update_one(
-        {'_id': current_user.id},
-        {'$inc': {'coin_balance': -coins}}
-    )
-    mongo.db.coin_transactions.insert_one({
-        'user_id': str(current_user.id),
-        'amount': -coins,
-        'type': 'spend',
-        'ref': f"{action}_{datetime.utcnow().isoformat()}",
-        'date': datetime.utcnow()
-    })
-
-@inventory_bp.route('/', methods=['GET'])
+@inventory_bp.route('/')
 @login_required
-def inventory_dashboard():
-    form = FilterForm(request.args)
-    item_name_filter = request.args.get('item_name', '')
-    low_stock_filter = request.args.get('low_stock', '')
+@requires_role('trader')
+def index():
+    """List all inventory items for the current user."""
     try:
-        mongo = current_app.extensions['pymongo']
-        user = mongo.db.users.find_one({'_id': current_user.id})
-        query = {'user_id': str(current_user.id)}
-        if user.get('role') == 'admin':
-            query.pop('user_id')
-        if item_name_filter:
-            query['item_name'] = {'$regex': item_name_filter, '$options': 'i'}
-        if low_stock_filter:
-            query['low_stock'] = low_stock_filter == 'yes'
-        items = list(mongo.db.inventory.find(query).sort('created_at', -1).limit(50))
-        for item in items:
-            item['_id'] = str(item['_id'])
-            item['low_stock'] = item['quantity'] <= item['threshold']
-        return render_template(
-            'inventory/view.html',
-            items=items,
-            form=form,
-            item_name_filter=item_name_filter,
-            low_stock_filter=low_stock_filter
-        )
-    except pymongo.errors.PyMongoError as e:
-        logger.error(f"MongoDB error fetching inventory for user {current_user.id}: {str(e)}")
-        flash(trans_function('core_something_went_wrong', default='An error occurred'), 'danger')
-        return render_template('inventory/view.html', items=[], form=form), 500
+        items = mongo.db.inventory.find({
+            'user_id': str(current_user.id)
+        }).sort('created_at', -1)
+        return render_template('inventory/index.html', items=items, format_currency=format_currency)
+    except Exception as e:
+        logger.error(f"Error fetching inventory for user {current_user.id}: {str(e)}")
+        flash(trans('something_went_wrong'), 'danger')
+        return redirect(url_for('dashboard.index'))
+
+@inventory_bp.route('/low_stock')
+@login_required
+@requires_role('trader')
+def low_stock():
+    """List inventory items with low stock."""
+    try:
+        low_stock_items = mongo.db.inventory.find({
+            'user_id': str(current_user.id),
+            'qty': {'$lte': mongo.db.inventory.threshold}
+        }).sort('qty', 1)
+        return render_template('inventory/low_stock.html', items=low_stock_items, format_currency=format_currency)
+    except Exception as e:
+        logger.error(f"Error fetching low stock items for user {current_user.id}: {str(e)}")
+        flash(trans('something_went_wrong'), 'danger')
+        return redirect(url_for('inventory.index'))
 
 @inventory_bp.route('/add', methods=['GET', 'POST'])
 @login_required
-@limiter.limit("50 per hour")
-def add_item():
-    if not check_coins_required('add_inventory'):
-        return redirect(url_for('coins.purchase'))
+@requires_role('trader')
+def add():
+    """Add a new inventory item."""
+    from app.forms import InventoryForm
     form = InventoryForm()
+    if not check_coin_balance(1):
+        flash(trans('insufficient_coins', default='Insufficient coins to add an item. Purchase more coins.'), 'danger')
+        return redirect(url_for('coins.purchase'))
     if form.validate_on_submit():
         try:
-            mongo = current_app.extensions['pymongo']
             item = {
                 'user_id': str(current_user.id),
-                'item_name': form.item_name.data.strip(),
-                'quantity': float(form.quantity.data),
+                'item_name': form.item_name.data,
+                'qty': form.qty.data,
                 'unit': form.unit.data,
-                'buying_price': float(form.buying_price.data),
-                'selling_price': float(form.selling_price.data),
-                'threshold': float(form.threshold.data),
-                'created_at': datetime.utcnow(),
-                'updated_at': datetime.utcnow()
+                'buying_price': form.buying_price.data,
+                'selling_price': form.selling_price.data,
+                'threshold': form.threshold.data,
+                'created_at': datetime.utcnow()
             }
-            item['low_stock'] = item['quantity'] <= item['threshold']
-            result = mongo.db.inventory.insert_one(item)
-            deduct_coins('add_inventory')
-            flash(trans_function('item_added', default='Item added successfully'), 'success')
-            logger.info(f"Inventory item added by user {current_user.id}: {result.inserted_id}")
-            return redirect(url_for('inventory.inventory_dashboard'))
-        except pymongo.errors.PyMongoError as e:
-            logger.error(f"MongoDB error adding inventory item: {str(e)}")
-            flash(trans_function('core_something_went_wrong', default='An error occurred'), 'danger')
-            return render_template('inventory/add.html', form=form), 500
+            mongo.db.inventory.insert_one(item)
+            mongo.db.users.update_one(
+                {'_id': ObjectId(current_user.id)},
+                {'$inc': {'coin_balance': -1}}
+            )
+            mongo.db.coin_transactions.insert_one({
+                'user_id': str(current_user.id),
+                'amount': -1,
+                'type': 'spend',
+                'date': datetime.utcnow(),
+                'ref': f"Inventory item creation: {item['item_name']}"
+            })
+            flash(trans('add_item_success', default='Inventory item added successfully'), 'success')
+            return redirect(url_for('inventory.index'))
+        except Exception as e:
+            logger.error(f"Error adding inventory item for user {current_user.id}: {str(e)}")
+            flash(trans('something_went_wrong'), 'danger')
     return render_template('inventory/add.html', form=form)
 
-@inventory_bp.route('/update/<item_id>', methods=['GET', 'POST'])
+@inventory_bp.route('/edit/<id>', methods=['GET', 'POST'])
 @login_required
-@limiter.limit("50 per hour")
-def update_item(item_id):
-    if not check_coins_required('update_inventory'):
-        return redirect(url_for('coins.purchase'))
+@requires_role('trader')
+def edit(id):
+    """Edit an existing inventory item."""
+    from app.forms import InventoryForm
     try:
-        mongo = current_app.extensions['pymongo']
-        item = mongo.db.inventory.find_one({'_id': ObjectId(item_id), 'user_id': str(current_user.id)})
+        item = mongo.db.inventory.find_one({
+            '_id': ObjectId(id),
+            'user_id': str(current_user.id)
+        })
         if not item:
-            flash(trans_function('item_not_found', default='Item not found'), 'danger')
-            return redirect(url_for('inventory.inventory_dashboard'))
+            flash(trans('item_not_found', default='Item not found'), 'danger')
+            return redirect(url_for('inventory.index'))
         form = InventoryForm(data={
             'item_name': item['item_name'],
-            'quantity': item['quantity'],
+            'qty': item['qty'],
             'unit': item['unit'],
             'buying_price': item['buying_price'],
             'selling_price': item['selling_price'],
@@ -163,85 +107,45 @@ def update_item(item_id):
         })
         if form.validate_on_submit():
             try:
-                item_update = {
-                    'item_name': form.item_name.data.strip(),
-                    'quantity': float(form.quantity.data),
+                updated_item = {
+                    'item_name': form.item_name.data,
+                    'qty': form.qty.data,
                     'unit': form.unit.data,
-                    'buying_price': float(form.buying_price.data),
-                    'selling_price': float(form.selling_price.data),
-                    'threshold': float(form.threshold.data),
+                    'buying_price': form.buying_price.data,
+                    'selling_price': form.selling_price.data,
+                    'threshold': form.threshold.data,
                     'updated_at': datetime.utcnow()
                 }
-                item_update['low_stock'] = item_update['quantity'] <= item_update['threshold']
                 mongo.db.inventory.update_one(
-                    {'_id': ObjectId(item_id), 'user_id': str(current_user.id)},
-                    {'$set': item_update}
+                    {'_id': ObjectId(id)},
+                    {'$set': updated_item}
                 )
-                deduct_coins('update_inventory')
-                flash(trans_function('item_updated', default='Item updated successfully'), 'success')
-                logger.info(f"Inventory item updated by user {current_user.id}: {item_id}")
-                return redirect(url_for('inventory.inventory_dashboard'))
-            except pymongo.errors.PyMongoError as e:
-                logger.error(f"MongoDB error updating inventory item {item_id}: {str(e)}")
-                flash(trans_function('core_something_went_wrong', default='An error occurred'), 'danger')
-                return render_template('inventory/add.html', form=form, item_id=item_id), 500
-        return render_template('inventory/add.html', form=form, item_id=item_id)
-    except pymongo.errors.PyMongoError as e:
-        logger.error(f"MongoDB error fetching inventory item {item_id}: {str(e)}")
-        flash(trans_function('core_something_went_wrong', default='An error occurred'), 'danger')
-        return redirect(url_for('inventory.inventory_dashboard')), 500
+                flash(trans('edit_item_success', default='Inventory item updated successfully'), 'success')
+                return redirect(url_for('inventory.index'))
+            except Exception as e:
+                logger.error(f"Error updating inventory item {id} for user {current_user.id}: {str(e)}")
+                flash(trans('something_went_wrong'), 'danger')
+        return render_template('inventory/edit.html', form=form, item=item)
+    except Exception as e:
+        logger.error(f"Error fetching inventory item {id} for user {current_user.id}: {str(e)}")
+        flash(trans('item_not_found'), 'danger')
+        return redirect(url_for('inventory.index'))
 
-@inventory_bp.route('/delete/<item_id>', methods=['POST'])
+@inventory_bp.route('/delete/<id>', methods=['POST'])
 @login_required
-@limiter.limit("50 per hour")
-def delete_item(item_id):
+@requires_role('trader')
+def delete(id):
+    """Delete an inventory item."""
     try:
-        mongo = current_app.extensions['pymongo']
-        result = mongo.db.inventory.delete_one({'_id': ObjectId(item_id), 'user_id': str(current_user.id)})
-        if result.deleted_count == 0:
-            flash(trans_function('item_not_found', default='Item not found'), 'danger')
+        result = mongo.db.inventory.delete_one({
+            '_id': ObjectId(id),
+            'user_id': str(current_user.id)
+        })
+        if result.deleted_count:
+            flash(trans('delete_item_success', default='Inventory item deleted successfully'), 'success')
         else:
-            flash(trans_function('item_deleted', default='Item deleted successfully'), 'success')
-            logger.info(f"Inventory item deleted by user {current_user.id}: {item_id}")
-        return redirect(url_for('inventory.inventory_dashboard'))
-    except pymongo.errors.PyMongoError as e:
-        logger.error(f"MongoDB error deleting inventory item {item_id}: {str(e)}")
-        flash(trans_function('core_something_went_wrong', default='An error occurred'), 'danger')
-        return redirect(url_for('inventory.inventory_dashboard')), 500
-
-@inventory_bp.route('/export/csv', methods=['GET'])
-@login_required
-@limiter.limit("10 per hour")
-def export_inventory_csv():
-    try:
-        mongo = current_app.extensions['pymongo']
-        user = mongo.db.users.find_one({'_id': current_user.id})
-        query = {'user_id': str(current_user.id)}
-        if user.get('role') == 'admin':
-            query.pop('user_id')
-        items = list(mongo.db.inventory.find(query))
-        output = StringIO()
-        writer = csv.writer(output)
-        writer.writerow(['Item Name', 'Quantity', 'Unit', 'Buying Price', 'Selling Price', 'Threshold', 'Low Stock', 'Created At'])
-        for item in items:
-            writer.writerow([
-                item.get('item_name', ''),
-                item.get('quantity', 0),
-                item.get('unit', ''),
-                item.get('buying_price', 0),
-                item.get('selling_price', 0),
-                item.get('threshold', 0),
-                item.get('low_stock', False),
-                item.get('created_at', '').strftime('%Y-%m-%d') if item.get('created_at') else ''
-            ])
-        output.seek(0)
-        return send_file(
-            output,
-            mimetype='text/csv',
-            as_attachment=True,
-            download_name=f'inventory_{datetime.utcnow().strftime("%Y%m%d")}.csv'
-        )
-    except pymongo.errors.PyMongoError as e:
-        logger.error(f"MongoDB error exporting inventory: {str(e)}")
-        flash(trans_function('core_something_went_wrong', default='An error occurred'), 'danger')
-        return redirect(url_for('inventory.inventory_dashboard')), 500
+            flash(trans('item_not_found'), 'danger')
+    except Exception as e:
+        logger.error(f"Error deleting inventory item {id} for user {current_user.id}: {str(e)}")
+        flash(trans('something_went_wrong'), 'danger')
+    return redirect(url_for('inventory.index'))

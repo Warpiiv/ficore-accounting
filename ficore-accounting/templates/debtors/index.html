@@ -42,12 +42,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ trans('purchase_coins', default='Purchase Coins') }} - Ficore</title>
+    <title>{{ trans('debtors', default='Debtors') }} - Ficore</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-4 max-w-lg">
-        <h1 class="text-2xl font-bold mb-4">{{ trans('purchase_coins', default='Purchase Coins') }}</h1>
+    <div class="container mx-auto p-4 max-w-4xl">
+        <h1 class="text-2xl font-bold mb-4">{{ trans('debtors', default='Debtors') }}</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -57,24 +57,43 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        <form action="{{ url_for('coins.purchase') }}" method="POST" class="space-y-4">
-            {{ form.hidden_tag() }}
-            <div>
-                <label for="amount" class="block text-sm">{{ trans('coin_amount', default='Coin Amount') }}</label>
-                {{ form.amount(class="w-full p-2 border rounded", required=True) }}
-                {% if form.amount.errors %}
-                    <p class="text-red-500 text-sm">{{ form.amount.errors[0] }}</p>
-                {% endif %}
+        <a href="{{ url_for('debtors.add') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4 inline-block">{{ trans('create_debtor', default='Create Debtor') }}</a>
+        {% if debtors.count() %}
+            <div class="overflow-x-auto">
+                <table class="w-full bg-white shadow-md rounded">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2 text-left">{{ trans('party_name', default='Party Name') }}</th>
+                            <th class="p-2 text-left">{{ trans('total', default='Total') }}</th>
+                            <th class="p-2 text-left">{{ trans('status', default='Status') }}</th>
+                            <th class="p-2 text-left">{{ trans('due_date', default='Due Date') }}</th>
+                            <th class="p-2 text-left">{{ trans('actions', default='Actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for debtor in debtors %}
+                            <tr>
+                                <td class="p-2">{{ debtor.party_name }}</td>
+                                <td class="p-2">{{ format_currency(debtor.total) }}</td>
+                                <td class="p-2">{{ trans(debtor.status, default=debtor.status) }}</td>
+                                <td class="p-2">{{ format_date(debtor.due_date) }}</td>
+                                <td class="p-2">
+                                    <a href="{{ url_for('debtors.edit', id=debtor._id) }}" class="text-blue-500 hover:underline">{{ trans('edit', default='Edit') }}</a>
+                                    <form action="{{ url_for('debtors.delete', id=debtor._id) }}" method="POST" class="inline">
+                                        <button type="submit" class="text-red-500 hover:underline" onclick="return confirm('{{ trans('confirm_delete', default='Are you sure?') }}')">{{ trans('delete', default='Delete') }}</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div>
-                <label for="payment_method" class="block text-sm">{{ trans('payment_method', default='Payment Method') }}</label>
-                {{ form.payment_method(class="w-full p-2 border rounded", required=True) }}
-                {% if form.payment_method.errors %}
-                    <p class="text-red-500 text-sm">{{ form.payment_method.errors[0] }}</p>
-                {% endif %}
+        {% else %}
+            <div class="text-center py-8">
+                <p class="text-gray-500">{{ trans('no_debtors', default='No debtors found') }}</p>
+                <p class="mt-2">{{ trans('create_debtor_desc', default='Start by creating your first debtor.') }}</p>
             </div>
-            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('purchase', default='Purchase') }}</button>
-        </form>
+        {% endif %}
     </div>
 </body>
 </html>

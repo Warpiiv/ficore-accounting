@@ -42,12 +42,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ trans('admin_dashboard', default='Admin Dashboard') }} - Ficore</title>
+    <title>{{ trans('inventory_report', default='Inventory Report') }} - Ficore</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="container mx-auto p-4 max-w-4xl">
-        <h1 class="text-2xl font-bold mb-4">{{ trans('admin_dashboard', default='Admin Dashboard') }}</h1>
+        <h1 class="text-2xl font-bold mb-4">{{ trans('inventory_report', default='Inventory Report') }}</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -57,63 +57,52 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">{{ trans('users', default='Users') }}</h2>
-                <p class="text-2xl">{{ stats.users }}</p>
+        <form action="{{ url_for('reports.inventory') }}" method="POST" class="space-y-4 mb-4">
+            {{ form.hidden_tag() }}
+            <div>
+                <label for="item_name" class="block text-sm">{{ trans('item_name', default='Item Name') }}</label>
+                {{ form.item_name(class="w-full p-2 border rounded") }}
+                {% if form.item_name.errors %}
+                    <p class="text-red-500 text-sm">{{ form.item_name.errors[0] }}</p>
+                {% endif %}
             </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">{{ trans('invoices', default='Invoices') }}</h2>
-                <p class="text-2xl">{{ stats.invoices }}</p>
+            <div class="flex space-x-4">
+                <button type="submit" name="format" value="html" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('view', default='View') }}</button>
+                <button type="submit" name="format" value="pdf" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">{{ trans('download_pdf', default='Download PDF') }}</button>
+                <button type="submit" name="format" value="csv" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">{{ trans('download_csv', default='Download CSV') }}</button>
             </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">{{ trans('transactions', default='Transactions') }}</h2>
-                <p class="text-2xl">{{ stats.transactions }}</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">{{ trans('inventory', default='Inventory') }}</h2>
-                <p class="text-2xl">{{ stats.inventory }}</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">{{ trans('coin_transactions', default='Coin Transactions') }}</h2>
-                <p class="text-2xl">{{ stats.coin_transactions }}</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">{{ trans('audit_logs', default='Audit Logs') }}</h2>
-                <p class="text-2xl">{{ stats.audit_logs }}</p>
-            </div>
-        </div>
-        <div class="flex space-x-4 mb-4">
-            <a href="{{ url_for('admin.manage_users') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('manage_users', default='Manage Users') }}</a>
-            <a href="{{ url_for('admin.coins_credit') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('credit_coins', default='Credit Coins') }}</a>
-            <a href="{{ url_for('admin.audit') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('view_audit_logs', default='View Audit Logs') }}</a>
-        </div>
-        <h2 class="text-xl font-semibold mb-2">{{ trans('recent_users', default='Recent Users') }}</h2>
-        {% if recent_users %}
+        </form>
+        {% if items.count() %}
             <div class="overflow-x-auto">
                 <table class="w-full bg-white shadow-md rounded">
                     <thead>
                         <tr class="bg-gray-200">
-                            <th class="p-2 text-left">{{ trans('username', default='Username') }}</th>
-                            <th class="p-2 text-left">{{ trans('email', default='Email') }}</th>
-                            <th class="p-2 text-left">{{ trans('role', default='Role') }}</th>
-                            <th class="p-2 text-left">{{ trans('created_at', default='Created At') }}</th>
+                            <th class="p-2 text-left">{{ trans('item_name', default='Item Name') }}</th>
+                            <th class="p-2 text-left">{{ trans('quantity', default='Quantity') }}</th>
+                            <th class="p-2 text-left">{{ trans('unit', default='Unit') }}</th>
+                            <th class="p-2 text-left">{{ trans('buying_price', default='Buying Price') }}</th>
+                            <th class="p-2 text-left">{{ trans('selling_price', default='Selling Price') }}</th>
+                            <th class="p-2 text-left">{{ trans('threshold', default='Threshold') }}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for user in recent_users %}
+                        {% for item in items %}
                             <tr>
-                                <td class="p-2">{{ user.username }}</td>
-                                <td class="p-2">{{ user.email }}</td>
-                                <td class="p-2">{{ trans(user.role, default=user.role) }}</td>
-                                <td class="p-2">{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td class="p-2">{{ item.item_name }}</td>
+                                <td class="p-2">{{ item.qty }}</td>
+                                <td class="p-2">{{ trans(item.unit, default=item.unit) }}</td>
+                                <td class="p-2">{{ format_currency(item.buying_price) }}</td>
+                                <td class="p-2">{{ format_currency(item.selling_price) }}</td>
+                                <td class="p-2">{{ item.threshold }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         {% else %}
-            <p class="text-gray-500">{{ trans('no_users', default='No users found') }}</p>
+            <div class="text-center py-8">
+                <p class="text-gray-500">{{ trans('no_items', default='No inventory items found') }}</p>
+            </div>
         {% endif %}
     </div>
 </body>

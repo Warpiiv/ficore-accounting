@@ -42,12 +42,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ trans('purchase_coins', default='Purchase Coins') }} - Ficore</title>
+    <title>{{ trans('edit_receipt', default='Edit Receipt') }} - Ficore</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="container mx-auto p-4 max-w-lg">
-        <h1 class="text-2xl font-bold mb-4">{{ trans('purchase_coins', default='Purchase Coins') }}</h1>
+        <h1 class="text-2xl font-bold mb-4">{{ trans('edit_receipt', default='Edit Receipt') }}</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -57,23 +57,44 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        <form action="{{ url_for('coins.purchase') }}" method="POST" class="space-y-4">
+        <form action="{{ url_for('receipts.edit', id=receipt._id) }}" method="POST" class="space-y-4">
             {{ form.hidden_tag() }}
             <div>
-                <label for="amount" class="block text-sm">{{ trans('coin_amount', default='Coin Amount') }}</label>
-                {{ form.amount(class="w-full p-2 border rounded", required=True) }}
+                <label for="party_name" class="block text-sm">{{ trans('party_name', default='Party Name') }}</label>
+                {{ form.party_name(class="w-full p-2 border rounded", required=True) }}
+                {% if form.party_name.errors %}
+                    <p class="text-red-500 text-sm">{{ form.party_name.errors[0] }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="date" class="block text-sm">{{ trans('date', default='Date') }}</label>
+                {{ form.date(class="w-full p-2 border rounded", type="date", required=True) }}
+                {% if form.date.errors %}
+                    <p class="text-red-500 text-sm">{{ form.date.errors[0] }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="amount" class="block text-sm">{{ trans('amount', default='Amount') }}</label>
+                {{ form.amount(class="w-full p-2 border rounded", type="number", step="0.01", required=True) }}
                 {% if form.amount.errors %}
                     <p class="text-red-500 text-sm">{{ form.amount.errors[0] }}</p>
                 {% endif %}
             </div>
             <div>
-                <label for="payment_method" class="block text-sm">{{ trans('payment_method', default='Payment Method') }}</label>
-                {{ form.payment_method(class="w-full p-2 border rounded", required=True) }}
-                {% if form.payment_method.errors %}
-                    <p class="text-red-500 text-sm">{{ form.payment_method.errors[0] }}</p>
+                <label for="description" class="block text-sm">{{ trans('description', default='Description') }}</label>
+                {{ form.description(class="w-full p-2 border rounded") }}
+                {% if form.description.errors %}
+                    <p class="text-red-500 text-sm">{{ form.description.errors[0] }}</p>
                 {% endif %}
             </div>
-            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('purchase', default='Purchase') }}</button>
+            <div>
+                <label for="category" class="block text-sm">{{ trans('category', default='Category') }}</label>
+                {{ form.category(class="w-full p-2 border rounded") }}
+                {% if form.category.errors %}
+                    <p class="text-red-500 text-sm">{{ form.category.errors[0] }}</p>
+                {% endif %}
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('save', default='Save') }}</button>
         </form>
     </div>
 </body>

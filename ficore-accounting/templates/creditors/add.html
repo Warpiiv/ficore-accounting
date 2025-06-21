@@ -42,12 +42,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ trans('purchase_coins', default='Purchase Coins') }} - Ficore</title>
+    <title>{{ trans('create_creditor', default='Create Creditor') }} - Ficore</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans">
     <div class="container mx-auto p-4 max-w-lg">
-        <h1 class="text-2xl font-bold mb-4">{{ trans('purchase_coins', default='Purchase Coins') }}</h1>
+        <h1 class="text-2xl font-bold mb-4">{{ trans('create_creditor', default='Create Creditor') }}</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -57,23 +57,37 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        <form action="{{ url_for('coins.purchase') }}" method="POST" class="space-y-4">
+        <form action="{{ url_for('creditors.add') }}" method="POST" class="space-y-4">
             {{ form.hidden_tag() }}
             <div>
-                <label for="amount" class="block text-sm">{{ trans('coin_amount', default='Coin Amount') }}</label>
-                {{ form.amount(class="w-full p-2 border rounded", required=True) }}
-                {% if form.amount.errors %}
-                    <p class="text-red-500 text-sm">{{ form.amount.errors[0] }}</p>
+                <label for="party_name" class="block text-sm">{{ trans('party_name', default='Party Name') }}</label>
+                {{ form.party_name(class="w-full p-2 border rounded", required=True) }}
+                {% if form.party_name.errors %}
+                    <p class="text-red-500 text-sm">{{ form.party_name.errors[0] }}</p>
                 {% endif %}
             </div>
             <div>
-                <label for="payment_method" class="block text-sm">{{ trans('payment_method', default='Payment Method') }}</label>
-                {{ form.payment_method(class="w-full p-2 border rounded", required=True) }}
-                {% if form.payment_method.errors %}
-                    <p class="text-red-500 text-sm">{{ form.payment_method.errors[0] }}</p>
+                <label for="phone" class="block text-sm">{{ trans('phone', default='Phone') }}</label>
+                {{ form.phone(class="w-full p-2 border rounded") }}
+                {% if form.phone.errors %}
+                    <p class="text-red-500 text-sm">{{ form.phone.errors[0] }}</p>
                 {% endif %}
             </div>
-            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('purchase', default='Purchase') }}</button>
+            <div>
+                <label for="due_date" class="block text-sm">{{ trans('due_date', default='Due Date') }}</label>
+                {{ form.due_date(class="w-full p-2 border rounded", type="date", required=True) }}
+                {% if form.due_date.errors %}
+                    <p class="text-red-500 text-sm">{{ form.due_date.errors[0] }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label class="block text-sm">{{ trans('items', default='Items') }}</label>
+                {{ form.items }}
+                {% if form.items.errors %}
+                    <p class="text-red-500 text-sm">{{ form.items.errors[0] }}</p>
+                {% endif %}
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('save', default='Save') }}</button>
         </form>
     </div>
 </body>
