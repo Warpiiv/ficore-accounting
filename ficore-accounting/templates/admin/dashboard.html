@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ trans('admin_dashboard_title', default='Admin Dashboard') }}</h2>
+    <p>{{ trans('admin_view_all_data', default='Viewing all users\' data.') }}</p>
+
+    <h3>{{ trans('all_invoices', default='All Invoices') }}</h3>
+    {% if invoices %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{{ trans('user_id', default='User') }}</th>
+                    <th>{{ trans('invoice_number', default='Invoice Number') }}</th>
+                    <th>{{ trans('customer_name', default='Customer') }}</th>
+                    <th>{{ trans('amount', default='Amount') }}</th>
+                    <th>{{ trans('status', default='Status') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                    <tr>
+                        <td>{{ invoice.user_id }}</td>
+                        <td>{{ invoice.invoice_number }}</td>
+                        <td>{{ invoice.customer_name }}</td>
+                        <td>{{ invoice.amount | format_currency }}</td>
+                        <td>{{ invoice.status | capitalize }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ trans('no_invoices', default='No invoices found.') }}</p>
+    {% endif %}
+
+    <h3>{{ trans('all_transactions', default='All Transactions') }}</h3>
+    {% if transactions %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{{ trans('user_id', default='User') }}</th>
+                    <th>{{ trans('type', default='Type') }}</th>
+                    <th>{{ trans('category', default='Category') }}</th>
+                    <th>{{ trans('amount', default='Amount') }}</th>
+                    <th>{{ trans('description', default='Description') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.user_id }}</td>
+                        <td>{{ transaction.type | capitalize }}</td>
+                        <td>{{ transaction.category | capitalize }}</td>
+                        <td>{{ transaction.amount | format_currency }}</td>
+                        <td>{{ transaction.description }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{{ trans('no_transactions', default='No transactions found.') }}</p>
+    {% endif %}
+</div>
+{% endblock %}
