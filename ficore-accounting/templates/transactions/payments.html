@@ -1,0 +1,128 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="{{ trans('lang_code', default='en') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>{{ trans('payments', default='Payments') }} - Ficore</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-4 max-w-4xl">
+        <h1 class="text-2xl font-bold mb-4">{{ trans('payments', default='Payments') }}</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="bg-{{ 'green' if category == 'success' else 'red' }}-100 border border-{{ 'green' if category == 'success' else 'red' }}-400 text-{{ 'green' if category == 'success' else 'red' }}-700 px-4 py-3 rounded mb-4" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('transactions.payments_history') }}" method="get" class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="party_name" class="block text-sm">{{ trans('party_name', default='Party Name') }}</label>
+                    <input type="text" name="party_name" id="party_name" value="{{ filter_values.party_name }}" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label for="category" class="block text-sm">{{ trans('category', default='Category') }}</label>
+                    <select name="category" id="category" class="w-full p-2 border rounded">
+                        <option value="">{{ trans('all', default='All') }}</option>
+                        <option value="sales" {% if filter_values.category == 'sales' %}selected{% endif %}>{{ trans('sales', default='Sales') }}</option>
+                        <option value="utilities" {% if filter_values.category == 'utilities' %}selected{% endif %}>{{ trans('utilities', default='Utilities') }}</option>
+                        <option value="transport" {% if filter_values.category == 'transport' %}selected{% endif %}>{{ trans('transport', default='Transport') }}</option>
+                        <option value="other" {% if filter_values.category == 'other' %}selected{% endif %}>{{ trans('other', default='Other') }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="date" class="block text-sm">{{ trans('date', default='Date') }}</label>
+                    <input type="date" name="date" id="date" value="{{ filter_values.date }}" class="w-full p-2 border rounded">
+                </div>
+            </div>
+            <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">{{ trans('filter') }}</button>
+        </form>
+        <a href="{{ url_for('transactions.add', type='payment') }}" class="inline-block bg-green-500 text-white px-4 py-2 rounded mb-4 hover:bg-green-600">{{ trans('add_payment', default='Add Payment') }}</a>
+        <a href="{{ url_for('transactions.export_transactions_csv', type='payment') }}" class="inline-block bg-gray-600 text-white px-4 py-2 rounded mb-4 ml-2 hover:bg-gray-700">{{ trans('export_csv', default='Export CSV') }}</a>
+        {% if transactions|length == 0 %}
+            <p class="text-gray-600">{{ trans('no_payments', default='No payments found.') }}</p>
+        {% else %}
+            <div class="mb-4">
+                <p class="text-lg">{{ trans('total', default='Total') }}: {{ total|format_currency }}</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2 text-left">{{ trans('party_name', default='Party Name') }}</th>
+                            <th class="p-2 text-left">{{ trans('amount', default='Amount') }}</th>
+                            <th class="p-2 text-left">{{ trans('category') }}</th>
+                            <th class="p-2 text-left">{{ trans('date', default='Date') }}</th>
+                            <th class="p-2 text-left">{{ trans('actions', default='Actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                            <tr class="border-t">
+                                <td class="p-2">{{ transaction.party_name }}</td>
+                                <td class="p-2">{{ transaction.amount|format_currency }}</td>
+                                <td class="p-2">{{ trans(transaction.category, default=transaction.category|capitalize) }}</td>
+                                <td class="p-2">{{ transaction.created_at|format_datetime }}</td>
+                                <td class="p-2">
+                                    <a href="{{ url_for('transactions.update_transaction', type='payment', transaction_id=transaction._id) }}" class="text-blue-500 hover:underline">{{ trans('edit', default='Edit') }}</a>
+                                    <form action="{{ url_for('transactions.delete_transaction', type='payment', transaction_id=transaction._id) }}" method="post" class="inline" onsubmit="return confirm('{{ trans('confirm_delete', default='Are you sure?') }}');">
+                                        <button type="submit" class="text-red-500 hover:underline ml-2">{{ trans('delete', default='Delete') }}</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+    <script src="/service-worker.js"></script>
+</body>
+</html>
